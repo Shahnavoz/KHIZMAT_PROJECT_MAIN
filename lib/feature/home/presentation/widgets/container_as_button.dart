@@ -9,17 +9,22 @@ class ContainerAsButton extends StatelessWidget {
     required this.text,
     required this.backGroundColor,
     this.textColor,
+    this.width,
+    this.borderColor,
   });
   final AdaptiveSizes size;
   final String text;
   final Color backGroundColor;
   final Color? textColor;
+  final double? width;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: backGroundColor,
+        border: Border.all(color: borderColor ?? Colors.transparent),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(
@@ -28,7 +33,7 @@ class ContainerAsButton extends StatelessWidget {
           vertical: size.otstup5,
         ),
         child: SizedBox(
-          width: size.screenWidth*0.4,
+          width: width ?? size.screenWidth * 0.4,
           child: textWithH1Style(
             maxLines: 1,
             text,

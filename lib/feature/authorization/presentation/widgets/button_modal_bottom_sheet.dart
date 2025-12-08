@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
+import 'package:khizmat_new/consts/methods/common_methods.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/authorization/presentation/pages/main_question_page.dart';
@@ -125,12 +126,17 @@ class _ButtonModalBottomSheetState extends State<ButtonModalBottomSheet> {
                               ],
                             ),
                           ),
-                          partTwoWidget: Text(
-                            "Позвонить оператору",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          partTwoWidget: GestureDetector(
+                            onTap: () {
+                              makePhoneCall("870904004");
+                            },
+                            child: Text(
+                              "Позвонить оператору",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                           backGroundColor: Colors.white,
@@ -152,12 +158,17 @@ class _ButtonModalBottomSheetState extends State<ButtonModalBottomSheet> {
                               ],
                             ),
                           ),
-                          partTwoWidget: Text(
-                            "Написать в телеграм",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          partTwoWidget: GestureDetector(
+                            onTap: () {
+                              openTelegram("@shahnavoz1");
+                            },
+                            child: Text(
+                              "Написать в телеграм",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                           backGroundColor: Colors.white,

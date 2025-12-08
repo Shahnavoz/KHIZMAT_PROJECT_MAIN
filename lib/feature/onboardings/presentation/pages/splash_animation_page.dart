@@ -3,14 +3,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math';
 import 'dart:async';
 
-class BookZoom extends StatefulWidget {
-  const BookZoom({super.key});
+import 'package:khizmat_new/feature/authorization/presentation/pages/main_enter_page.dart';
+
+class SplashAnimationPage extends StatefulWidget {
+  const SplashAnimationPage({super.key});
 
   @override
-  State<BookZoom> createState() => _BookZoomState();
+  State<SplashAnimationPage> createState() => _SplashAnimationPageState();
 }
 
-class _BookZoomState extends State<BookZoom> with TickerProviderStateMixin {
+class _SplashAnimationPageState extends State<SplashAnimationPage>
+    with TickerProviderStateMixin {
   late final AnimationController _bookController;
   late final Animation<double> _bookScale;
   late final Animation<double> _bookOpacity;
@@ -99,6 +102,8 @@ class _BookZoomState extends State<BookZoom> with TickerProviderStateMixin {
         });
       }
     });
+
+   
   }
 
   void _startTextAnimation() {
@@ -119,6 +124,14 @@ class _BookZoomState extends State<BookZoom> with TickerProviderStateMixin {
         });
       }
     });
+
+     Future.delayed(
+      Duration(seconds: 15),
+      () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MainEnterPage()),
+      ),
+    );
   }
 
   @override
@@ -135,13 +148,13 @@ class _BookZoomState extends State<BookZoom> with TickerProviderStateMixin {
     const lightGreenColor = Color(0xFFA5D6A7);
 
     final letters = [
-      "assets/icons/imzo_icon1.svg",
-      "assets/icons/imzo_icon1.svg",
-      "assets/icons/imzo_icon1.svg",
-      "assets/icons/imzo_icon1.svg",
-      "assets/icons/imzo_icon1.svg",
-      "assets/icons/imzo_icon1.svg",
-      "assets/icons/imzo_icon1.svg",
+      "assets/splash_letters/h.svg",
+      "assets/splash_letters/u.svg",
+      "assets/splash_letters/k.svg",
+      "assets/splash_letters/u1.svg",
+      "assets/splash_letters/m.svg",
+      "assets/splash_letters/a.svg",
+      "assets/splash_letters/t.svg",
       // "assets/h.svg",
       // "assets/u.svg",
       // "assets/k.svg",
@@ -151,130 +164,125 @@ class _BookZoomState extends State<BookZoom> with TickerProviderStateMixin {
       // "assets/t.svg",
     ];
 
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (!_showCircleAnimation)
-                  Opacity(
-                    opacity: _bookOpacity.value,
-                    child: ScaleTransition(
-                      scale: _bookScale,
-                      child: SvgPicture.asset(
-                        "assets/icons/imzo_icon1.svg",
-                        width: 150,
-                        height: 150,
-                      ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (!_showCircleAnimation)
+                Opacity(
+                  opacity: _bookOpacity.value,
+                  child: ScaleTransition(
+                    scale: _bookScale,
+                    child: SvgPicture.asset(
+                      "assets/icons/imzo_icon1.svg",
+                      width: 150,
+                      height: 150,
                     ),
                   ),
-
-                if (_showCircleAnimation) ...[
-                  const SizedBox(height: 40),
-
-                  SizedBox(
-                    width: 300,
-                    height: 300,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        AnimatedOpacity(
-                          duration: const Duration(milliseconds: 800),
-                          opacity: _showCenterIcon ? 1.0 : 0.0,
-                          child: CustomPaint(
-                            painter: _CircleConnectionPainter(
-                              angle: _rotationAngle,
-                              dotCount: 36,
-                              color: greenColor.withOpacity(0.3),
+                ),
+          
+              if (_showCircleAnimation) ...[
+                const SizedBox(height: 40),
+          
+                SizedBox(
+                  width: 300,
+                  height: 300,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 800),
+                        opacity: _showCenterIcon ? 1.0 : 0.0,
+                        child: CustomPaint(
+                          painter: _CircleConnectionPainter(
+                            angle: _rotationAngle,
+                            dotCount: 36,
+                            color: greenColor.withOpacity(0.3),
+                          ),
+                          size: const Size(280, 280),
+                        ),
+                      ),
+          
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 800),
+                        opacity: _showText ? 1.0 : 0.0,
+                        child: Container(
+                          width: 220,
+                          height: 220,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: greenColor.withOpacity(0.2),
+                              width: 2,
                             ),
-                            size: const Size(280, 280),
+                          ),
+                          child: Stack(
+                            children: [
+                              ...List.generate(letters.length, (index) {
+                                final baseAngle =
+                                    (2 * pi / letters.length) * index;
+                                final angle = baseAngle + _rotationAngle;
+                                final radius = 95.0;
+          
+                                final x = 110 + radius * cos(angle);
+                                final y = 110 + radius * sin(angle);
+          
+                                return Positioned(
+                                  left: x - 16,
+                                  top: y - 16,
+                                  child: SvgPicture.asset(
+                                    letters[index],
+                                    color: greenColor,
+                                    width: 32,
+                                    height: 32,
+                                  ),
+                                );
+                              }),
+                            ],
                           ),
                         ),
-
-                        AnimatedOpacity(
-                          duration: const Duration(milliseconds: 800),
-                          opacity: _showText ? 1.0 : 0.0,
+                      ),
+          
+                      // Центральная иконка с пульсацией
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 600),
+                        opacity: _showCenterIcon ? 1.0 : 0.0,
+                        child: ScaleTransition(
+                          scale: _pulseAnimation,
                           child: Container(
-                            width: 220,
-                            height: 220,
+                            width: 70,
+                            height: 70,
                             decoration: BoxDecoration(
+                              color: greenColor,
                               shape: BoxShape.circle,
-                              border: Border.all(
-                                color: greenColor.withOpacity(0.2),
-                                width: 2,
-                              ),
-                            ),
-                            child: Stack(
-                              children: [
-                                ...List.generate(letters.length, (index) {
-                                  final baseAngle =
-                                      (2 * pi / letters.length) * index;
-                                  final angle = baseAngle + _rotationAngle;
-                                  final radius = 95.0;
-
-                                  final x = 110 + radius * cos(angle);
-                                  final y = 110 + radius * sin(angle);
-
-                                  return Positioned(
-                                    left: x - 16,
-                                    top: y - 16,
-                                    child: SvgPicture.asset(
-                                      letters[index],
-                                      color: greenColor,
-                                      width: 32,
-                                      height: 32,
-                                    ),
-                                  );
-                                }),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: greenColor.withOpacity(0.4),
+                                  blurRadius: 15,
+                                  spreadRadius: 3,
+                                ),
                               ],
                             ),
-                          ),
-                        ),
-
-
-                        // Центральная иконка с пульсацией
-                        AnimatedOpacity(
-                          duration: const Duration(milliseconds: 600),
-                          opacity: _showCenterIcon ? 1.0 : 0.0,
-                          child: ScaleTransition(
-                            scale: _pulseAnimation,
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                color: greenColor,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: greenColor.withOpacity(0.4),
-                                    blurRadius: 15,
-                                    spreadRadius: 3,
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  "assets/icons/imzo_icon1.svg",
-                                  width: 32,
-                                  height: 32,
-                                  color: Colors.white,
-                                ),
+                            child: Center(
+                              child: SvgPicture.asset(
+                                "assets/icons/imzo_icon1.svg",
+                                width: 32,
+                                height: 32,
+                                color: Colors.white,
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ],
-            ),
+            ],
           ),
         ],
       ),
@@ -297,9 +305,10 @@ class _CircleConnectionPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2 - 15;
-    final dotPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
+    final dotPaint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.fill;
 
     for (int i = 0; i < dotCount; i++) {
       final dotAngle = (2 * pi / dotCount) * i + angle;
@@ -313,17 +322,19 @@ class _CircleConnectionPainter extends CustomPainter {
       canvas.drawCircle(Offset(dotX, dotY), dotSize, dotPaint);
     }
 
-    final innerRingPaint = Paint()
-      ..color = color.withOpacity(0.15)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5;
+    final innerRingPaint =
+        Paint()
+          ..color = color.withOpacity(0.15)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5;
 
     canvas.drawCircle(center, radius, innerRingPaint);
 
-    final outerRingPaint = Paint()
-      ..color = color.withOpacity(0.1)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
+    final outerRingPaint =
+        Paint()
+          ..color = color.withOpacity(0.1)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.0;
 
     canvas.drawCircle(center, radius + 10, outerRingPaint);
   }

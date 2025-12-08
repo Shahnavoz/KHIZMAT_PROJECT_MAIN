@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -18,20 +17,27 @@ class AllUpdatedDateService {
           "Authorization":"Bearer $token",
         },
       );
-      print(token);
+      // print(token);
 
       if (response.statusCode == 200) {
-        print(token);
+        // print(token);
+        print(response.body);
+
         var data = allUpdatedDateModelFromJson(response.body);
+
+        print(data.data.categories);
+        print(data.data.documents);
         return data;
       } else {
-        // return jsonDecode(response.body);
         print("Errorr: ${response.statusCode}");
         print("Errorr: ${response.body}");
         throw Exception("Error else: ${response.body}, ${response.statusCode}");
       }
     } catch (e) {
+      print(e);
       throw Exception("Error: ${e},");
+      
+
     }
   }
 }

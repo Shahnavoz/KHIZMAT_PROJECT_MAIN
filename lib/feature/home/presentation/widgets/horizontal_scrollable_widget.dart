@@ -15,6 +15,7 @@ class HorizontalScrollableWidget extends StatefulWidget {
     required this.selectedIndex,
     this.activeTextColor,
     this.nonActiveTextColor,
+    this.borderColor,
   });
 
   final List<CategoryElement> categories;
@@ -25,6 +26,7 @@ class HorizontalScrollableWidget extends StatefulWidget {
   int selectedIndex;
   Color? activeTextColor = Colors.white;
   Color? nonActiveTextColor = Colors.white;
+  Color? borderColor;
 
   @override
   State<HorizontalScrollableWidget> createState() =>
@@ -66,6 +68,9 @@ class _HorizontalScrollableWidgetState
                 },
                 child: Container(
                   decoration: BoxDecoration(
+                    border: Border.all(
+                      color: widget.borderColor ?? Colors.transparent,
+                    ),
                     color:
                         widget.selectedIndex == index
                             ? widget.oneActiveColor

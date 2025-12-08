@@ -11,7 +11,7 @@ AllUpdatedDateModel allUpdatedDateModelFromJson(String str) =>
 String allUpdatedDateModelToJson(AllUpdatedDateModel data) =>
     json.encode(data.toJson());
 
-class AllUpdatedDateModel {
+class AllUpdatedDateModel { 
   int statusCode;
   String statusMessage;
   Data data;
@@ -39,7 +39,7 @@ class AllUpdatedDateModel {
 class Data {
   int updatedDate;
   List<CategoryElement> categories;
-  List<Document> documents;
+  List<UpdatedDateDocument> documents;
 
   Data({
     required this.updatedDate,
@@ -52,8 +52,8 @@ class Data {
     categories: List<CategoryElement>.from(
       json["categories"].map((x) => CategoryElement.fromJson(x)),
     ),
-    documents: List<Document>.from(
-      json["documents"].map((x) => Document.fromJson(x)),
+    documents: List<UpdatedDateDocument>.from(
+      json["documents"].map((x) => UpdatedDateDocument.fromJson(x)),
     ),
   );
 
@@ -67,8 +67,8 @@ class Data {
 class CategoryElement {
   int id;
   int? position;
-  Description title;
-  Description description;
+  AllUpdatedDateDescription title;
+  AllUpdatedDateDescription description;
   String? iconId;
   dynamic gradientStartColor;
   dynamic gradientEndColor;
@@ -96,15 +96,15 @@ class CategoryElement {
   factory CategoryElement.fromJson(Map<String, dynamic> json) =>
       CategoryElement(
         id: json["id"],
-        position: json["position"],
-        title: Description.fromJson(json["title"]),
-        description: Description.fromJson(json["description"]),
+        position: json["position"] ?? 0,
+        title: AllUpdatedDateDescription.fromJson(json["title"]),
+        description: AllUpdatedDateDescription.fromJson(json["description"]),
         iconId: json["icon_id"],
         gradientStartColor: json["gradient_start_color"],
         gradientEndColor: json["gradient_end_color"],
         soon: json["soon"],
         icon: json["icon"],
-        parentId: json["parent_id"],
+        parentId: json["parent_id"] ?? 0,
         deleted: json["deleted"],
         status: json["status"],
       );
@@ -125,15 +125,15 @@ class CategoryElement {
   };
 }
 
-class Description {
+class AllUpdatedDateDescription {
   String? tj;
   String? ru;
   String? en;
 
-  Description({required this.tj, required this.ru, required this.en});
+  AllUpdatedDateDescription({required this.tj, required this.ru, required this.en});
 
-  factory Description.fromJson(Map<String, dynamic> json) =>
-      Description(tj: json["tj"], ru: json["ru"], en: json["en"]);
+  factory AllUpdatedDateDescription.fromJson(Map<String, dynamic> json) =>
+      AllUpdatedDateDescription(tj: json["tj"], ru: json["ru"], en: json["en"]);
 
   Map<String, dynamic> toJson() => {"tj": tj, "ru": ru, "en": en};
 
@@ -152,15 +152,15 @@ class Description {
   }
 }
 
-class Document {
+class UpdatedDateDocument {
   int id;
   int categoryId;
   DocumentCategory category;
   int? position;
-  Description title;
-  Description description;
+  AllUpdatedDateDescription title;
+  AllUpdatedDateDescription description;
   Type type;
-  Description typeTitle;
+  AllUpdatedDateDescription typeTitle;
   String icon;
   List<ApplicantType> applicantTypes;
   bool deleted;
@@ -168,7 +168,7 @@ class Document {
   String? tags;
   bool? isPublicService;
 
-  Document({
+  UpdatedDateDocument({
     required this.id,
     required this.categoryId,
     required this.category,
@@ -185,18 +185,18 @@ class Document {
     this.isPublicService,
   });
 
-  factory Document.fromJson(Map<String, dynamic> json) => Document(
+  factory UpdatedDateDocument.fromJson(Map<String, dynamic> json) => UpdatedDateDocument(
     id: json["id"],
     categoryId: json["category_id"],
     category: DocumentCategory.fromJson(json["category"]),
     position: json["position"],
-    title: Description.fromJson(json["title"]),
-    description: Description.fromJson(json["description"]),
-    type: typeValues.map[json["type"]]!,
-    typeTitle: Description.fromJson(json["type_title"]),
+    title: AllUpdatedDateDescription.fromJson(json["title"]),
+    description: AllUpdatedDateDescription.fromJson(json["description"]),
+    type: typeValues.map[json["type"]] ?? Type.REFERENCE,
+    typeTitle: AllUpdatedDateDescription.fromJson(json["type_title"]),
     icon: json["icon"],
     applicantTypes: List<ApplicantType>.from(
-      json["applicant_types"].map((x) => applicantTypeValues.map[x]!),
+      json["applicant_types"].map((x) => applicantTypeValues.map[x]),
     ),
     deleted: json["deleted"],
     status: json["status"],
@@ -233,7 +233,7 @@ final applicantTypeValues = EnumValues({
 });
 
 class DocumentCategory {
-  Description title;
+  AllUpdatedDateDescription title;
   String iconId;
   dynamic gradientStartColor;
   dynamic gradientEndColor;
@@ -247,7 +247,7 @@ class DocumentCategory {
 
   factory DocumentCategory.fromJson(Map<String, dynamic> json) =>
       DocumentCategory(
-        title: Description.fromJson(json["title"]),
+        title: AllUpdatedDateDescription.fromJson(json["title"]),
         iconId: json["icon_id"],
         gradientStartColor: json["gradient_start_color"],
         gradientEndColor: json["gradient_end_color"],

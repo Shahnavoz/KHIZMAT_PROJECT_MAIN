@@ -55,16 +55,7 @@ class _LifeEventsState extends ConsumerState<LifeEvents> {
                       decoration: BoxDecoration(
                         // border: Border.all(color: greyTextFBorderColor),
                         borderRadius: BorderRadius.circular(12),
-                        gradient: RadialGradient(
-                          // center: Alignment.center,
-                          radius: 0.9,
-                          colors: [
-                            Color(0xFFFFFFFF),
-                            Color(0xFFFFFFFF),
-                            Color.fromARGB(255, 236, 236, 236),
-                          ],
-                          stops: [ 0.0, 0.6, 3.0],
-                        ),
+                        gradient:backGroundContainersGradient
                       ),
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: size.otstup15),

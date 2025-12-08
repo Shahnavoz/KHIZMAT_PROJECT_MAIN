@@ -62,6 +62,9 @@ class _MainQuestionPageState extends State<MainQuestionPage> {
                         MyTextFieldWithPrefix(
                           controller: searchController,
                           hintText: 'Поиск вопросов',
+                          onChanged: (p0) {
+                            
+                          },
                         ),
                       ],
                     ),
@@ -112,6 +115,7 @@ class MyTextFieldWithPrefix extends StatelessWidget {
   final bool obsecureText;
   final String? Function(String?)? validator;
   final Color backGroundColor;
+  final void Function(String)? onChanged;
   const MyTextFieldWithPrefix({
     super.key,
     required this.hintText,
@@ -122,6 +126,7 @@ class MyTextFieldWithPrefix extends StatelessWidget {
     this.obsecureText = false,
     this.validator,
     this.backGroundColor = greyButtonBorderColor,
+    required this.onChanged
   });
 
   @override
@@ -134,6 +139,7 @@ class MyTextFieldWithPrefix extends StatelessWidget {
         color: backGroundColor,
       ),
       child: TextFormField(
+        onChanged: onChanged,
         validator: validator,
         obscureText: obsecureText,
         controller: controller,

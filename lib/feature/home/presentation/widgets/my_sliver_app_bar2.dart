@@ -164,6 +164,9 @@ class _MySliverAppBar2State extends ConsumerState<MySliverAppBar2> {
                   controller: widget.searchController,
                   hintText: "Поиск вопросов",
                   backGroundColor: Colors.white,
+                  onChanged: (p0) {
+                    
+                  },
                 ),
               ],
             ),

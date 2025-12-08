@@ -17,8 +17,7 @@ import 'package:khizmat_new/feature/authorization/presentation/widgets/button_or
 import 'package:khizmat_new/feature/authorization/presentation/widgets/footer_company_text.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/my__button.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/my_animated_dot_indicator.dart';
-import 'package:khizmat_new/feature/home/presentation/pages/new_home_page.dart';
-import 'package:khizmat_new/feature/home/presentation/pages/test_home_page.dart';
+import 'package:khizmat_new/feature/bottomNavBar/presentation/pages/bottom_nav_page.dart';
 import 'package:khizmat_new/generated/l10n.dart';
 
 class MainEnterPage extends ConsumerStatefulWidget {
@@ -31,8 +30,8 @@ class MainEnterPage extends ConsumerStatefulWidget {
 class _MainEnterPageState extends ConsumerState<MainEnterPage> {
   var controller = CarouselSliderController();
   var pageController = PageController();
-  var emailController = TextEditingController(text: "test1234@test.test");
-  var passwordController = TextEditingController(text: "test1234@test.test");
+  var emailController = TextEditingController(text: "fiz_fo@gmail.com");
+  var passwordController = TextEditingController(text: "x5a9Iexz7XRX");
   final _formKey = GlobalKey<FormState>();
   var storage = FlutterSecureStorage();
   Future<void> login(String email, String password) async {
@@ -55,9 +54,9 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
           final token = json['data']['token']['access_token'];
           await storage.write(key: 'token', value: token);
           print('Login successful! Token: $token');
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => NewHomePage()),
+            MaterialPageRoute(builder: (context) => BottomNavPage()),
             // MaterialPageRoute(builder: (context) => TestHomePage()),
           );
         }
@@ -300,6 +299,9 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
                                                         ],
                                                       ),
                                                       MyTextFieldWithPrefix(
+                                                        onChanged: (p0) {
+                                                          
+                                                        },
                                                         validator: (value) {
                                                           if (value == null ||
                                                               value.isEmpty)
@@ -327,6 +329,9 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
                                                         height: size.otstup15,
                                                       ),
                                                       MyTextFieldWithPrefix(
+                                                        onChanged: (p0) {
+                                                          
+                                                        },
                                                         validator: (value) {
                                                           if (value == null ||
                                                               value.isEmpty) {

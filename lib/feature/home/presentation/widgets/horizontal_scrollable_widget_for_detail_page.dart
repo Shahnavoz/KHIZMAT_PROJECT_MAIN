@@ -7,7 +7,7 @@ import 'package:khizmat_new/feature/home/data/models/all_updated_date_model.dart
 class HorizontalScrollableWidgetForDetailPage extends StatefulWidget {
   HorizontalScrollableWidgetForDetailPage({
     super.key,
-    required this.categories,
+    required this.category,
     required this.size,
     required this.currentLocale,
     this.oneActiveColor,
@@ -15,13 +15,15 @@ class HorizontalScrollableWidgetForDetailPage extends StatefulWidget {
     required this.selectedIndex,
     this.activeTextColor,
     this.nonActiveTextColor,
+    required this.categories,
   });
 
-  final List<CategoryElement> categories;
+  final CategoryElement category;
+  List<CategoryElement> categories;
   final AdaptiveSizes size;
   final Locale currentLocale;
-  LinearGradient? oneActiveColor = buttonsTitleGradient;
-  LinearGradient? nonActiveColor = buttonsTitleGradient;
+  Color? oneActiveColor = primaryGreenColor;
+  Color? nonActiveColor = primaryGreenColor;
   int selectedIndex;
   Color? activeTextColor = Colors.white;
   Color? nonActiveTextColor = Colors.white;
@@ -35,21 +37,20 @@ class _HorizontalScrollableWidgetForDetailPageState
     extends State<HorizontalScrollableWidgetForDetailPage> {
   @override
   Widget build(BuildContext context) {
-    if (widget.categories.isEmpty) {
-      return const Text(
-        'Нет категорий',
-        style: TextStyle(color: Colors.red, fontSize: 16),
-      );
-    }
+    // if (widget.categories.isEmpty) {
+    //   return const Text(
+    //     'Нет категорий',
+    //     style: TextStyle(color: Colors.red, fontSize: 16),
+    //   );
+    // }
 
     return Container(
-      height: 50,
+      // height: 30,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(widget.categories.length, (index) {
-            
             final title =
                 widget.categories[index].title.getText(widget.currentLocale) ??
                 'Без названия';
@@ -62,11 +63,12 @@ class _HorizontalScrollableWidgetForDetailPageState
                 onTap: () {
                   setState(() {
                     widget.selectedIndex = index;
+                    // print(widget.selectedIndex);
                   });
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient:
+                    color:
                         widget.selectedIndex == index
                             ? widget.oneActiveColor
                             : widget.nonActiveColor,
@@ -82,7 +84,7 @@ class _HorizontalScrollableWidgetForDetailPageState
                       children: [
                         //ne nachinaetsa s pervogo
                         textWithH1Style(
-                          index == 0 ? "Все" : title,
+                          title,
                           color:
                               widget.selectedIndex == index
                                   ? widget.activeTextColor!

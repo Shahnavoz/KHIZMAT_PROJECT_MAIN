@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 //BUTTON'S COLORS
 const Color backgroundColor = Color(0xFFE5F5EE);
 const Color primaryButtonColor = Color(0xFF26AC71);
-const Color secondaryColorForScroll=Color(0xFF90C0BD);
+const Color primaryGreenColor = Color(0xFF5EB681);
+const Color secondaryGreenColor = Color(0xFF4C9283);
+const Color secondaryColorForScroll = Color(0xFF90C0BD);
 const Color nonActiveDotColor = Color(0xFFEAF7F1);
 const Color greenButtonBorderColor = Color(0xFF219C65);
 const Color greyButtonBorderColor = Color(0xFFF7F7F7);
@@ -22,6 +24,10 @@ const Color mainPagePartBackGround = Color(0xFFE0F4EB);
 const Color wrapItemColor = Color(0xFFA2B8AE);
 const Color textFieldBorderColor = Color(0xFFE2E2E2);
 const Color boxGreyTabBorder = Color(0xFFF7F7F7);
+const Color navIconColor = Color(0xFFE7E7E7);
+const Color navActiveIconColor = Color(0xFF5EB681);
+const Color navDotColor = Color(0xFF015057);
+
 const LinearGradient gradientColor = LinearGradient(
   colors: [Color(0xFF000000), Color(0xFF26AC71), Color(0xFFA2B8AE)],
 );
@@ -63,6 +69,17 @@ const LinearGradient buttonsTitleGradient = LinearGradient(
   begin: Alignment.centerLeft,
   end: Alignment.centerRight,
   stops: [0.0, 0.5],
+);
+
+const backGroundContainersGradient = RadialGradient(
+  // center: Alignment.center,
+  radius: 0.9,
+  colors: [
+    Color(0xFFFFFFFF),
+    Color(0xFFFFFFFF),
+    Color.fromARGB(255, 236, 236, 236),
+  ],
+  stops: [0.0, 0.6, 3.0],
 );
 
 const borderLinearGradient = LinearGradient(

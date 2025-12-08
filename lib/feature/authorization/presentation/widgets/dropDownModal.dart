@@ -40,6 +40,7 @@ class _DropdownmodalState extends ConsumerState<Dropdownmodal> {
       height: size.screenHeight * 0.40,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ModalAppBar(mainText: "Выберите язык"),
 
@@ -72,7 +73,8 @@ class _DropdownmodalState extends ConsumerState<Dropdownmodal> {
 
                   /// Правая часть — Nazvanie + Radio
                   partTwoWidget: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    // crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // SizedBox(width: 10),
                       Text(_getLanguageName(locale.languageCode), style: h1Title),

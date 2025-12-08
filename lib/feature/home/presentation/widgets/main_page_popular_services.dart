@@ -37,7 +37,7 @@ class _MainPagePopularServicesState
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: size.otstup15,
+          // horizontal: size.otstup15,
           vertical: size.otstup15,
         ),
         child: Column(
@@ -58,65 +58,60 @@ class _MainPagePopularServicesState
                 ),
                 itemBuilder: (context, index) {
                   return Container(
+                    margin: EdgeInsets.all(3.3),
                     decoration: BoxDecoration(
-                      gradient: borderLinearGradient,
+                      gradient: backGroundContainersGradient,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Container(
-                      margin: EdgeInsets.all(3.3),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: size.otstup15,
+                        vertical: size.otstup15,
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: size.otstup15,
-                          vertical: size.otstup15,
-                        ),
-                        child: Column(
-                          children: [
-                            widget.categories[index].iconId != null
-                                ? Container(
-                                  padding: EdgeInsets.all(0),
-                                  decoration: BoxDecoration(
-                                    // border: Border.all(),
-                                    // shape: BoxShape.circle,
-                                    // color: primaryButtonColor,
-                                  ),
-
-                                  child: Image.asset(
-                                    "assets/icons/Group 831885407.png",
-                                    // widget.categories[index].iconId!,
-                                    width: size.imageSize100,
-                                    // color: Colors.white,
-                                  ),
-                                )
-                                : Container(
-                                  padding: EdgeInsets.all(0),
-                                  decoration: BoxDecoration(
-                                    // border: Border.all(),
-                                    shape: BoxShape.circle,
-                                    color: primaryButtonColor,
-                                  ),
-                                  child: Image.asset(
-                                    "assets/icons/Group 831885407.png",
-                                  ),
+                      child: Column(
+                        children: [
+                          widget.categories[index].iconId != null
+                              ? Container(
+                                padding: EdgeInsets.all(0),
+                                decoration: BoxDecoration(
+                                  // border: Border.all(),
+                                  // shape: BoxShape.circle,
+                                  // color: primaryButtonColor,
                                 ),
-                            SizedBox(height: size.otstup15),
-                            SizedBox(
-                              width: size.screenWidth,
-                              child: Text(
-                                overflow: TextOverflow.ellipsis,
-                                widget.categories[index].description.getText(
-                                  currentLocale,
+                  
+                                child: Image.asset(
+                                  "assets/icons/Group 831885407.png",
+                                  // widget.categories[index].iconId!,
+                                  width: size.imageSize100,
+                                  // color: Colors.white,
                                 ),
-                                style: categoryTextRobotoTitle,
-                                maxLines: 3,
-                                textAlign: TextAlign.center,
+                              )
+                              : Container(
+                                padding: EdgeInsets.all(0),
+                                decoration: BoxDecoration(
+                                  // border: Border.all(),
+                                  shape: BoxShape.circle,
+                                  color: primaryButtonColor,
+                                ),
+                                child: Image.asset(
+                                  "assets/icons/Group 831885407.png",
+                                ),
                               ),
+                          SizedBox(height: size.otstup15),
+                          SizedBox(
+                            width: size.screenWidth,
+                            child: Text(
+                              overflow: TextOverflow.ellipsis,
+                              widget.categories[index].description.getText(
+                                currentLocale,
+                              ),
+                              style: categoryTextRobotoTitle,
+                              maxLines: 3,
+                              textAlign: TextAlign.center,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   );
