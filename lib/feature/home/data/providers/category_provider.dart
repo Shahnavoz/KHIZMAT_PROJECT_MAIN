@@ -3,7 +3,10 @@ import 'package:khizmat_new/feature/home/data/models/all_updated_date_model.dart
 import 'package:khizmat_new/feature/home/data/models/combined_category_data_model.dart';
 import 'package:khizmat_new/feature/home/data/models/podcategories_model.dart';
 import 'package:khizmat_new/feature/home/data/models/podcategory_specialization_model.dart';
+import 'package:khizmat_new/feature/home/data/models/upload_file_model.dart';
+import 'package:khizmat_new/feature/home/data/models/uploaded_file_info.dart';
 import 'package:khizmat_new/feature/home/data/repos/category_service.dart';
+import 'package:khizmat_new/feature/home/data/repos/shagi_polucheniye_uslugi_service.dart';
 
 //With New Model
 final categoriesWithNewModelProvider = FutureProvider<AllUpdatedDateModel>((
@@ -12,6 +15,19 @@ final categoriesWithNewModelProvider = FutureProvider<AllUpdatedDateModel>((
   final repo = CategoryService();
   return repo.getCategoriesWithNewModel();
 });
+
+final uploadedFileProvider = FutureProvider.family<UploadedFileInfo?, int>((
+  ref,
+  applicationId,
+) async {
+  final repo = ShagiPolucheniyeUslugiService();
+  return repo.getUploadedFileInfo(applicationId);
+});
+final uploadeMethodFileProvider =
+    FutureProvider.family<UploadedFileModel?, int>((ref, applicationId) async {
+      final repo = ShagiPolucheniyeUslugiService();
+      return repo.uploadFile(applicationId);
+    });
 
 //Getting subcategories by document_id
 final categoriesDetailByDocumentIdProvider =

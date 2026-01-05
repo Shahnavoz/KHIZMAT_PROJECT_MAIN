@@ -10,7 +10,6 @@ import 'package:khizmat_new/feature/authorization/presentation/pages/main_questi
 import 'package:khizmat_new/feature/history/presentation/widgets/ApplicationCard.dart';
 import 'package:khizmat_new/feature/history/presentation/widgets/horizontally_scrollable_widget.dart';
 import 'package:khizmat_new/feature/history/presentation/widgets/payment_card.dart';
-import 'package:khizmat_new/feature/home/presentation/pages/steps_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart';
 
 class HistoryPage extends ConsumerStatefulWidget {

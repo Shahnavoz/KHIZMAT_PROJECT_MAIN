@@ -250,67 +250,83 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
 
                                   return GestureDetector(
                                     onTap: () async {
-                                      final allSpecializations =
-                                          model.uslugaSpecialization[doc.id] ??
-                                          [];
+                                      // final allSpecializations =
+                                      //     model.uslugaSpecialization[doc.id] ??
+                                      //     [];
 
-                                      if (allSpecializations.isEmpty) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (context) => UslugaInfoPage(
-                                                  uslugaInfo:
-                                                      uslugaDetailInfo[index],
-                                                  specializations: [],
-                                                  index: index,
-                                                  requirements: [],
-                                                ),
-                                          ),
-                                        );
-                                        return;
-                                      }
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => UslugaInfoPage(
+                                                uslugaInfo:
+                                                    uslugaDetailInfo[index],
+                                                specializations: [],
+                                                index: index,
+                                                requirements: [],
+                                                categoryId: widget.category.id,
+                                                doc: doc,
+                                              ),
+                                        ),
+                                      );
 
-                                      final selectedSpec =
-                                          allSpecializations.first;
+                                      // if (allSpecializations.isEmpty) {
+                                      //   Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder:
+                                      //           (context) => UslugaInfoPage(
+                                      //             uslugaInfo:
+                                      //                 uslugaDetailInfo[index],
+                                      //             specializations: [],
+                                      //             index: index,
+                                      //             requirements: [],
+                                      //           ),
+                                      //     ),
+                                      //   );
+                                      //   return;
+                                      // }
 
-                                      try {
-                                        // Ждём, пока загрузятся requirements
-                                        final allRequirements = await ref.read(
-                                          requirementsProvider((
-                                            doc.id,
-                                            selectedSpec.id,
-                                          )).future,
-                                        );
+                                      // final selectedSpec =
+                                      //     allSpecializations.first;
 
-                                        // Только после загрузки — переходим
-                                        if (!context.mounted) return;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (context) => UslugaInfoPage(
-                                                  uslugaInfo:
-                                                      uslugaDetailInfo[index],
-                                                  specializations:
-                                                      allSpecializations,
-                                                  index: index,
-                                                  requirements: allRequirements,
-                                                ),
-                                          ),
-                                        );
-                                      } catch (e) {
-                                        if (!context.mounted) return;
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              "Ошибка загрузки: $e",
-                                            ),
-                                          ),
-                                        );
-                                      }
+                                      // try {
+                                      //   // Ждём, пока загрузятся requirements
+                                      //   final allRequirements = await ref.read(
+                                      //     requirementsProvider((
+                                      //       doc.id,
+                                      //       selectedSpec.id,
+                                      //     )).future,
+                                      //   );
+
+                                      //   // Только после загрузки — переходим
+                                      //   if (!context.mounted) return;
+                                      //   Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder:
+                                      //           (context) => UslugaInfoPage(
+                                      //             uslugaInfo:
+                                      //                 uslugaDetailInfo[index],
+                                      //             specializations:
+                                      //                 allSpecializations,
+                                      //             index: index,
+                                      //             requirements: allRequirements,
+                                      //           ),
+                                      //     ),
+                                      //   );
+                                      // } catch (e) {
+                                      //   if (!context.mounted) return;
+                                      //   ScaffoldMessenger.of(
+                                      //     context,
+                                      //   ).showSnackBar(
+                                      //     SnackBar(
+                                      //       content: Text(
+                                      //         "Ошибка загрузки: $e",
+                                      //       ),
+                                      //     ),
+                                      //   );
+                                      // }
                                     },
                                     child: ListTile(
                                       contentPadding: EdgeInsets.symmetric(
@@ -339,13 +355,13 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                       title: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           SizedBox(
                                             child: textWithH1Style(
                                               color: Colors.black,
-                                              filteredDocuments[index]
-                                                  .title
+                                              filteredDocuments[index].title
                                                   .getText(currentLocale),
                                               textAlign: TextAlign.start,
                                               fontsize: 14,
@@ -382,7 +398,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                   },
                   error:
                       (error, st) => Center(
-                        child: Text('Errroooror!!${error.toString()},${st}'),
+                        child: Text('Errrooor!!${error.toString()},${st}'),
                       ),
                   loading:
                       () => SizedBox(height: 450, child: CategoryPageShimmer()),

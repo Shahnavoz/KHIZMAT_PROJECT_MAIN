@@ -8,6 +8,7 @@ class SwitchWidget extends StatefulWidget {
   final bool isOn;
   final void Function(bool) onToggle;
   final String? Function(bool?)? validator;
+  final String? content;
 
   const SwitchWidget({
     super.key,
@@ -15,6 +16,7 @@ class SwitchWidget extends StatefulWidget {
     required this.isOn,
     required this.onToggle,
     this.validator,
+    this.content
   });
 
   @override
@@ -58,7 +60,8 @@ class _SwitchWidgetState extends State<SwitchWidget> {
                           SizedBox(
                             width: widget.size.screenWidth * 0.55,
                             child: Text(
-                              'Подтверждаю ответственность за сохранность пароля ключа сертификата электронной подписи',
+                              widget.content ?? "",
+                              // 'Подтверждаю ответственность за сохранность пароля ключа сертификата электронной подписи',
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
@@ -81,7 +84,7 @@ class _SwitchWidgetState extends State<SwitchWidget> {
                         ),
                         activeToggleColor: primaryButtonColor,
                         onToggle: (val) {
-                          field.didChange(val); // обновляем FormField
+                          field.didChange(val); 
                           widget.onToggle(val);
                         },
                       ),

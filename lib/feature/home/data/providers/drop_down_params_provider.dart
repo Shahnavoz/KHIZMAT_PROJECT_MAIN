@@ -1,4 +1,3 @@
-// 1. Новый провайдер специально для зависимых dropdown-ов
 import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';

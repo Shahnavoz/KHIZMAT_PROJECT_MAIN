@@ -133,7 +133,8 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
               clipBehavior: Clip.none,
               children: [
                 Container(
-                  child: Image.asset(
+                  child: 
+                  Image.asset(
                     appThemeProvider
                         ? "assets/images/image 17.png"
                         : "assets/images/DARK MAIN.png",

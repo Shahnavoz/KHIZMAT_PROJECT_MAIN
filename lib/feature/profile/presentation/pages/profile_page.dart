@@ -3,11 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
-import 'package:khizmat_new/feature/authorization/presentation/pages/dropdown_test.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/dropDownModal.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/footer_company_text.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/my__button.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/container_as_button.dart';
+import 'package:khizmat_new/feature/profile/data/repos/profile_service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,6 +17,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final String name = "Шахриер";
+  final String LastName = "Мирзония";
+  final profileService = ProfileService();
   @override
   Widget build(BuildContext context) {
     final size = AdaptiveSizes(context);
@@ -62,7 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
             decoration: BoxDecoration(
               gradient: RadialGradient(
                 colors: [Color(0xFF5EB681), Color(0xFFEBEBEB)],
-                stops: [0.0, 1.0],
+                stops: [1.0, 1.0],
                 center: Alignment.topRight,
               ),
             ),
@@ -92,42 +95,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //     Container(
-                        //       decoration: BoxDecoration(
-                        //         color: Colors.white,
-                        //         shape: BoxShape.circle,
-                        //       ),
-
-                        //       child: Padding(
-                        //         padding: EdgeInsets.only(left: 10),
-                        //         child: IconButton(
-                        //           onPressed: () {},
-                        //           icon: Icon(
-                        //             Icons.arrow_back_ios,
-                        //             color: primaryButtonColor,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     Container(
-                        //       decoration: BoxDecoration(
-                        //         color: Colors.white,
-                        //         shape: BoxShape.circle,
-                        //       ),
-
-                        //       child: IconButton(
-                        //         onPressed: () {},
-                        //         icon: Icon(
-                        //           Icons.abc,
-                        //           color: primaryButtonColor,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                         SizedBox(height: size.otstup20),
                         textWithH1Style("Профиль", textAlign: TextAlign.start),
                         SizedBox(height: size.otstup30),
@@ -174,7 +141,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                             borderRadius: BorderRadius.circular(
                                               12,
                                             ),
-                                            color: Colors.grey[200],
+                                            // color: Colors.grey[200],
+                                          ),
+
+                                          child: Center(
+                                            child: Text(
+                                              "${name[0].toUpperCase()}${LastName[0].toUpperCase()}",
+                                              style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -187,7 +164,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         SizedBox(
                                           width: size.screenWidth * 0.6,
                                           child: scrollTextWithH1Style(
-                                            "Шахриер Мирзония",
+                                            "${name} ${LastName}",
                                           ),
                                         ),
                                         // SizedBox(
@@ -213,29 +190,29 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 SizedBox(height: size.otstup15),
 
-                                Divider(color: greyTextFBorderColor),
+                                // Divider(color: greyTextFBorderColor),
                                 // SizedBox(height: size.otstup18),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ProfileContainerWithInfo(
-                                      size: size,
-                                      title: "2",
-                                      subTitle: "Подписи",
-                                    ),
-                                    ProfileContainerWithInfo(
-                                      size: size,
-                                      title: "3",
-                                      subTitle: "Ожидание услуг",
-                                    ),
-                                    ProfileContainerWithInfo(
-                                      size: size,
-                                      title: "21",
-                                      subTitle: "Получено услуг",
-                                    ),
-                                  ],
-                                ),
+                                // Row(
+                                //   mainAxisAlignment:
+                                //       MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     ProfileContainerWithInfo(
+                                //       size: size,
+                                //       title: "2",
+                                //       subTitle: "Подписи",
+                                //     ),
+                                //     ProfileContainerWithInfo(
+                                //       size: size,
+                                //       title: "3",
+                                //       subTitle: "Ожидание услуг",
+                                //     ),
+                                //     ProfileContainerWithInfo(
+                                //       size: size,
+                                //       title: "21",
+                                //       subTitle: "Получено услуг",
+                                //     ),
+                                //   ],
+                                // ),
                               ],
                             ),
                           ),
@@ -408,7 +385,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                           size: size,
                                           backgroundColor: Colors.white,
                                           borderColor: greyTextFBorderColor,
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            setState(() {
+                                              // profileService.logOut();
+                                              Navigator.pop(context);
+                                            });
+                                          },
                                           child: textWithH1Style(
                                             "Выход с приложения",
                                             fontsize: 15,
@@ -454,7 +436,7 @@ class ProfileSettingContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: greyBorderColor, width: 2),
+        border: Border.all(color: Color(0xFFEFEFEF), width: 2),
         borderRadius: BorderRadius.circular(40),
       ),
       child: Padding(

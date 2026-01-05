@@ -28,8 +28,6 @@ void makePhoneCall(String phoneNumber) async {
   }
 }
 
-
-
 /// Открывает Telegram по username, ID, боту или каналу
 Future<void> openTelegram(String telegramIdentifier) async {
   // Убираем лишние символы: @, пробелы и т.д.
@@ -41,9 +39,9 @@ Future<void> openTelegram(String telegramIdentifier) async {
 
   // Список возможных ссылок (пробуем по очереди — что сработает, то и откроет)
   final urls = [
-    'tg://resolve?domain=$cleaned',           // Основной способ (открывает в приложении)
-    'https://t.me/$cleaned',                   // Открывает в браузере → перекидывает в приложение
-    'https://telegram.me/$cleaned',            // Альтернатива
+    'tg://resolve?domain=$cleaned', // Основной способ (открывает в приложении)
+    'https://t.me/$cleaned', // Открывает в браузере → перекидывает в приложение
+    'https://telegram.me/$cleaned', // Альтернатива
   ];
 
   for (final urlString in urls) {
@@ -60,4 +58,27 @@ Future<void> openTelegram(String telegramIdentifier) async {
 
   // Если ничего не сработало
   throw Exception("Не удалось открыть Telegram. Установлено ли приложение?");
+}
+
+String? validateCertificateOwner(
+  String? value, {
+  bool isIndividualEntrepreneur = false,
+}) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Поле обязательно для заполнения';
+  }
+
+  final parts = value.trim().split(' ');
+
+  if (!isIndividualEntrepreneur) {
+    if (parts.length < 3) {
+      return 'Введите полное ФИО (Фамилия Имя Отчество)';
+    }
+  } else {
+    if (parts.length < 4) {
+      return 'Введите ФИО и статус ИП полностью';
+    }
+  }
+
+  return null;
 }

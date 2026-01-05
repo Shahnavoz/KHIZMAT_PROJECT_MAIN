@@ -66,6 +66,7 @@ class _RadioButtonState extends ConsumerState<RadioButton> {
                                       width: size.screenWidth * 0.64,
                                       child: Text(
                                         widget.options[index].name.getText(currentLocal),
+                                        
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,

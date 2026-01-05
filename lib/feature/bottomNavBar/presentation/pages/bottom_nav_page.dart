@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
+import 'package:khizmat_new/feature/documents/presentation/pages/my_documents_page.dart';
 import 'package:khizmat_new/feature/history/presentation/pages/history_page.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/new_home_page.dart';
 import 'package:khizmat_new/feature/profile/presentation/pages/profile_page.dart';
@@ -26,15 +27,20 @@ class _BottomNavPageState extends State<BottomNavPage> {
     "assets/icons/mainPageIcon.svg",
     "assets/icons/UslugaPageIcon.svg",
     "assets/icons/historyPageIcon.svg",
-    "assets/icons/profilePageIcon.svg"
+    "assets/icons/profilePageIcon.svg",
     // Icons.home,
     // Icons.account_balance,
     // Icons.access_time,
     // Icons.person,
   ];
 
-  final List<String> labels = ["Главная", "Услуги", "История", "Профиль"];
-  List<Widget> pages = [NewHomePage(), Scaffold(), HistoryPage(), ProfilePage()];
+  final List<String> labels = ["Главная", "Документы", "История", "Профиль"];
+  List<Widget> pages = [
+    NewHomePage(),
+    MyDocumentsPage(),
+    HistoryPage(),
+    ProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
