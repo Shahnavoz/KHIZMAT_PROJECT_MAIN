@@ -62,9 +62,7 @@ class _MainQuestionPageState extends State<MainQuestionPage> {
                         MyTextFieldWithPrefix(
                           controller: searchController,
                           hintText: 'Поиск вопросов',
-                          onChanged: (p0) {
-                            
-                          },
+                          onChanged: (p0) {},
                         ),
                       ],
                     ),
@@ -111,22 +109,28 @@ class MyTextFieldWithPrefix extends StatelessWidget {
   final double? width;
   final Color borderColor;
   final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final TextEditingController controller;
   final bool obsecureText;
   final String? Function(String?)? validator;
   final Color backGroundColor;
   final void Function(String)? onChanged;
+  final void Function()? onTap;
+  final void Function(String)? onFieldSubmitted;
   const MyTextFieldWithPrefix({
     super.key,
     required this.hintText,
     this.width,
     this.borderColor = greyTextFBorderColor,
     this.prefixIcon,
+    this.suffixIcon,
     required this.controller,
     this.obsecureText = false,
     this.validator,
     this.backGroundColor = greyButtonBorderColor,
-    required this.onChanged
+    required this.onChanged,
+    this.onTap,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -134,11 +138,13 @@ class MyTextFieldWithPrefix extends StatelessWidget {
     return Container(
       width: width,
       decoration: BoxDecoration(
-        border: Border.all(color: borderColor),
+        border: Border.all(color: borderColor, width: 0.2),
         borderRadius: BorderRadius.circular(10),
         color: backGroundColor,
       ),
       child: TextFormField(
+        onFieldSubmitted: onFieldSubmitted,
+        onTap: onTap,
         onChanged: onChanged,
         validator: validator,
         obscureText: obsecureText,
@@ -154,8 +160,8 @@ class MyTextFieldWithPrefix extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: borderColor),
           ),
-          prefixIcon:
-              prefixIcon ?? Icon(Icons.search, color: greyIconColor),
+          suffixIcon: suffixIcon ?? SizedBox.shrink(),
+          prefixIcon: prefixIcon ?? Icon(Icons.search, color: greyIconColor),
           hintText: hintText,
           hintStyle: TextStyle(color: primaryGreyTextColor),
           contentPadding: EdgeInsets.symmetric(vertical: 12),

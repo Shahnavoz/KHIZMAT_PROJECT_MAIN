@@ -160,7 +160,19 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                       ),
                                       textAlign: TextAlign.start,
                                       color: Colors.black54,
-                                      maxLines: !showAll ? 3 : 10,
+                                      maxLines: showAll ? 10 : 2,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          showAll=!showAll;
+                                        });
+                                      },
+                                      child: textWithH1Style(
+                                        showAll!=true ? "Подробнее" : "Свернуть",
+                                        fontsize: 16,
+                                        color: primaryButtonColor,
+                                      ),
                                     ),
                                   ],
                                 ),

@@ -837,14 +837,11 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                             isLoading: true,
                                           ),
                                       error:
-                                          (err, stack) =>
-                                              buildDropdownSkeleton(
-                                                field,
-                                                error: err.toString(),
-                                              ),
+                                          (err, stack) => buildDropdownSkeleton(
+                                            field,
+                                            error: err.toString(),
+                                          ),
                                       data: (stepsInfo) {
-                                        // List<ChoiceOption> baseOptions =
-                                        //     field.choiceOptions;
                                         if (baseOptions.isEmpty &&
                                             field.actionId != null) {
                                           baseOptions =
@@ -852,40 +849,9 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                   .actionId] ??
                                               [];
                                         }
-
-                                        // if (baseOptions.isNotEmpty) {
-                                        //   return _buildDropdown(
-                                        //     field: field,
-                                        //     options: baseOptions,
-                                        //     selectedValue:
-                                        //         formFamilyProviderRead.getValue(
-                                        //               field.key,
-                                        //             )
-                                        //             as String?,
-                                        //     onChanged: (value) {
-                                        //       if (value != null) {
-                                        //         formFamilyProviderRead.setValue(
-                                        //           field.key,
-                                        //           value,
-                                        //         );
-                                        //         // if (field.actionKey != null) {
-                                        //         //   ref
-                                        //         //       .read(
-                                        //         //         selectedValueProvider
-                                        //         //             .notifier,
-                                        //         //       )
-                                        //         //       .state = value;
-                                        //         // }
-                                        //       }
-                                        //     },
-                                        //     size: size,
-                                        //   );
-                                        // }
                                         final bool isDependent =
                                             field.actionKey == null &&
                                             field.choiceOptionsAuto != null;
-                                        // &&
-                                        // field.choiceOptions.isEmpty;
 
                                         if (!isDependent) {
                                           return _buildDropdown(
@@ -903,42 +869,20 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                 field.key,
                                                 newValue,
                                               );
-
-                                              // Вот так — теперь безопасно!
-                                              ref
-                                                  .read(
-                                                    selectedValueProvider
-                                                        .notifier,
-                                                  )
-                                                  .state = newValue;
+                                              Future.microtask(() {
+                                                ref
+                                                    .read(
+                                                      selectedValueProvider
+                                                          .notifier,
+                                                    )
+                                                    .update(
+                                                      (state) => newValue,
+                                                    );
+                                              });
                                             },
-                                            // onChanged: (String? newValue) {
-                                            //   if (newValue != null) {
-                                            //     formFamilyProviderRead.setValue(
-                                            //       field.key,
-                                            //       newValue,
-                                            //     );
-
-                                            //     ref
-                                            //         .read(
-                                            //           selectedValueProvider
-                                            //               .notifier,
-                                            //         )
-                                            //         .state = newValue;
-                                            //     // formFamilyProviderRead.setValue(
-                                            //     //   'sub_region_field_key',
-                                            //     //   null,
-                                            //     // );
-                                            //     // formFamilyProviderRead.setValue(
-                                            //     //   'city_field_key',
-                                            //     //   null,
-                                            //     // );
-                                            //   }
-                                            // },
                                             size: size,
                                           );
                                         }
-
                                         final selectedParentCode = ref.watch(
                                           selectedValueProvider,
                                         );
@@ -958,7 +902,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                             applicationId:
                                                 stepsInfo.applicationId,
                                             locale: currentLocale,
-                                            actionKey: "SUB_REGIONS",
+                                            actionKey: field.choiceOptionsAuto!,
                                             parentCode: selectedParentCode,
                                             parentActionId: "REGION_ID",
                                           )),
@@ -971,94 +915,89 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                 isLoading: true,
                                               ),
                                           error:
-                                              (err, _) =>
-                                                  buildDropdownSkeleton(
-                                                    field,
-                                                    error: err.toString(),
-                                                  ),
-
-                                          // data: (dataMap) {
-                                          //   final dependentOptions =
-                                          //       dataMap[field.actionId] ??
-                                          //       <ChoiceOption>[];
-
-                                          //   final codes =
-                                          //       dependentOptions
-                                          //           .map((e) => e.code)
-                                          //           .toList();
-                                          //   final duplicates =
-                                          //       codes
-                                          //           .where(
-                                          //             (code) =>
-                                          //                 codes
-                                          //                     .where(
-                                          //                       (c) =>
-                                          //                           c == code,
-                                          //                     )
-                                          //                     .length >
-                                          //                 1,
-                                          //           )
-                                          //           .toSet();
-                                          //   if (duplicates.isNotEmpty) {
-                                          //     print(
-                                          //       "ДУБЛИКАТЫ CODE: $duplicates",
-                                          //     );
-                                          //   }
-
-                                          //   return _buildDropdown(
-                                          //     field: field,
-                                          //     options: dependentOptions,
-                                          //     selectedValue:
-                                          //         formFamilyProviderRead
-                                          //                 .getValue(field.key)
-                                          //             as String?,
-                                          //     onChanged: (value) {
-                                          //       if (value != null) {
-                                          //         formFamilyProviderRead
-                                          //             .setValue(
-                                          //               field.key,
-                                          //               value,
-                                          //             );
-                                          //       }
-                                          //     },
-                                          //     size: size,
-                                          //   );
-                                          // },
+                                              (err, _) => buildDropdownSkeleton(
+                                                field,
+                                                error: err.toString(),
+                                              ),
                                           data: (dataMap) {
                                             final dependentOptions =
                                                 (dataMap[field.actionId] ??
                                                         <ChoiceOption>[])
                                                     .toSet()
                                                     .toList();
+
                                             String? currentValue =
                                                 formFamilyProviderRead.getValue(
                                                       field.key,
                                                     )
                                                     as String?;
+
                                             if (currentValue != null &&
                                                 !dependentOptions.any(
                                                   (opt) =>
                                                       opt.code == currentValue,
                                                 )) {
+                                              Future.microtask(() {
+                                                formFamilyProviderRead.setValue(
+                                                  field.key,
+                                                  null,
+                                                );
+                                              });
                                               currentValue = null;
-                                              formFamilyProviderRead.setValue(
-                                                field.key,
-                                                null,
-                                              );
                                             }
+
                                             return _buildDropdown(
                                               field: field,
                                               options: dependentOptions,
                                               selectedValue: currentValue,
                                               onChanged: (String? newValue) {
-                                                formFamilyProviderRead.setValue(
-                                                  field.key,
-                                                  newValue,
-                                                );
+                                                Future.microtask(() {
+                                                  formFamilyProviderRead
+                                                      .setValue(
+                                                        field.key,
+                                                        newValue,
+                                                      );
+                                                });
                                               },
                                               size: size,
                                             );
                                           },
+
+                                          // data: (dataMap) {
+                                          //   final dependentOptions =
+                                          //       (dataMap[field.actionId] ??
+                                          //               <ChoiceOption>[])
+                                          //           .toSet()
+                                          //           .toList();
+                                          //   String? currentValue =
+                                          //       formFamilyProviderRead.getValue(
+                                          //             field.key,
+                                          //           )
+                                          //           as String?;
+                                          //   if (currentValue != null &&
+                                          //       !dependentOptions.any(
+                                          //         (opt) =>
+                                          //             opt.code == currentValue,
+                                          //       )) {
+                                          //     currentValue = null;
+                                          //     formFamilyProviderRead.setValue(
+                                          //       field.key,
+                                          //       null,
+                                          //     );
+                                          //   }
+                                          //   return _buildDropdown(
+                                          //     field: field,
+                                          //     options: dependentOptions,
+                                          //     selectedValue: currentValue,
+                                          //     onChanged: (String? newValue) {
+                                          //       formFamilyProviderRead.setValue(
+                                          //         field.key,
+                                          //         newValue,
+                                          //       );
+                                          //     },
+                                          //     size: size,
+                                          //   );
+                                          // },
                                         );
                                       },
                                     );
@@ -1355,6 +1294,8 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                   children: [
                                                     textWithH1Style(
                                                       fieldGroups.title.ru!,
+                                                      textAlign:
+                                                          TextAlign.start,
                                                       fontsize: 18,
                                                     ),
                                                     fieldGroups
@@ -1426,39 +1367,40 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                                         .getText(
                                                                           currentLocale,
                                                                         ),
-                                                                    hintText:"",
-                                                                        // (field.key ==
-                                                                        //             "APPLICANT_TIN" ||
-                                                                        //         field.key ==
-                                                                        //             "TRUSTED_TIN")
-                                                                        //     ? (field.placeholder
-                                                                        //                 .getText(
-                                                                        //                   currentLocale,
-                                                                        //                 )
-                                                                        //                 .isNotEmpty ==
-                                                                        //             true
-                                                                        //         ? ""
-                                                                        //         // field.placeholder.getText(
-                                                                        //         //   currentLocale,
-                                                                        //         // )
-                                                                        //         : "___ ___ ___")
-                                                                        //     : (field.type ==
-                                                                        //             "DATE" ||
-                                                                        //         field.type ==
-                                                                        //             "DATE_OF_BIRTH")
-                                                                        //     ? (field.placeholder
-                                                                        //                 .getText(
-                                                                        //                   currentLocale,
-                                                                        //                 )
-                                                                        //                 .isNotEmpty ==
-                                                                        //             true
-                                                                        //         ? field.placeholder.getText(
-                                                                        //           currentLocale,
-                                                                        //         )
-                                                                        //         : "дд.мм.гггг")
-                                                                        //     : field.placeholder.getText(
-                                                                        //       currentLocale,
-                                                                        //     ),
+                                                                    hintText:
+                                                                        "",
+                                                                    // (field.key ==
+                                                                    //             "APPLICANT_TIN" ||
+                                                                    //         field.key ==
+                                                                    //             "TRUSTED_TIN")
+                                                                    //     ? (field.placeholder
+                                                                    //                 .getText(
+                                                                    //                   currentLocale,
+                                                                    //                 )
+                                                                    //                 .isNotEmpty ==
+                                                                    //             true
+                                                                    //         ? ""
+                                                                    //         // field.placeholder.getText(
+                                                                    //         //   currentLocale,
+                                                                    //         // )
+                                                                    //         : "___ ___ ___")
+                                                                    //     : (field.type ==
+                                                                    //             "DATE" ||
+                                                                    //         field.type ==
+                                                                    //             "DATE_OF_BIRTH")
+                                                                    //     ? (field.placeholder
+                                                                    //                 .getText(
+                                                                    //                   currentLocale,
+                                                                    //                 )
+                                                                    //                 .isNotEmpty ==
+                                                                    //             true
+                                                                    //         ? field.placeholder.getText(
+                                                                    //           currentLocale,
+                                                                    //         )
+                                                                    //         : "дд.мм.гггг")
+                                                                    //     : field.placeholder.getText(
+                                                                    //       currentLocale,
+                                                                    //     ),
                                                                     controller:
                                                                         _controller,
                                                                     onChanged: (
@@ -1851,6 +1793,294 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                                     ],
                                                                   ),
                                                                 );
+                                                              case 'DROP_DOWN':
+                                                                final stepsInfoAsync =
+                                                                    ref.watch(
+                                                                      shagiProvider(
+                                                                        docId,
+                                                                      ),
+                                                                    );
+
+                                                                List<
+                                                                  ChoiceOption
+                                                                >
+                                                                baseOptions =
+                                                                    field
+                                                                        .choiceOptions;
+
+                                                                return stepsInfoAsync.when(
+                                                                  loading:
+                                                                      () => buildDropdownSkeleton(
+                                                                        field,
+                                                                        isLoading:
+                                                                            true,
+                                                                      ),
+                                                                  error:
+                                                                      (
+                                                                        err,
+                                                                        stack,
+                                                                      ) => buildDropdownSkeleton(
+                                                                        field,
+                                                                        error:
+                                                                            err.toString(),
+                                                                      ),
+                                                                  data: (
+                                                                    stepsInfo,
+                                                                  ) {
+                                                                    if (baseOptions
+                                                                            .isEmpty &&
+                                                                        field.actionId !=
+                                                                            null) {
+                                                                      baseOptions =
+                                                                          stepsInfo
+                                                                              .dropDownOptions[field
+                                                                              .actionId] ??
+                                                                          [];
+                                                                    }
+                                                                    final bool
+                                                                    isDependent =
+                                                                        field.actionKey ==
+                                                                            null &&
+                                                                        field.choiceOptionsAuto !=
+                                                                            null;
+
+                                                                    if (!isDependent) {
+                                                                      return _buildDropdown(
+                                                                        field:
+                                                                            field,
+                                                                        options:
+                                                                            baseOptions,
+                                                                        selectedValue:
+                                                                            formFamilyProviderRead.getValue(
+                                                                                  field.key,
+                                                                                )
+                                                                                as String?,
+                                                                        onChanged: (
+                                                                          String?
+                                                                          newValue,
+                                                                        ) {
+                                                                          if (newValue ==
+                                                                              null)
+                                                                            return;
+
+                                                                          formFamilyProviderRead.setValue(
+                                                                            field.key,
+                                                                            newValue,
+                                                                          );
+                                                                          Future.microtask(() {
+                                                                            ref
+                                                                                .read(
+                                                                                  selectedValueProvider.notifier,
+                                                                                )
+                                                                                .update(
+                                                                                  (
+                                                                                    state,
+                                                                                  ) =>
+                                                                                      newValue,
+                                                                                );
+                                                                          });
+                                                                        },
+                                                                        size:
+                                                                            size,
+                                                                      );
+                                                                    }
+                                                                    final selectedParentCode =
+                                                                        ref.watch(
+                                                                          selectedValueProvider,
+                                                                        );
+
+                                                                    if (selectedParentCode
+                                                                        .isEmpty) {
+                                                                      return _buildDropdown(
+                                                                        field:
+                                                                            field,
+                                                                        options:
+                                                                            [],
+                                                                        selectedValue:
+                                                                            null,
+                                                                        onChanged:
+                                                                            (
+                                                                              value,
+                                                                            ) =>
+                                                                                null,
+                                                                        size:
+                                                                            size,
+                                                                      );
+                                                                    }
+
+                                                                    final dependentAsync = ref.watch(
+                                                                      dependentDropdownProvider((
+                                                                        applicationId:
+                                                                            stepsInfo.applicationId,
+                                                                        locale:
+                                                                            currentLocale,
+                                                                        actionKey:
+                                                                            field.choiceOptionsAuto!,
+                                                                        parentCode:
+                                                                            selectedParentCode,
+                                                                        parentActionId:
+                                                                            "REGION_ID",
+                                                                      )),
+                                                                    );
+
+                                                                    return dependentAsync.when(
+                                                                      loading:
+                                                                          () => buildDropdownSkeleton(
+                                                                            field,
+                                                                            isLoading:
+                                                                                true,
+                                                                          ),
+                                                                      error:
+                                                                          (
+                                                                            err,
+                                                                            _,
+                                                                          ) => buildDropdownSkeleton(
+                                                                            field,
+                                                                            error:
+                                                                                err.toString(),
+                                                                          ),
+                                                                      data: (
+                                                                        dataMap,
+                                                                      ) {
+                                                                        final dependentOptions =
+                                                                            (dataMap[field.actionId] ??
+                                                                                    <
+                                                                                      ChoiceOption
+                                                                                    >[])
+                                                                                .toSet()
+                                                                                .toList();
+
+                                                                        String?
+                                                                        currentValue =
+                                                                            formFamilyProviderRead.getValue(
+                                                                                  field.key,
+                                                                                )
+                                                                                as String?;
+
+                                                                        if (currentValue !=
+                                                                                null &&
+                                                                            !dependentOptions.any(
+                                                                              (
+                                                                                opt,
+                                                                              ) =>
+                                                                                  opt.code ==
+                                                                                  currentValue,
+                                                                            )) {
+                                                                          Future.microtask(() {
+                                                                            formFamilyProviderRead.setValue(
+                                                                              field.key,
+                                                                              null,
+                                                                            );
+                                                                          });
+                                                                          currentValue =
+                                                                              null;
+                                                                        }
+
+                                                                        return _buildDropdown(
+                                                                          field:
+                                                                              field,
+                                                                          options:
+                                                                              dependentOptions,
+                                                                          selectedValue:
+                                                                              currentValue,
+                                                                          onChanged: (
+                                                                            String?
+                                                                            newValue,
+                                                                          ) {
+                                                                            Future.microtask(() {
+                                                                              formFamilyProviderRead.setValue(
+                                                                                field.key,
+                                                                                newValue,
+                                                                              );
+                                                                            });
+                                                                          },
+                                                                          size:
+                                                                              size,
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                );
+
+                                                              case 'TEXT_BLOCK':
+                                                                return Padding(
+                                                                  padding:
+                                                                      const EdgeInsets.symmetric(
+                                                                        vertical:
+                                                                            12,
+                                                                      ),
+                                                                  child: Container(
+                                                                    decoration: BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                            12,
+                                                                          ),
+                                                                      color:
+                                                                          field.textBlockColor ==
+                                                                                  'ORANGE'
+                                                                              ? Color(
+                                                                                0xFFffefe3,
+                                                                              )
+                                                                              : field.textBlockColor ==
+                                                                                  'BLUE'
+                                                                              ? Color(
+                                                                                0xFFeaf5ff,
+                                                                              )
+                                                                              : Color(
+                                                                                0xFFeafff3,
+                                                                              ),
+                                                                    ),
+                                                                    padding:
+                                                                        const EdgeInsets.all(
+                                                                          16,
+                                                                        ),
+                                                                    child: Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Text(
+                                                                          field.title.getText(
+                                                                            currentLocale,
+                                                                          ),
+                                                                          style: TextStyle(
+                                                                            fontSize:
+                                                                                18,
+                                                                            fontWeight:
+                                                                                FontWeight.normal,
+                                                                            color:
+                                                                                field.textBlockColor ==
+                                                                                        'ORANGE'
+                                                                                    ? Color(
+                                                                                      0xFFF79B58,
+                                                                                    )
+                                                                                    : field.textBlockColor ==
+                                                                                        'BLUE'
+                                                                                    ? Color(
+                                                                                      0xFF4ca2f2,
+                                                                                    )
+                                                                                    : primaryButtonColor,
+                                                                          ),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              8,
+                                                                        ),
+                                                                        Text(
+                                                                          field.textBlockContent.getText(
+                                                                            currentLocale,
+                                                                          ),
+                                                                          style: TextStyle(
+                                                                            fontSize:
+                                                                                16,
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                );
 
                                                               default:
                                                                 return Padding(
@@ -2070,7 +2300,7 @@ Widget _buildDropdown({
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: size!.screenWidth * 0.75,
+                          width: size!.screenWidth * 0.6,
                           child: Text(
                             option.name.ru ??
                                 option.name.en ??
@@ -2085,7 +2315,7 @@ Widget _buildDropdown({
                           ),
                         ),
                         Container(
-                          width: size.screenWidth * 0.75,
+                          width: size.screenWidth * 0.6,
                           height: 0.5,
                           color: primaryGreenColor,
                           margin: const EdgeInsets.only(top: 3),
@@ -2098,7 +2328,7 @@ Widget _buildDropdown({
           selectedItemBuilder: (context) {
             return options.map<Widget>((option) {
               return SizedBox(
-                width: size!.screenWidth * 0.75,
+                width: size!.screenWidth * 0.6,
                 child: Text(
                   option.name.ru ?? option.name.en ?? option.code ?? "",
                   style: const TextStyle(color: Colors.black),
@@ -2114,5 +2344,3 @@ Widget _buildDropdown({
     ),
   );
 }
-
-

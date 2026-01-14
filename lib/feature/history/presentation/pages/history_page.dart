@@ -10,7 +10,6 @@ import 'package:khizmat_new/feature/authorization/presentation/pages/main_questi
 import 'package:khizmat_new/feature/history/presentation/widgets/ApplicationCard.dart';
 import 'package:khizmat_new/feature/history/presentation/widgets/horizontally_scrollable_widget.dart';
 import 'package:khizmat_new/feature/history/presentation/widgets/payment_card.dart';
-import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart';
 
 class HistoryPage extends ConsumerStatefulWidget {
   const HistoryPage({super.key});
@@ -39,12 +38,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     final payments = List.generate(1, (_) => PaymentCard(count: 3));
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppbar(
-        title: "История",
-        // actionWidget: Padding(
-        //   padding: EdgeInsets.only(right: size.otstup10),
-        //   child: FontSettingContainer(size: size),
-        // ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        title: textWithH1Style("История"),
       ),
       body: Column(
         children: [
@@ -78,22 +75,22 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
               ],
             ),
           ),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(color: Color(0xFFF7F7F7)),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: size.otstup10,
-                horizontal: size.otstup15,
-              ),
-              child: textWithH1Style(
-                "25 ноября, среда",
-                color: Color(0xFFAFAFAF),
-                textAlign: TextAlign.start,
-                fontsize: 16,
-              ),
-            ),
-          ),
+          // Container(
+          //   width: double.infinity,
+          //   decoration: BoxDecoration(color: Color(0xFFF7F7F7)),
+          //   child: Padding(
+          //     padding: EdgeInsets.symmetric(
+          //       vertical: size.otstup10,
+          //       horizontal: size.otstup15,
+          //     ),
+          //     child: textWithH1Style(
+          //       "25 ноября, среда",
+          //       color: Color(0xFFAFAFAF),
+          //       textAlign: TextAlign.start,
+          //       fontsize: 16,
+          //     ),
+          //   ),
+          // ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -103,6 +100,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
               child: IndexedStack(
                 index: selectedIndex,
                 children: [
+                  
                   _buildAllTab(size, documents, applications, payments),
                   _buildPaymentsTab(size, payments.length),
                   _buildDocumentsTab(size, documents.length),
@@ -122,25 +120,68 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     List<Applicationcard> applications,
     List<PaymentCard> payments,
   ) {
-    // final sectionTitles = ['Документы', 'Заявления', 'Платежи'];
 
     return ListView(
-      // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       children: [
+        Container(
+            width: double.infinity,
+            decoration: BoxDecoration(color: Color(0xFFF7F7F7)),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: size.otstup10,
+                horizontal: size.otstup15,
+              ),
+              child: textWithH1Style(
+                "25 ноября, среда",
+                color: Color(0xFFAFAFAF),
+                textAlign: TextAlign.start,
+                fontsize: 16,
+              ),
+            ),
+          ),
         _buildSection(
-          // title: sectionTitles[0],
           items: documents,
           itemSeparator: SizedBox(height: size.otstup10),
         ),
-        // SizedBox(height: size.otstup20),-----------------
+        SizedBox(height: size.otstup15,),
+        Container(
+            width: double.infinity,
+            decoration: BoxDecoration(color: Color(0xFFF7F7F7)),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: size.otstup10,
+                horizontal: size.otstup15,
+              ),
+              child: textWithH1Style(
+                "25 ноября, среда",
+                color: Color(0xFFAFAFAF),
+                textAlign: TextAlign.start,
+                fontsize: 16,
+              ),
+            ),
+          ),
         _buildSection(
-          // title: sectionTitles[1],
           items: applications,
           itemSeparator: SizedBox(height: size.otstup10),
         ),
-        // SizedBox(height: size.otstup20),
+        SizedBox(height: size.otstup15,),
+        Container(
+            width: double.infinity,
+            decoration: BoxDecoration(color: Color(0xFFF7F7F7)),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: size.otstup10,
+                horizontal: size.otstup15,
+              ),
+              child: textWithH1Style(
+                "25 ноября, среда",
+                color: Color(0xFFAFAFAF),
+                textAlign: TextAlign.start,
+                fontsize: 16,
+              ),
+            ),
+          ),
         _buildSection(
-          // title: sectionTitles[2],
           items: payments,
           itemSeparator: SizedBox(height: size.otstup10),
         ),
@@ -149,7 +190,6 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   }
 
   Widget _buildSection({
-    // String title = '',
     required List<dynamic> items,
     required Widget itemSeparator,
   }) {

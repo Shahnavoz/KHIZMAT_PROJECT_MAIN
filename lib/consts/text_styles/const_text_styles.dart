@@ -72,14 +72,19 @@ Widget textH2GreyTitle(
   String text, {
   Color textColor = primaryGreyTextColor,
   FontWeight fontWeight = FontWeight.w400,
+  double fontSize=15
 }) {
   return Text(
     text,
+    // maxLines: 1,
+    // overflow: TextOverflow.ellipsis,
     style: GoogleFonts.robotoFlex(
-      fontSize: 15,
+      fontSize: fontSize,
       fontWeight: fontWeight,
       // height: 15,
       color: textColor,
+      
+      
     ),
   );
 }
@@ -96,7 +101,7 @@ Widget textWithH1Style(
     maxLines: maxLines,
     text,
     overflow: TextOverflow.ellipsis,
-    style: GoogleFonts.ibmPlexSans(
+    style: GoogleFonts.roboto(
       fontSize: fontsize,
       fontWeight: fontW,
       height: 1.2,
