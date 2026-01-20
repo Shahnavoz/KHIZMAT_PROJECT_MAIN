@@ -22,7 +22,6 @@ import 'package:khizmat_new/feature/home/presentation/widgets/radio_button.dart'
 import 'package:khizmat_new/feature/home/presentation/widgets/requirement_step.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/switch_widget.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:open_file/open_file.dart';
 
 final currentStepProvider = StateProvider<int>((ref) => 0);
 final selectedValueProvider = StateProvider<String>((ref) => "");
@@ -1136,7 +1135,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                                       SizedBox(
                                                                         width:
                                                                             size.screenWidth *
-                                                                            0.75,
+                                                                            0.7,
                                                                         child: Text(
                                                                           option.name.ru ??
                                                                               option.name.en ??
@@ -1160,7 +1159,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                                       Container(
                                                                         width:
                                                                             size.screenWidth *
-                                                                            0.75,
+                                                                            0.7,
                                                                         height:
                                                                             0.5,
                                                                         color:
@@ -1189,7 +1188,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                             return SizedBox(
                                                               width:
                                                                   size.screenWidth *
-                                                                  0.75,
+                                                                  0.7,
                                                               child: Text(
                                                                 option
                                                                         .name

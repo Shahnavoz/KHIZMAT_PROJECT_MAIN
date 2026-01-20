@@ -1,6 +1,7 @@
+
+import 'dart:ui';  
 import 'package:flutter/material.dart';
 
-//BUTTON'S COLORS
 const Color backgroundColor = Color(0xFFE5F5EE);
 const Color primaryButtonColor = Color(0xFF26AC71);
 const Color primaryGreenColor = Color(0xFF5EB681);
@@ -36,33 +37,33 @@ const LinearGradient newGradientColor = LinearGradient(
 );
 const RadialGradient boxRadialGradient = RadialGradient(
   colors: [
-    Color(0xFFFFFFFF), // белый в центре
-    Color.fromARGB(255, 200, 231, 239), // зелёный на середине
-    Color(0xFFFFFFFF), // белый по краям
+    Color(0xFFFFFFFF),
+    Color.fromARGB(255, 200, 231, 239), 
+    Color(0xFFFFFFFF), 
   ],
-  stops: [0.0, 0.5, 1.0], // позиции цветов
-  center: Alignment.center, // по умолчанию центр
-  radius: 1, // размер градиента (0.0–1.0)
+  stops: [0.0, 0.5, 1.0], 
+  center: Alignment.center, 
+  radius: 1,
 );
 const RadialGradient wrapRadialGradient = RadialGradient(
   colors: [
-    Color(0xFF015057), // белый в центре
-    Color(0x26AC711F), // зелёный на середине
-    Color(0xFFFFFFFF), // белый по краям
+    Color(0xFF015057), 
+    Color(0x26AC711F),
+    Color(0xFFFFFFFF), 
   ],
-  stops: [0.0, 0.12 % 0], // позиции цветов
-  center: Alignment.center, // по умолчанию центр
-  radius: 1, // размер градиента (0.0–1.0)
+  stops: [0.0, 0.12 % 0],
+  center: Alignment.center, 
+  radius: 1,
 );
 const RadialGradient boxBlueRadialGradient = RadialGradient(
   colors: [
-    Color(0xFFFFFFFF), // белый в центре
-    Color.fromARGB(255, 197, 237, 244), // зелёный на середине
-    Color(0xFFFFFFFF), // белый по краям
+    Color(0xFFFFFFFF),
+    Color.fromARGB(255, 197, 237, 244), 
+    Color(0xFFFFFFFF), 
   ],
-  stops: [0.0, 0.5, 1.0], // позиции цветов
-  center: Alignment.center, // по умолчанию центр
-  radius: 1, // размер градиента (0.0–1.0)
+  stops: [0.0, 0.5, 1.0],
+  center: Alignment.center,
+  radius: 1,
 );
 const LinearGradient buttonsTitleGradient = LinearGradient(
   colors: [Color(0xFF015057), Color(0xFF90C0BD)],
