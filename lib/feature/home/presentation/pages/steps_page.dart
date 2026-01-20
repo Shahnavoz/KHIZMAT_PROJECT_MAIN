@@ -574,7 +574,6 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                             ),
                             SizedBox(height: size.otstup30),
 
-                            // Прогресс-бар (ИСПРАВЛЕН! без Column и setState)
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               padding: EdgeInsets.symmetric(
@@ -704,13 +703,11 @@ class _StepsPageState extends ConsumerState<StepsPage> {
             ),
           ),
 
-          // ФИКСИРОВАННЫЕ КНОПКИ ВНУТРИ asyncSteps ДАННЫХ (доступ ко всем переменным!)
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Builder(
-              // ← Builder дает доступ к ref и asyncSteps
               builder: (context) {
                 return asyncSteps.when(
                   data: (allStepsInfo) {
@@ -722,7 +719,6 @@ class _StepsPageState extends ConsumerState<StepsPage> {
 
                     final step = steps.map((s) => s.type).toList();
 
-                    // final step = steps[currentStepIdx];
 
                     if (steps.isEmpty ||
                         currentStepIdx < 0 ||
