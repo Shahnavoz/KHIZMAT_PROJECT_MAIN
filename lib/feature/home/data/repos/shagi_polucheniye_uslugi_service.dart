@@ -7,6 +7,8 @@ import 'package:khizmat_new/feature/home/data/models/field_value_model.dart';
 import 'package:khizmat_new/feature/home/data/models/shagi_polucheniye_uslugi_model.dart';
 import 'package:khizmat_new/feature/home/data/models/start_document_model.dart';
 import 'package:khizmat_new/feature/home/data/models/step_requirement_model.dart';
+import 'package:khizmat_new/feature/home/data/models/upload_file_model.dart';
+import 'package:khizmat_new/feature/home/data/models/uploaded_file_info.dart';
 
 class ShagiPolucheniyeUslugiService {
   var storage = FlutterSecureStorage();
@@ -238,6 +240,61 @@ class ShagiPolucheniyeUslugiService {
       }
     } catch (e) {
       print("Error: $e");
+    }
+  }
+
+  Future<UploadedFileModel?> uploadFile(int application_id) async {
+    try {
+      var token = await storage.read(key: 'token');
+      var response = await http.post(
+        Uri.parse(
+          'https://apikhizmat.ehukumat.tj/v1/file/application/upload?application_id=$application_id',
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=utf-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var decoded = jsonDecode(response.body);
+        print(decoded);
+        print("*********************");
+        var allData = UploadedFileModel.fromJson(decoded);
+        return allData;
+      } else {
+        throw Exception();
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+  Future<UploadedFileInfo?> getUploadedFileInfo(int application_id) async {
+    try {
+      var token = await storage.read(key: 'token');
+      var response = await http.post(
+        Uri.parse(
+          'https://apikhizmat.ehukumat.tj/v1/file/application/info/6575?application_id=$application_id',
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=utf-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var decoded = jsonDecode(response.body);
+        print(decoded);
+        print("*********************");
+        var allData = UploadedFileInfo.fromJson(decoded);
+        return allData;
+      } else {
+        throw Exception();
+      }
+    } catch (e) {
+      return null;
     }
   }
 }

@@ -1,30 +1,45 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/consts/masks/field_masks.dart';
+import 'package:khizmat_new/consts/methods/common_methods.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/my__button.dart';
 import 'package:khizmat_new/feature/home/data/models/field_value_model.dart';
 import 'package:khizmat_new/feature/home/data/models/shagi_polucheniye_uslugi_model.dart';
 import 'package:khizmat_new/feature/home/data/models/step_requirement_model.dart';
+import 'package:khizmat_new/feature/home/data/providers/category_provider.dart';
 import 'package:khizmat_new/feature/home/data/providers/controllers_provider.dart';
 import 'package:khizmat_new/feature/home/data/providers/drop_down_params_provider.dart';
 import 'package:khizmat_new/feature/home/data/providers/steps_provider.dart';
 import 'package:khizmat_new/feature/home/data/repos/shagi_polucheniye_uslugi_service.dart';
+import 'package:khizmat_new/feature/home/presentation/pages/Gos_organizations_page.dart';
+import 'package:khizmat_new/feature/home/presentation/widgets/_build_dropdown_skeleton.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart';
+import 'package:khizmat_new/feature/home/presentation/widgets/font_setting_container.dart';
+import 'package:khizmat_new/feature/home/presentation/widgets/info_content_dialog.dart';
+import 'package:khizmat_new/feature/home/presentation/widgets/input_text_field.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/radio_button.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/requirement_step.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/switch_widget.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 final currentStepProvider = StateProvider<int>((ref) => 0);
+final myStep = StateProvider<StepInfo>(
+  (ref) => StepInfo(
+    id: 1,
+    position: 1,
+    title: Description(tj: "tj", ru: "ru", en: "en"),
+    type: "type",
+  ),
+);
 final selectedValueProvider = StateProvider<String>((ref) => "");
+final actionIdValueProvider = StateProvider<String>((ref) => "");
 
 class StepsPage extends ConsumerStatefulWidget {
   final int docId;
@@ -83,57 +98,384 @@ class _StepsPageState extends ConsumerState<StepsPage> {
           child: FontSettingContainer(size: size),
         ),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: greyTextFBorderColor)),
-          borderRadius: BorderRadius.horizontal(
-            right: Radius.circular(10),
-            left: Radius.circular(10),
-          ),
-          color: Colors.white,
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: size.otstup18,
-            vertical: size.otstup20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              My_Button(
-                width: double.infinity,
-                size: size,
-                backgroundColor: Colors.white,
-                borderColor: greyTextFBorderColor,
-                borderRadius: 10,
-                onPressed: () {},
-                child: textWithH1Style(
-                  "Сохранить как черновик",
-                  fontsize: 15,
-                  // color: Colors.white,
-                ),
-              ),
-              My_Button(
-                width: double.infinity,
-                size: size,
-                backgroundColor: primaryButtonColor,
-                borderColor: primaryButtonColor,
-                borderRadius: 10,
-                onPressed: () {
-                  _onContinuePressed(asyncSteps, currentStep);
-                },
-                child: textWithH1Style(
-                  "Продoлжить",
-                  fontsize: 15,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+
+      // bottomNavigationBar: Container(
+      //   decoration: BoxDecoration(
+      //     border: Border(top: BorderSide(color: greyTextFBorderColor)),
+      //     borderRadius: BorderRadius.horizontal(
+      //       right: Radius.circular(10),
+      //       left: Radius.circular(10),
+      //     ),
+      //     color: Colors.white,
+      //   ),
+      //   child: Padding(
+      //     padding: EdgeInsets.symmetric(
+      //       horizontal: size.otstup18,
+      //       vertical: size.otstup20,
+      //     ),
+      //     child: Column(
+      //       mainAxisSize: MainAxisSize.min,
+      //       children: [
+      //         My_Button(
+      //           width: double.infinity,
+      //           size: size,
+      //           backgroundColor: Colors.white,
+      //           borderColor: greyTextFBorderColor,
+      //           borderRadius: 10,
+      //           onPressed: () {},
+      //           child: textWithH1Style(
+      //             "Сохранить как черновик",
+      //             fontsize: 15,
+      //             // color: Colors.white,
+      //           ),
+      //         ),
+      //         My_Button(
+      //           width: double.infinity,
+      //           size: size,
+      //           backgroundColor: primaryButtonColor,
+      //           borderColor: primaryButtonColor,
+      //           borderRadius: 10,
+      //           onPressed: () {
+      //             _onContinuePressed(asyncSteps, currentStep);
+      //           },
+      //           child: textWithH1Style(
+      //             "Продoлжить",
+      //             fontsize: 15,
+      //             color: Colors.white,
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
+      // body: Stack(
+      //   children: [
+      //     Container(
+      //       child: Image.asset(
+      //         "assets/images/WHITE MAINcut.png",
+      //         fit: BoxFit.cover,
+      //         width: double.infinity,
+      //         height: 130,
+      //       ),
+      //     ),
+      //     Container(
+      //       decoration: BoxDecoration(color: Colors.white.withOpacity(0.7)),
+      //     ),
+
+      //     Positioned(
+      //       bottom: 10,
+      //       child: Container(
+      //         decoration: BoxDecoration(
+      //           border: Border(top: BorderSide(color: greyTextFBorderColor)),
+      //           borderRadius: BorderRadius.horizontal(
+      //             right: Radius.circular(10),
+      //             left: Radius.circular(10),
+      //           ),
+      //           color: Colors.white,
+      //         ),
+      //         child: Padding(
+      //           padding: EdgeInsets.symmetric(
+      //             horizontal: size.otstup18,
+      //             vertical: size.otstup20,
+      //           ),
+      //           child: Column(
+      //             mainAxisSize: MainAxisSize.min,
+      //             children: [
+      //               My_Button(
+      //                 width: double.infinity,
+      //                 size: size,
+      //                 backgroundColor: Colors.white,
+      //                 borderColor: greyTextFBorderColor,
+      //                 borderRadius: 10,
+      //                 onPressed: () {},
+      //                 child: textWithH1Style(
+      //                   "Сохранить как черновик",
+      //                   fontsize: 15,
+      //                   // color: Colors.white,
+      //                 ),
+      //               ),
+      //               My_Button(
+      //                 width: double.infinity,
+      //                 size: size,
+      //                 backgroundColor: primaryButtonColor,
+      //                 borderColor: primaryButtonColor,
+      //                 borderRadius: 10,
+      //                 onPressed: () {
+      //                   _onContinuePressed(asyncSteps, currentStep);
+      //                 },
+      //                 child: textWithH1Style(
+      //                   "Продoлжить",
+      //                   fontsize: 15,
+      //                   color: Colors.white,
+      //                 ),
+      //               ),
+      //             ],
+      //           ),
+      //         ),
+      //       ),
+      //     ),
+
+      //     SingleChildScrollView(
+      //       child: Column(
+      //         children: [
+      //           Container(
+      //             decoration: BoxDecoration(color: Colors.transparent),
+      //             child: Padding(
+      //               padding: EdgeInsets.symmetric(
+      //                 horizontal: 0,
+      //                 vertical: size.otstup25,
+      //               ),
+      //               child: asyncSteps.when(
+      //                 data: (allStepsInfo) {
+      //                   final applicationId = allStepsInfo.applicationId;
+      //                   final stepsAndFields = allStepsInfo.stepsInfo[0].data;
+      //                   final steps = stepsAndFields.steps;
+      //                   final stepRequirement =
+      //                       allStepsInfo.stepRequirement.data.requirements;
+      //                   final sortedSteps =
+      //                       steps.toList()..sort(
+      //                         (a, b) => a.position!.compareTo(b.position!),
+      //                       );
+      //                   if (sortedSteps.isEmpty ||
+      //                       currentStep < 0 ||
+      //                       currentStep >= sortedSteps.length) {
+      //                     return null;
+      //                   }
+
+      //                   final dropDownList = allStepsInfo.dropDownOptions;
+
+      //                   final fieldGroups = stepsAndFields.fieldGroups;
+      //                   final currentStepGroups =
+      //                       fieldGroups
+      //                           .where(
+      //                             (fieldGroup) =>
+      //                                 fieldGroup.stepId ==
+      //                                 sortedSteps[currentStep].id,
+      //                           )
+      //                           .toList();
+      //                   for (var group in fieldGroups) {
+      //                     group.fields.sort(
+      //                       (a, b) => a.position.compareTo(b.position),
+      //                     );
+      //                     if (sortedSteps.isEmpty ||
+      //                         currentStep < 0 ||
+      //                         currentStep >= sortedSteps.length) {
+      //                       return null;
+      //                     }
+
+      //                     final currentStepGroups =
+      //                         fieldGroups
+      //                             .where(
+      //                               (fieldGroup) =>
+      //                                   fieldGroup.stepId ==
+      //                                   sortedSteps[currentStep].id,
+      //                             )
+      //                             .toList();
+
+      //                     final currentStepKeys = currentStepGroups.expand(
+      //                       (fieldGroup) =>
+      //                           fieldGroup.fields
+      //                               .where(
+      //                                 (field) => field.type != 'TEXT_BLOCK',
+      //                               )
+      //                               .map((field) => field.key)
+      //                               .toList(),
+      //                     );
+      //                   }
+      //                   return Column(
+      //                     crossAxisAlignment: CrossAxisAlignment.start,
+      //                     mainAxisAlignment: MainAxisAlignment.start,
+      //                     children: [
+      //                       Padding(
+      //                         padding: EdgeInsets.symmetric(
+      //                           horizontal: size.otstup20,
+      //                         ),
+      //                         child: Column(
+      //                           crossAxisAlignment: CrossAxisAlignment.start,
+      //                           children: [
+      //                             Row(
+      //                               children: [
+      //                                 textWithH1Style(
+      //                                   "Шаг № ${currentStep + 1}",
+      //                                 ),
+      //                                 textWithH1Style(" / "),
+      //                                 textWithH1Style(
+      //                                   (steps.length.toString()),
+      //                                 ),
+      //                               ],
+      //                             ),
+      //                             textWithH1Style(
+      //                               sortedSteps[currentStep].title.getText(
+      //                                 currentLocale,
+      //                               ),
+      //                               color: primaryButtonColor,
+      //                               textAlign: TextAlign.start,
+      //                             ),
+      //                           ],
+      //                         ),
+      //                       ),
+      //                       SizedBox(height: size.otstup30),
+      //                       SingleChildScrollView(
+      //                         scrollDirection: Axis.horizontal,
+      //                         child: Padding(
+      //                           padding: EdgeInsets.symmetric(
+      //                             horizontal: size.otstup20,
+      //                             // vertical: size.otstup15,
+      //                           ),
+      //                           child: Column(
+      //                             children: [
+      //                               Row(
+      //                                 children: List.generate(steps.length, (
+      //                                   index,
+      //                                 ) {
+      //                                   setState(() {
+      //                                     currentIndex = index;
+      //                                     isActive = !isActive;
+      //                                   });
+      //                                   return Padding(
+      //                                     padding: EdgeInsets.only(
+      //                                       left:
+      //                                           index != 0 ? size.otstup15 : 0,
+      //                                     ),
+      //                                     child: GestureDetector(
+      //                                       onTap: () {
+      //                                         ref
+      //                                             .read(
+      //                                               currentStepProvider
+      //                                                   .notifier,
+      //                                             )
+      //                                             .state = index;
+      //                                       },
+      //                                       child: Row(
+      //                                         children: [
+      //                                           Container(
+      //                                             width: 30,
+      //                                             height: 30,
+      //                                             decoration: BoxDecoration(
+      //                                               color:
+      //                                                   currentIndex ==
+      //                                                               currentStep ||
+      //                                                           currentIndex <
+      //                                                               currentStep
+      //                                                       ? primaryButtonColor
+      //                                                       : Colors.white,
+      //                                               shape: BoxShape.circle,
+      //                                               border: Border.all(
+      //                                                 width: 2,
+      //                                                 color:
+      //                                                     currentIndex ==
+      //                                                                 currentStep ||
+      //                                                             currentIndex <
+      //                                                                 currentStep
+      //                                                         ? primaryButtonColor
+      //                                                         : greyTextFBorderColor,
+      //                                               ),
+      //                                             ),
+      //                                             child:
+      //                                                 currentIndex < currentStep
+      //                                                     ? Icon(
+      //                                                       Icons.done,
+      //                                                       size: 20,
+      //                                                       color: Colors.white,
+      //                                                     )
+      //                                                     : Center(
+      //                                                       child: textWithH1Style(
+      //                                                         fontsize: 16,
+      //                                                         color:
+      //                                                             currentIndex ==
+      //                                                                     currentStep
+      //                                                                 ? Colors
+      //                                                                     .white
+      //                                                                 : Colors
+      //                                                                     .black,
+      //                                                         (index + 1)
+      //                                                             .toString(),
+      //                                                       ),
+      //                                                     ),
+      //                                           ),
+      //                                           Container(
+      //                                             width:
+      //                                                 size.screenWidth * 0.25,
+      //                                             height: 5,
+      //                                             decoration: BoxDecoration(
+      //                                               color:
+      //                                                   currentIndex ==
+      //                                                               currentStep ||
+      //                                                           currentIndex <
+      //                                                               currentStep
+      //                                                       ? primaryButtonColor
+      //                                                       : greyTextFBorderColor,
+      //                                               borderRadius:
+      //                                                   BorderRadius.only(
+      //                                                     topRight:
+      //                                                         Radius.circular(
+      //                                                           10,
+      //                                                         ),
+      //                                                     bottomRight:
+      //                                                         Radius.circular(
+      //                                                           10,
+      //                                                         ),
+      //                                                   ),
+      //                                             ),
+      //                                           ),
+      //                                         ],
+      //                                       ),
+      //                                     ),
+      //                                   );
+      //                                 }),
+      //                               ),
+      //                             ],
+      //                           ),
+      //                         ),
+      //                       ),
+      //                       SizedBox(height: size.otstup18),
+      //                       Container(
+      //                         decoration: BoxDecoration(
+      //                           color: Colors.white,
+      //                           borderRadius: BorderRadius.only(
+      //                             topLeft: Radius.circular(10),
+      //                             topRight: Radius.circular(10),
+      //                           ),
+      //                         ),
+      //                         child: Padding(
+      //                           padding: EdgeInsets.symmetric(
+      //                             horizontal: size.otstup20,
+      //                             vertical: size.otstup18,
+      //                           ),
+      //                           child: buildStepContent(
+      //                             currentLocale: currentLocale,
+      //                             size: size,
+      //                             step: sortedSteps[currentStep],
+      //                             groups: currentStepGroups,
+      //                             formFamilyProviderRead:
+      //                                 formFamilyProviderRead,
+      //                             formFamilyProviderWatch:
+      //                                 formFamilyProviderWatch,
+      //                             docId: widget.docId,
+      //                             requirements: stepRequirement,
+      //                             applicationId: applicationId,
+      //                           ),
+      //                         ),
+      //                       ),
+      //                     ],
+      //                   );
+      //                 },
+      //                 error:
+      //                     (error, st) => Center(child: Text(error.toString())),
+      //                 loading: () => Center(child: CircularProgressIndicator()),
+      //               ),
+      //             ),
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //   ],
+      // ),
+
+      //////////////////////
       body: Stack(
         children: [
+          // Фон + изображение (как было)
           Container(
             child: Image.asset(
               "assets/images/WHITE MAINcut.png",
@@ -145,6 +487,8 @@ class _StepsPageState extends ConsumerState<StepsPage> {
           Container(
             decoration: BoxDecoration(color: Colors.white.withOpacity(0.7)),
           ),
+
+          // Скроллируемый контент
           SingleChildScrollView(
             child: Column(
               children: [
@@ -157,6 +501,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                     ),
                     child: asyncSteps.when(
                       data: (allStepsInfo) {
+                        final applicationId = allStepsInfo.applicationId;
                         final stepsAndFields = allStepsInfo.stepsInfo[0].data;
                         final steps = stepsAndFields.steps;
                         final stepRequirement =
@@ -165,15 +510,22 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                             steps.toList()..sort(
                               (a, b) => a.position!.compareTo(b.position!),
                             );
+
                         if (sortedSteps.isEmpty ||
                             currentStep < 0 ||
                             currentStep >= sortedSteps.length) {
-                          return null;
+                          return const SizedBox.shrink();
                         }
 
                         final dropDownList = allStepsInfo.dropDownOptions;
-
                         final fieldGroups = stepsAndFields.fieldGroups;
+
+                        // Сортируем поля ОДИН РАЗ (убрал дублирующий for)
+                        for (var group in fieldGroups) {
+                          group.fields.sort(
+                            (a, b) => a.position.compareTo(b.position),
+                          );
+                        }
                         final currentStepGroups =
                             fieldGroups
                                 .where(
@@ -182,39 +534,18 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                       sortedSteps[currentStep].id,
                                 )
                                 .toList();
-                        for (var group in fieldGroups) {
-                          group.fields.sort(
-                            (a, b) => a.position.compareTo(b.position),
-                          );
-                          if (sortedSteps.isEmpty ||
-                              currentStep < 0 ||
-                              currentStep >= sortedSteps.length) {
-                            return null;
-                          }
 
-                          final currentStepGroups =
-                              fieldGroups
-                                  .where(
-                                    (fieldGroup) =>
-                                        fieldGroup.stepId ==
-                                        sortedSteps[currentStep].id,
-                                  )
-                                  .toList();
+                        final currentStepKeys = currentStepGroups.expand(
+                          (fieldGroup) => fieldGroup.fields
+                              .where((field) => field.type != 'TEXT_BLOCK')
+                              .map((field) => field.key),
+                        );
 
-                          final currentStepKeys = currentStepGroups.expand(
-                            (fieldGroup) =>
-                                fieldGroup.fields
-                                    .where(
-                                      (field) => field.type != 'TEXT_BLOCK',
-                                    )
-                                    .map((field) => field.key)
-                                    .toList(),
-                          );
-                        }
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
+                            // Заголовок шага
                             Padding(
                               padding: EdgeInsets.symmetric(
                                 horizontal: size.otstup20,
@@ -228,9 +559,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                         "Шаг № ${currentStep + 1}",
                                       ),
                                       textWithH1Style(" / "),
-                                      textWithH1Style(
-                                        (steps.length.toString()),
-                                      ),
+                                      textWithH1Style(steps.length.toString()),
                                     ],
                                   ),
                                   textWithH1Style(
@@ -244,120 +573,93 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                               ),
                             ),
                             SizedBox(height: size.otstup30),
+
+                            // Прогресс-бар (ИСПРАВЛЕН! без Column и setState)
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: size.otstup20,
-                                  // vertical: size.otstup15,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: List.generate(steps.length, (
-                                        index,
-                                      ) {
-                                        setState(() {
-                                          currentIndex = index;
-                                          isActive = !isActive;
-                                        });
-                                        return Padding(
-                                          padding: EdgeInsets.only(
-                                            left:
-                                                index != 0 ? size.otstup15 : 0,
-                                          ),
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              ref
-                                                  .read(
-                                                    currentStepProvider
-                                                        .notifier,
-                                                  )
-                                                  .state = index;
-                                            },
-                                            child: Row(
-                                              children: [
-                                                Container(
-                                                  width: 30,
-                                                  height: 30,
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        currentIndex ==
-                                                                    currentStep ||
-                                                                currentIndex <
-                                                                    currentStep
-                                                            ? primaryButtonColor
-                                                            : Colors.white,
-                                                    shape: BoxShape.circle,
-                                                    border: Border.all(
-                                                      width: 2,
-                                                      color:
-                                                          currentIndex ==
-                                                                      currentStep ||
-                                                                  currentIndex <
-                                                                      currentStep
-                                                              ? primaryButtonColor
-                                                              : greyTextFBorderColor,
-                                                    ),
-                                                  ),
-                                                  child:
-                                                      currentIndex < currentStep
-                                                          ? Icon(
-                                                            Icons.done,
-                                                            size: 20,
-                                                            color: Colors.white,
-                                                          )
-                                                          : Center(
-                                                            child: textWithH1Style(
-                                                              fontsize: 16,
-                                                              color:
-                                                                  currentIndex ==
-                                                                          currentStep
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .black,
-                                                              (index + 1)
-                                                                  .toString(),
-                                                            ),
-                                                          ),
-                                                ),
-                                                Container(
-                                                  width:
-                                                      size.screenWidth * 0.25,
-                                                  height: 5,
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        currentIndex ==
-                                                                    currentStep ||
-                                                                currentIndex <
-                                                                    currentStep
-                                                            ? primaryButtonColor
-                                                            : greyTextFBorderColor,
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                          topRight:
-                                                              Radius.circular(
-                                                                10,
-                                                              ),
-                                                          bottomRight:
-                                                              Radius.circular(
-                                                                10,
-                                                              ),
-                                                        ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: size.otstup20,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: List.generate(steps.length, (index) {
+                                  final isActiveStep = index == currentStep;
+                                  final isCompleted = index < currentStep;
+                                  final color =
+                                      isActiveStep || isCompleted
+                                          ? primaryButtonColor
+                                          : greyTextFBorderColor;
+                                  final textColor =
+                                      isActiveStep
+                                          ? Colors.white
+                                          : Colors.black;
+
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                      left: index != 0 ? size.otstup15 : 0,
                                     ),
-                                  ],
-                                ),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        ref
+                                            .read(currentStepProvider.notifier)
+                                            .state = index;
+                                      },
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          // Кружок
+                                          Container(
+                                            width: 30,
+                                            height: 30,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  isActiveStep || isCompleted
+                                                      ? primaryButtonColor
+                                                      : Colors.white,
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                width: 2,
+                                                color: color,
+                                              ),
+                                            ),
+                                            child:
+                                                isCompleted
+                                                    ? Icon(
+                                                      Icons.done,
+                                                      size: 20,
+                                                      color: Colors.white,
+                                                    )
+                                                    : Center(
+                                                      child: textWithH1Style(
+                                                        fontsize: 16,
+                                                        color: textColor,
+                                                        (index + 1).toString(),
+                                                      ),
+                                                    ),
+                                          ),
+                                          // Линия (только не для последнего)
+                                          if (index < steps.length - 1)
+                                            Container(
+                                              width:
+                                                  80, // фиксированная ширина вместо screenWidth*0.25
+                                              height: 5,
+                                              margin: EdgeInsets.only(left: 4),
+                                              decoration: BoxDecoration(
+                                                color: color,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }),
                               ),
                             ),
                             SizedBox(height: size.otstup18),
+
+                            // Контент шага
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -382,9 +684,13 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                       formFamilyProviderWatch,
                                   docId: widget.docId,
                                   requirements: stepRequirement,
+                                  applicationId: applicationId,
                                 ),
                               ),
                             ),
+                            SizedBox(
+                              height: 200,
+                            ), // запас под фиксированные кнопки
                           ],
                         );
                       },
@@ -397,7 +703,444 @@ class _StepsPageState extends ConsumerState<StepsPage> {
               ],
             ),
           ),
+
+          // ФИКСИРОВАННЫЕ КНОПКИ ВНУТРИ asyncSteps ДАННЫХ (доступ ко всем переменным!)
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Builder(
+              // ← Builder дает доступ к ref и asyncSteps
+              builder: (context) {
+                return asyncSteps.when(
+                  data: (allStepsInfo) {
+                    final stepsAndFields = allStepsInfo.stepsInfo[0].data;
+                    final steps =
+                        stepsAndFields.steps.toList()
+                          ..sort((a, b) => a.position!.compareTo(b.position!));
+                    final currentStepIdx = ref.watch(currentStepProvider);
+
+                    final step = steps.map((s) => s.type).toList();
+
+                    // final step = steps[currentStepIdx];
+
+                    if (steps.isEmpty ||
+                        currentStepIdx < 0 ||
+                        currentStepIdx >= steps.length) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: greyTextFBorderColor),
+                        ),
+                        borderRadius: BorderRadius.horizontal(
+                          right: Radius.circular(10),
+                          left: Radius.circular(10),
+                        ),
+                        color: Colors.white,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: size.otstup18,
+                        vertical: size.otstup20,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          My_Button(
+                            width: double.infinity,
+                            size: size,
+                            backgroundColor: Colors.white,
+                            borderColor: greyTextFBorderColor,
+                            borderRadius: 10,
+                            onPressed: () {
+                              // Полный доступ к steps, currentStepIdx, allStepsInfo!
+                              print(
+                                "Сохранить черновик: шаг ${currentStepIdx + 1}/${steps.length}",
+                              );
+                              // Твоя логика сохранения: saveDraft(steps, currentStepIdx, allStepsInfo);
+                            },
+                            child: textWithH1Style(
+                              step[currentStep] == 'PAYMENT'
+                                  ? "Заполнить заново"
+                                  : "Сохранить как черновик",
+                              fontsize: 15,
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          My_Button(
+                            width: double.infinity,
+                            size: size,
+                            backgroundColor: primaryButtonColor,
+                            borderColor: primaryButtonColor,
+                            borderRadius: 10,
+                            onPressed: () {
+                              step[currentStep] == 'PAYMENT'
+                                  ? Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => GosOrganizationsPage(),
+                                    ),
+                                  )
+                                  : Container();
+                              // Доступ ко всем данным для _onContinuePressed
+                              // _onContinuePressed(allStepsInfo, currentStepIdx);
+                              // Или: ref.read(currentStepProvider.notifier).state = currentStepIdx + 1;
+                            },
+                            child: textWithH1Style(
+                              step[currentStep] == 'PAYMENT'
+                                  ? "Перейти к оплате"
+                                  : "Продолжить",
+                              fontsize: 15,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  loading: () => const SizedBox.shrink(),
+                  error: (error, st) => const SizedBox.shrink(),
+                );
+              },
+            ),
+          ),
         ],
+
+        // body: Stack(
+        //   children: [
+        //     Container(
+        //       child: Image.asset(
+        //         "assets/images/WHITE MAINcut.png",
+        //         fit: BoxFit.cover,
+        //         width: double.infinity,
+        //         height: 130,
+        //       ),
+        //     ),
+        //     Container(
+        //       decoration: BoxDecoration(color: Colors.white.withOpacity(0.7)),
+        //     ),
+
+        //     SingleChildScrollView(
+        //       child: Column(
+        //         children: [
+        //           Container(
+        //             decoration: BoxDecoration(color: Colors.transparent),
+        //             child: Padding(
+        //               padding: EdgeInsets.symmetric(
+        //                 horizontal: 0,
+        //                 vertical: size.otstup25,
+        //               ),
+        //               child: asyncSteps.when(
+        //                 data: (allStepsInfo) {
+        //                   final applicationId = allStepsInfo.applicationId;
+        //                   final stepsAndFields = allStepsInfo.stepsInfo[0].data;
+        //                   final steps = stepsAndFields.steps;
+
+        //                   final stepRequirement =
+        //                       allStepsInfo.stepRequirement.data.requirements;
+        //                   final sortedSteps =
+        //                       steps.toList()..sort(
+        //                         (a, b) => a.position!.compareTo(b.position!),
+        //                       );
+        //                   if (sortedSteps.isEmpty ||
+        //                       currentStep < 0 ||
+        //                       currentStep >= sortedSteps.length) {
+        //                     return null;
+        //                   }
+
+        //                   final dropDownList = allStepsInfo.dropDownOptions;
+
+        //                   final fieldGroups = stepsAndFields.fieldGroups;
+        //                   final currentStepGroups =
+        //                       fieldGroups
+        //                           .where(
+        //                             (fieldGroup) =>
+        //                                 fieldGroup.stepId ==
+        //                                 sortedSteps[currentStep].id,
+        //                           )
+        //                           .toList();
+        //                   for (var group in fieldGroups) {
+        //                     group.fields.sort(
+        //                       (a, b) => a.position.compareTo(b.position),
+        //                     );
+        //                     if (sortedSteps.isEmpty ||
+        //                         currentStep < 0 ||
+        //                         currentStep >= sortedSteps.length) {
+        //                       return null;
+        //                     }
+
+        //                     final currentStepGroups =
+        //                         fieldGroups
+        //                             .where(
+        //                               (fieldGroup) =>
+        //                                   fieldGroup.stepId ==
+        //                                   sortedSteps[currentStep].id,
+        //                             )
+        //                             .toList();
+
+        //                     final currentStepKeys = currentStepGroups.expand(
+        //                       (fieldGroup) =>
+        //                           fieldGroup.fields
+        //                               .where(
+        //                                 (field) => field.type != 'TEXT_BLOCK',
+        //                               )
+        //                               .map((field) => field.key)
+        //                               .toList(),
+        //                     );
+        //                   }
+        //                   return Column(
+        //                     crossAxisAlignment: CrossAxisAlignment.start,
+        //                     mainAxisAlignment: MainAxisAlignment.start,
+        //                     children: [
+        //                       Padding(
+        //                         padding: EdgeInsets.symmetric(
+        //                           horizontal: size.otstup20,
+        //                         ),
+        //                         child: Column(
+        //                           crossAxisAlignment: CrossAxisAlignment.start,
+        //                           children: [
+        //                             Row(
+        //                               children: [
+        //                                 textWithH1Style(
+        //                                   "Шаг № ${currentStep + 1}",
+        //                                 ),
+        //                                 textWithH1Style(" / "),
+        //                                 textWithH1Style(
+        //                                   (steps.length.toString()),
+        //                                 ),
+        //                               ],
+        //                             ),
+        //                             textWithH1Style(
+        //                               sortedSteps[currentStep].title.getText(
+        //                                 currentLocale,
+        //                               ),
+        //                               color: primaryButtonColor,
+        //                               textAlign: TextAlign.start,
+        //                             ),
+        //                           ],
+        //                         ),
+        //                       ),
+        //                       SizedBox(height: size.otstup30),
+        //                       SingleChildScrollView(
+        //                         scrollDirection: Axis.horizontal,
+        //                         child: Padding(
+        //                           padding: EdgeInsets.symmetric(
+        //                             horizontal: size.otstup20,
+        //                             // vertical: size.otstup15,
+        //                           ),
+        //                           child: Column(
+        //                             children: [
+        //                               Row(
+        //                                 children: List.generate(steps.length, (
+        //                                   index,
+        //                                 ) {
+        //                                   setState(() {
+        //                                     currentIndex = index;
+        //                                     isActive = !isActive;
+        //                                   });
+        //                                   return Padding(
+        //                                     padding: EdgeInsets.only(
+        //                                       left:
+        //                                           index != 0 ? size.otstup15 : 0,
+        //                                     ),
+        //                                     child: GestureDetector(
+        //                                       onTap: () {
+        //                                         ref
+        //                                             .read(
+        //                                               currentStepProvider
+        //                                                   .notifier,
+        //                                             )
+        //                                             .state = index;
+        //                                       },
+        //                                       child: Row(
+        //                                         children: [
+        //                                           Container(
+        //                                             width: 30,
+        //                                             height: 30,
+        //                                             decoration: BoxDecoration(
+        //                                               color:
+        //                                                   currentIndex ==
+        //                                                               currentStep ||
+        //                                                           currentIndex <
+        //                                                               currentStep
+        //                                                       ? primaryButtonColor
+        //                                                       : Colors.white,
+        //                                               shape: BoxShape.circle,
+        //                                               border: Border.all(
+        //                                                 width: 2,
+        //                                                 color:
+        //                                                     currentIndex ==
+        //                                                                 currentStep ||
+        //                                                             currentIndex <
+        //                                                                 currentStep
+        //                                                         ? primaryButtonColor
+        //                                                         : greyTextFBorderColor,
+        //                                               ),
+        //                                             ),
+        //                                             child:
+        //                                                 currentIndex < currentStep
+        //                                                     ? Icon(
+        //                                                       Icons.done,
+        //                                                       size: 20,
+        //                                                       color: Colors.white,
+        //                                                     )
+        //                                                     : Center(
+        //                                                       child: textWithH1Style(
+        //                                                         fontsize: 16,
+        //                                                         color:
+        //                                                             currentIndex ==
+        //                                                                     currentStep
+        //                                                                 ? Colors
+        //                                                                     .white
+        //                                                                 : Colors
+        //                                                                     .black,
+        //                                                         (index + 1)
+        //                                                             .toString(),
+        //                                                       ),
+        //                                                     ),
+        //                                           ),
+        //                                           Container(
+        //                                             width:
+        //                                                 size.screenWidth * 0.25,
+        //                                             height: 5,
+        //                                             decoration: BoxDecoration(
+        //                                               color:
+        //                                                   currentIndex ==
+        //                                                               currentStep ||
+        //                                                           currentIndex <
+        //                                                               currentStep
+        //                                                       ? primaryButtonColor
+        //                                                       : greyTextFBorderColor,
+        //                                               borderRadius:
+        //                                                   BorderRadius.only(
+        //                                                     topRight:
+        //                                                         Radius.circular(
+        //                                                           10,
+        //                                                         ),
+        //                                                     bottomRight:
+        //                                                         Radius.circular(
+        //                                                           10,
+        //                                                         ),
+        //                                                   ),
+        //                                             ),
+        //                                           ),
+        //                                         ],
+        //                                       ),
+        //                                     ),
+        //                                   );
+        //                                 }),
+        //                               ),
+        //                             ],
+        //                           ),
+        //                         ),
+        //                       ),
+        //                       SizedBox(height: size.otstup18),
+        //                       Container(
+        //                         decoration: BoxDecoration(
+        //                           color: Colors.white,
+        //                           borderRadius: BorderRadius.only(
+        //                             topLeft: Radius.circular(10),
+        //                             topRight: Radius.circular(10),
+        //                           ),
+        //                         ),
+        //                         child: Padding(
+        //                           padding: EdgeInsets.symmetric(
+        //                             horizontal: size.otstup20,
+        //                             vertical: size.otstup18,
+        //                           ),
+        //                           child: buildStepContent(
+        //                             currentLocale: currentLocale,
+        //                             size: size,
+        //                             step: sortedSteps[currentStep],
+        //                             groups: currentStepGroups,
+        //                             formFamilyProviderRead:
+        //                                 formFamilyProviderRead,
+        //                             formFamilyProviderWatch:
+        //                                 formFamilyProviderWatch,
+        //                             docId: widget.docId,
+        //                             requirements: stepRequirement,
+        //                             applicationId: applicationId,
+        //                           ),
+        //                         ),
+        //                       ),
+        //                     ],
+        //                   );
+        //                 },
+        //                 error:
+        //                     (error, st) => Center(child: Text(error.toString())),
+        //                 loading: () => Center(child: CircularProgressIndicator()),
+        //               ),
+        //             ),
+        //           ),
+        //           SizedBox(height: 180),
+        //         ],
+        //       ),
+        //     ),
+
+        //     Positioned(
+        //       bottom: 0,
+        //       left: 0,
+        //       right: 0,
+        //       child: Container(
+        //         decoration: BoxDecoration(
+        //           border: Border(top: BorderSide(color: greyTextFBorderColor)),
+        //           borderRadius: BorderRadius.horizontal(
+        //             right: Radius.circular(10),
+        //             left: Radius.circular(10),
+        //           ),
+        //           color: Colors.white,
+        //           // boxShadow: [
+        //           //   BoxShadow(
+        //           //     color: Colors.black.withOpacity(0.1),
+        //           //     blurRadius: 8,
+        //           //     offset: Offset(0, -2),
+        //           //   ),
+        //           // ],
+        //         ),
+        //         padding: EdgeInsets.symmetric(
+        //           horizontal: size.otstup18,
+        //           vertical: size.otstup20,
+        //         ),
+        //         child: Column(
+        //           mainAxisSize: MainAxisSize.min,
+        //           children: [
+        //             My_Button(
+        //               width: double.infinity,
+        //               size: size,
+        //               backgroundColor: Colors.white,
+        //               borderColor: greyTextFBorderColor,
+        //               borderRadius: 10,
+        //               onPressed: () {},
+        //               child: textWithH1Style(
+        //                 "Сохранить как черновик",
+        //                 fontsize: 15,
+        //               ),
+        //             ),
+        //             SizedBox(height: 12),
+        //             My_Button(
+        //               width: double.infinity,
+        //               size: size,
+        //               backgroundColor: primaryButtonColor,
+        //               borderColor: primaryButtonColor,
+        //               borderRadius: 10,
+        //               onPressed: () {
+        //                 _onContinuePressed(asyncSteps, currentStep);
+        //               },
+        //               child: textWithH1Style(
+        //                 "Продoлжить",
+        //                 fontsize: 15,
+        //                 color: Colors.white,
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //   ],
+        // ),
       ),
     );
   }
@@ -448,7 +1191,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
 
           dynamic sendValue = value;
           if (value is ChoiceOption) {
-            sendValue = value.code; // или value.name.getText(currentLocale)
+            sendValue = value.code;
           } else if (value is DateTime) {
             sendValue = DateFormat('yyyy-MM-dd').format(value);
           } else if (value is bool) {
@@ -492,6 +1235,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
     required Locale currentLocale,
     required int docId,
     required List<Requirement> requirements,
+    required int applicationId,
   }) {
     return step.type == 'FORM'
         ? Form(
@@ -499,6 +1243,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
           child: Column(
             children: [
               ...groups.map((fieldGroups) {
+                final file = ref.watch(uploadedFileProvider(applicationId));
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -506,21 +1251,35 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                       fieldGroups.title.getText(currentLocale),
                       textAlign: TextAlign.start,
                       fontsize: 17,
+                      maxLines: 6,
+                      color: Color(0xFF00505a),
+                      fontW: FontWeight.w500,
                     ),
                     SizedBox(height: size.otstup15),
                     fieldGroups.groupDuplicate == false
                         ? Column(
                           children:
                               fieldGroups.fields.map((field) {
-                                final selectedItem = ref.watch(
-                                  selectedValueProvider,
-                                );
+                                // final selectedItem = ref.watch(
+                                //   selectedValueProvider,
+                                // );
                                 final _controller = formFamilyProviderWatch
                                     .getTextController(field.key);
 
                                 switch (field.type) {
                                   case 'INPUT':
+                                    final kalidiShahodatNomaPassword =
+                                        formFamilyProviderWatch
+                                            .getTextController(
+                                              'APPLICANT_PASSWORD',
+                                            );
+                                    final kalidiShahodatNomaConfirm =
+                                        formFamilyProviderWatch
+                                            .getTextController(
+                                              'APPLICANT_REPEATED_PASSWORD',
+                                            );
                                     return InputTextField(
+                                      field: field,
                                       keyboardType: TextInputType.name,
                                       onTap: () {},
                                       size: size,
@@ -529,6 +1288,46 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                       labelText: field.title.getText(
                                         currentLocale,
                                       ),
+
+                                      suffixIcon:
+                                          field.key == 'DS_OWNER_NAME' ||
+                                                  field.key ==
+                                                      'APPLICANT_PASSWORD'
+                                              ? IconButton(
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return Dialog(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                16,
+                                                              ),
+                                                        ),
+                                                        child: SizedBox(
+                                                          width:
+                                                              size.screenWidth *
+                                                              0.8,
+                                                          child: InfoContentDialog(
+                                                            data: field
+                                                                .infoContent
+                                                                .getText(
+                                                                  currentLocale,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                icon: Icon(
+                                                  Icons.quiz_outlined,
+                                                  color: primaryGreenColor,
+                                                  size: size.cancelIconSize30,
+                                                ),
+                                              )
+                                              : SizedBox.shrink(),
                                       inputFormatters: [
                                         (field.key == "APPLICANT_TIN" ||
                                                 field.key == "TRUSTED_TIN")
@@ -576,16 +1375,77 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                             .setValue(field.key, value);
                                       },
                                       validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Поле обязательно для заполнения";
+                                        if (field.required &&
+                                            (value?.trim().isEmpty ?? true)) {
+                                          return "Обязательное поле";
                                         }
-                                        if (field.key == 'APPLICANT_TIN' &&
-                                            value.length < 9) {
-                                          return "Введите минимальную длину";
+
+                                        if (field.key == 'APPLICANT_TIN' ||
+                                            field.key == 'TRUSTED_TIN') {
+                                          if ((value?.length ?? 0) < 9) {
+                                            return "ИНН должен содержать 9 символов";
+                                          }
+                                        }
+
+                                        if (field.key == 'APPLICANT_PASSWORD') {
+                                          if ((value?.length ?? 0) < 8) {
+                                            return "Минимум 8 символов";
+                                          }
+                                        }
+
+                                        // Самая важная проверка — только для поля подтверждения
+                                        if (field.key ==
+                                            'APPLICANT_REPEATED_PASSWORD') {
+                                          final pass =
+                                              kalidiShahodatNomaPassword.text;
+                                          final confirm = value ?? '';
+
+                                          if (confirm.isEmpty) {
+                                            return "Подтвердите пароль";
+                                          }
+                                          if (pass != confirm) {
+                                            return "Пароли не совпадают";
+                                          }
+                                        }
+
+                                        if (field.key == 'DS_OWNER_NAME') {
+                                          return validateCertificateOwner(
+                                            value,
+                                          );
                                         }
 
                                         return null;
                                       },
+                                      // validator: (value) {
+                                      //   if (field.required == true &&
+                                      //           value == null ||
+                                      //       value!.isEmpty) {
+                                      //     return "Поле обязательно для заполнения";
+                                      //   }
+                                      //   if (field.key == 'APPLICANT_TIN' &&
+                                      //       value.length < 9) {
+                                      //     return "Введите минимальную длину";
+                                      //   }
+                                      //   if (field.key == "APPLICANT_PASSWORD" ||
+                                      //       field.key ==
+                                      //               "APPLICANT_REPEATED_PASSWORD" &&
+                                      //           kalidiShahodatNomaPassword
+                                      //                   .text !=
+                                      //               kalidiShahodatNomaConfirm
+                                      //                   .text) {
+                                      //     return 'Пароли не совпадают';
+                                      //   }
+                                      //   if (kalidiShahodatNomaPassword.text ==
+                                      //       kalidiShahodatNomaConfirm.text) {
+                                      //     return null;
+                                      //   }
+                                      //   if (field.key == 'DS_OWNER_NAME') {
+                                      //     return validateCertificateOwner(
+                                      //       value,
+                                      //     );
+                                      //   }
+                                      //   return null;
+                                      // },
                                     );
 
                                   case 'TEXT_EDITOR':
@@ -597,6 +1457,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                     );
                                     return field.visible == true
                                         ? InputTextField(
+                                          field: field,
                                           inputFormatters: [dateFormatter],
                                           keyboardType: TextInputType.datetime,
                                           onTap: () {},
@@ -712,7 +1573,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                               ),
                                               style: TextStyle(
                                                 fontSize: 18,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.normal,
                                                 color:
                                                     field.textBlockColor ==
                                                             'ORANGE'
@@ -739,294 +1600,28 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                     );
 
                                   // case 'DROP_DOWN':
-                                  //   final stepsInfoAsync = ref.watch(
-                                  //     shagiProvider(docId),
+                                  //   return ActionSelect(
+                                  //     applicationId: applicationId,
+                                  //     name: field.title.getText(currentLocale),
+                                  //     label: field.placeholder.getText(
+                                  //       currentLocale,
+                                  //     ),
+                                  //     actionId: field.actionId!,
+                                  //     actionKey: field.choiceOptionsAuto,
                                   //   );
-
-                                  //   // Хранит выбранное значение родительского дропдауна (регион → район и т.д.)
-                                  //   // final selectedParent = ref.watch(
-                                  //   //   selectedParentProvider(field.key),
-                                  //   // );
-
-                                  //   final selectedValue=ref.watch(selectedValueProvider);
-                                  //   print("***********");
-
-                                  //   print(selectedValue);
-
-                                  //   return stepsInfoAsync.when(
-                                  //     data: (stepsInfo) {
-                                  //       // Текущее значение этого поля из формы
-                                  //       final formData = ref.watch(
-                                  //         formProviderFamily(docId),
-                                  //       );
-                                  //       // final String? currentValue =
-                                  //       //     formData.getValue(field.actionKey!)
-                                  //       //         as String?;
-
-                                  //       // 1. Статические опции из JSON (самый низкий приоритет)
-                                  //       final staticOptions =
-                                  //           field.choiceOptions;
-
-                                  //       // 2. Опции из основного запроса (shagiProvider)
-                                  //       final baseOptions =
-                                  //           stepsInfo.dropDownOptions[field
-                                  //               .actionId] ??
-                                  //           <ChoiceOption>[];
-
-                                  //       // 3. Зависимые опции — самый высокий приоритет
-                                  //       final dependentAsync = ref.watch(
-                                  //         dependentDropdownProvider((
-                                  //           applicationId:
-                                  //               stepsInfo.applicationId,
-                                  //           locale: currentLocale,
-                                  //           actionKey: field.actionKey ?? '',
-                                  //           parentCode: selectedValue ?? '',
-                                  //           parentActionId: field.actionId!,
-                                  //         )),
-                                  //       );
-
-                                  //       return Padding(
-                                  //         padding: const EdgeInsets.only(
-                                  //           top: 8,
-                                  //           bottom: 10,
-                                  //         ),
-                                  //         child: Column(
-                                  //           crossAxisAlignment:
-                                  //               CrossAxisAlignment.start,
-                                  //           children: [
-                                  //             // Заголовок поля
-                                  //             RichText(
-                                  //               text: TextSpan(
-                                  //                 children: [
-                                  //                   TextSpan(
-                                  //                     text: field.title.ru,
-                                  //                     style: const TextStyle(
-                                  //                       color:
-                                  //                           primaryButtonColor,
-                                  //                       fontSize: 15,
-                                  //                       fontWeight:
-                                  //                           FontWeight.bold,
-                                  //                     ),
-                                  //                   ),
-                                  //                   if (field.required == true)
-                                  //                     const TextSpan(
-                                  //                       text: ' *',
-                                  //                       style: TextStyle(
-                                  //                         color:
-                                  //                             primaryButtonColor,
-                                  //                         fontSize: 16,
-                                  //                       ),
-                                  //                     ),
-                                  //                 ],
-                                  //               ),
-                                  //             ),
-                                  //             const SizedBox(height: 9),
-
-                                  //             DropdownButtonFormField2<String>(
-                                  //               value: selectedValue,
-                                  //               isExpanded: true,
-                                  //               hint: Text(
-                                  //                 field.placeholder.ru ??
-                                  //                     'Выберите...',
-                                  //               ),
-                                  //               decoration: InputDecoration(
-                                  //                 contentPadding:
-                                  //                     const EdgeInsets.only(
-                                  //                       left: 0,
-                                  //                       right: 8,
-                                  //                     ),
-                                  //                 enabledBorder:
-                                  //                     OutlineInputBorder(
-                                  //                       borderRadius:
-                                  //                           BorderRadius.circular(
-                                  //                             10,
-                                  //                           ),
-                                  //                       borderSide: BorderSide(
-                                  //                         color:
-                                  //                             Colors.grey[400]!,
-                                  //                         width: 2,
-                                  //                       ),
-                                  //                     ),
-                                  //                 focusedBorder: OutlineInputBorder(
-                                  //                   borderRadius:
-                                  //                       BorderRadius.circular(
-                                  //                         10,
-                                  //                       ),
-                                  //                   borderSide: const BorderSide(
-                                  //                     color: primaryButtonColor,
-                                  //                     width: 2,
-                                  //                   ),
-                                  //                 ),
-                                  //               ),
-                                  //               dropdownStyleData:
-                                  //                   DropdownStyleData(
-                                  //                     decoration: BoxDecoration(
-                                  //                       borderRadius:
-                                  //                           BorderRadius.circular(
-                                  //                             16,
-                                  //                           ),
-                                  //                       color: Colors.white,
-                                  //                     ),
-                                  //                   ),
-
-                                  //               // ГЛАВНАЯ ЛОГИКА: какие items показываем?
-                                  //               items:
-                                  //                   selectedValue != null
-                                  //                       // Если выбран родитель — показываем зависимые
-                                  //                       ? dependentAsync.when(
-                                  //                         data: (map) {
-                                  //                           final List<
-                                  //                             ChoiceOption
-                                  //                           >
-                                  //                           opts =
-                                  //                               map[field
-                                  //                                   .actionId] ??
-                                  //                               [];
-                                  //                           return opts.isEmpty
-                                  //                               ? _buildDropdownItems(
-                                  //                                 baseOptions,
-                                  //                                 size,
-                                  //                               )
-                                  //                               : _buildDropdownItems(
-                                  //                                 opts,
-                                  //                                 size,
-                                  //                               );
-                                  //                         },
-                                  //                         loading:
-                                  //                             () => [
-                                  //                               const DropdownMenuItem<
-                                  //                                 String
-                                  //                               >(
-                                  //                                 enabled:
-                                  //                                     false,
-                                  //                                 child: SizedBox(
-                                  //                                   height: 20,
-                                  //                                   width: 20,
-                                  //                                   child: CircularProgressIndicator(
-                                  //                                     strokeWidth:
-                                  //                                         2,
-                                  //                                   ),
-                                  //                                 ),
-                                  //                               ),
-                                  //                             ],
-                                  //                         error:
-                                  //                             (_, __) => [
-                                  //                               const DropdownMenuItem<
-                                  //                                 String
-                                  //                               >(
-                                  //                                 enabled:
-                                  //                                     false,
-                                  //                                 child: Text(
-                                  //                                   'Ошибка загрузки',
-                                  //                                 ),
-                                  //                               ),
-                                  //                             ],
-                                  //                       )
-                                  //                       // Если родитель НЕ выбран
-                                  //                       : _buildDropdownItems(
-                                  //                         baseOptions.isNotEmpty
-                                  //                             ? baseOptions
-                                  //                             : staticOptions,
-                                  //                         size,
-                                  //                       ),
-
-                                  //               // При выборе
-                                  //               onChanged: (String? newValue) {
-                                  //                 if (newValue == null) return;
-
-                                  //                 ref.read(selectedValueProvider.notifier).state=newValue;
-
-                                  //                 // Сохраняем в форму
-                                  //                 ref
-                                  //                     .read(
-                                  //                       formProviderFamily(
-                                  //                         docId,
-                                  //                       ).notifier,
-                                  //                     )
-                                  //                     .setValue(
-                                  //                       field.key,
-                                  //                       newValue,
-                                  //                     );
-
-                                  //                 // Если это родительский дропдаун (есть actionKey) — запоминаем выбор
-                                  //                 if (field.actionKey != null &&
-                                  //                     field
-                                  //                         .actionKey!
-                                  //                         .isNotEmpty) {
-                                  //                   ref
-                                  //                       .read(
-                                  //                         selectedParentProvider(
-                                  //                           field.actionId!,
-                                  //                         ).notifier,
-                                  //                       )
-                                  //                       .state = newValue;
-                                  //                 }
-                                  //               },
-
-                                  //               // Красивое отображение выбранного значения (как у тебя было)
-                                  //               selectedItemBuilder: (context) {
-                                  //                 final displayOptions =
-                                  //                     selectedValue != null
-                                  //                         ? dependentAsync.maybeWhen(
-                                  //                           data:
-                                  //                               (map) =>
-                                  //                                   map[field
-                                  //                                       .actionId] ??
-                                  //                                   baseOptions,
-                                  //                           orElse:
-                                  //                               () =>
-                                  //                                   baseOptions,
-                                  //                         )
-                                  //                         : (baseOptions
-                                  //                                 .isNotEmpty
-                                  //                             ? baseOptions
-                                  //                             : staticOptions);
-
-                                  //                 return displayOptions.map((
-                                  //                   opt,
-                                  //                 ) {
-                                  //                   return SizedBox(
-                                  //                     width:
-                                  //                         size.screenWidth *
-                                  //                         0.75,
-                                  //                     child: Text(
-                                  //                       opt.name.ru ??
-                                  //                           opt.name.en ??
-                                  //                           opt.code ??
-                                  //                           '',
-                                  //                       style: const TextStyle(
-                                  //                         color: Colors.black,
-                                  //                       ),
-                                  //                       maxLines: 1,
-                                  //                       overflow:
-                                  //                           TextOverflow
-                                  //                               .ellipsis,
-                                  //                     ),
-                                  //                   );
-                                  //                 }).toList();
-                                  //               },
-                                  //             ),
-                                  //           ],
-                                  //         ),
-                                  //       );
-                                  //     },
-                                  //     loading:
-                                  //         () => const Center(
-                                  //           child: CircularProgressIndicator(),
-                                  //         ),
-                                  //     error:
-                                  //         (err, stack) => Text('Ошибка: $err'),
-                                  //   );
-
                                   case 'DROP_DOWN':
                                     final stepsInfoAsync = ref.watch(
                                       shagiProvider(docId),
                                     );
 
-                                    List<ChoiceOption> options =
+                                    List<ChoiceOption> baseOptions =
                                         field.choiceOptions;
+                                    print("FULL LIST////////////");
+
+                                    print(baseOptions.map((e) => e.name.ru));
 
                                     return stepsInfoAsync.when(
+<<<<<<< HEAD
                                       data: (stepsInfo) {
                                         return field.choiceOptions.isEmpty
                                             ? Padding(
@@ -1377,13 +1972,182 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                               ),
                                             );
                                       },
+=======
+>>>>>>> 35ef8e78142de4c13898339516c8f520adca90e2
                                       loading:
-                                          () =>
-                                              const CircularProgressIndicator(),
+                                          () => buildDropdownSkeleton(
+                                            field,
+                                            isLoading: true,
+                                          ),
                                       error:
-                                          (err, stack) => Text('Ошибка: $err'),
-                                    );
+                                          (err, stack) => buildDropdownSkeleton(
+                                            field,
+                                            error: err.toString(),
+                                          ),
+                                      data: (stepsInfo) {
+                                        if (baseOptions.isEmpty &&
+                                            field.actionId != null) {
+                                          baseOptions =
+                                              stepsInfo.dropDownOptions[field
+                                                  .actionId] ??
+                                              [];
+                                        }
+                                        final bool isDependent =
+                                            field.actionKey == null &&
+                                            field.choiceOptionsAuto != null;
 
+                                        if (!isDependent) {
+                                          return _buildDropdown(
+                                            field: field,
+                                            options: baseOptions,
+                                            selectedValue:
+                                                formFamilyProviderRead.getValue(
+                                                      field.key,
+                                                    )
+                                                    as String?,
+                                            onChanged: (String? newValue) {
+                                              if (newValue == null) return;
+
+                                              formFamilyProviderRead.setValue(
+                                                field.key,
+                                                newValue,
+                                              );
+                                              Future.microtask(() {
+                                                ref
+                                                    .read(
+                                                      selectedValueProvider
+                                                          .notifier,
+                                                    )
+                                                    .update(
+                                                      (state) => newValue,
+                                                    );
+                                              });
+                                            },
+                                            size: size,
+                                          );
+                                        }
+                                        final selectedParentCode = ref.watch(
+                                          selectedValueProvider,
+                                        );
+
+                                        if (selectedParentCode.isEmpty) {
+                                          return _buildDropdown(
+                                            field: field,
+                                            options: [],
+                                            selectedValue: null,
+                                            onChanged: (value) => null,
+                                            size: size,
+                                          );
+                                        }
+
+                                        print("ACTION ID/*******************");
+
+                                        print(field.actionId);
+
+                                        final dependentAsync = ref.watch(
+                                          dependentDropdownProvider((
+                                            applicationId:
+                                                stepsInfo.applicationId,
+                                            locale: currentLocale,
+                                            actionKey: field.choiceOptionsAuto!,
+                                            parentCode: selectedParentCode,
+                                            parentActionId: 'REGION_ID',
+                                          )),
+                                        );
+
+                                        return dependentAsync.when(
+                                          loading:
+                                              () => buildDropdownSkeleton(
+                                                field,
+                                                isLoading: true,
+                                              ),
+                                          error:
+                                              (err, _) => buildDropdownSkeleton(
+                                                field,
+                                                error: err.toString(),
+                                              ),
+                                          data: (dataMap) {
+                                            final dependentOptions =
+                                                (dataMap[field.actionId] ??
+                                                        <ChoiceOption>[])
+                                                    .toSet()
+                                                    .toList();
+
+                                            String? currentValue =
+                                                formFamilyProviderRead.getValue(
+                                                      field.key,
+                                                    )
+                                                    as String?;
+
+                                            if (currentValue != null &&
+                                                !dependentOptions.any(
+                                                  (opt) =>
+                                                      opt.code == currentValue,
+                                                )) {
+                                              Future.microtask(() {
+                                                formFamilyProviderRead.setValue(
+                                                  field.key,
+                                                  null,
+                                                );
+                                              });
+                                              currentValue = null;
+                                            }
+
+                                            return _buildDropdown(
+                                              field: field,
+                                              options: dependentOptions,
+                                              selectedValue: currentValue,
+                                              onChanged: (String? newValue) {
+                                                Future.microtask(() {
+                                                  formFamilyProviderRead
+                                                      .setValue(
+                                                        field.key,
+                                                        newValue,
+                                                      );
+                                                });
+                                              },
+                                              size: size,
+                                            );
+                                          },
+
+                                          // data: (dataMap) {
+                                          //   final dependentOptions =
+                                          //       (dataMap[field.actionId] ??
+                                          //               <ChoiceOption>[])
+                                          //           .toSet()
+                                          //           .toList();
+                                          //   String? currentValue =
+                                          //       formFamilyProviderRead.getValue(
+                                          //             field.key,
+                                          //           )
+                                          //           as String?;
+                                          //   if (currentValue != null &&
+                                          //       !dependentOptions.any(
+                                          //         (opt) =>
+                                          //             opt.code == currentValue,
+                                          //       )) {
+                                          //     currentValue = null;
+                                          //     formFamilyProviderRead.setValue(
+                                          //       field.key,
+                                          //       null,
+                                          //     );
+                                          //   }
+                                          //   return _buildDropdown(
+                                          //     field: field,
+                                          //     options: dependentOptions,
+                                          //     selectedValue: currentValue,
+                                          //     onChanged: (String? newValue) {
+                                          //       formFamilyProviderRead.setValue(
+                                          //         field.key,
+                                          //         newValue,
+                                          //       );
+                                          //     },
+                                          //     size: size,
+                                          //   );
+                                          // },
+                                        );
+                                      },
+                                    );
                                   case 'RADIO_BUTTON':
                                     // final radioValue = ref.watch(
                                     //   formProviderFamily(docId).select(
@@ -1407,6 +2171,30 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: field.title.getText(
+                                                      currentLocale,
+                                                    ),
+                                                    style: TextStyle(
+                                                      color: primaryButtonColor,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  TextSpan(
+                                                    text: '* ',
+                                                    style: TextStyle(
+                                                      color: primaryButtonColor,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                             RadioButton(
                                               size: size,
                                               options: field.choiceOptions,
@@ -1449,7 +2237,11 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                         (p) => p.getValue(field.key) ?? false,
                                       ),
                                     );
+
                                     return SwitchWidget(
+                                      content: field.title.getText(
+                                        currentLocale,
+                                      ),
                                       onToggle: (value) {
                                         ref
                                             .read(formProviderFamily(docId))
@@ -1461,102 +2253,98 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                         if (value != true) {
                                           return "Поле обязательно для заполнения";
                                         }
+
                                         return null;
                                       },
                                     );
                                   case 'FILE':
-                                    return Padding(
-                                      padding: EdgeInsets.all(8),
-                                      child: Column(
-                                        children: [
-                                          InputTextField(
-                                            onChanged: (value) {
-                                              ref
-                                                  .read(
-                                                    formProviderFamily(docId),
-                                                  )
-                                                  .setValue(field.key, value);
-                                            },
-                                            onTap: () async {
-                                              final result =
-                                                  await FilePicker.platform
-                                                      .pickFiles();
+                                    return Column(
+                                      children: [
+                                        InputTextField(
+                                          field: field,
+                                          onChanged: (value) {
+                                            ref
+                                                .read(formProviderFamily(docId))
+                                                .setValue(field.key, value);
+                                          },
+                                          onTap: () async {
+                                            final result =
+                                                await FilePicker.platform
+                                                    .pickFiles();
 
-                                              if (result == null) return;
+                                            if (result == null) return;
 
-                                              final file = result.files.first;
+                                            final file = result.files.first;
 
-                                              setState(() {
-                                                _controller.text =
-                                                    file.name ?? '';
-                                              });
-                                            },
-                                            labelText: field.title.getText(
-                                              currentLocale,
-                                            ),
-                                            hintText:
-                                                field.placeholder.getText(
-                                                  currentLocale,
-                                                ) ??
-                                                'Выберите файл',
-                                            controller: _controller,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return "Поле обязательно для заполнения";
-                                              }
-                                            },
-                                            formKey: formFamilyProviderWatch
-                                                .getFieldKey(field.key),
-                                            size: size,
-                                            suffixIcon:
-                                                _controller.text.trim().isEmpty
-                                                    ? IconButton(
-                                                      onPressed: () async {
-                                                        final result =
-                                                            await FilePicker
-                                                                .platform
-                                                                .pickFiles();
-
-                                                        if (result == null)
-                                                          return;
-
-                                                        final file =
-                                                            result.files.first;
-
-                                                        setState(() {
-                                                          _controller.text =
-                                                              file.name ?? '';
-                                                          _pickedFile = file;
-                                                        });
-                                                      },
-                                                      icon: Icon(
-                                                        Icons
-                                                            .file_download_outlined,
-                                                        color:
-                                                            primaryButtonColor,
-                                                      ),
-                                                    )
-                                                    : IconButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _controller.text = '';
-                                                          _pickedFile = null;
-                                                        });
-                                                      },
-                                                      icon: Icon(
-                                                        Icons.delete_outline,
-                                                        color:
-                                                            primaryButtonColor,
-                                                      ),
-                                                    ),
+                                            setState(() {
+                                              _controller.text =
+                                                  file.name ?? '';
+                                            });
+                                          },
+                                          labelText: field.title.getText(
+                                            currentLocale,
                                           ),
-                                        ],
-                                      ),
+                                          hintText:
+                                              field.placeholder.getText(
+                                                currentLocale,
+                                              ) ??
+                                              'Выберите файл',
+                                          controller: _controller,
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Поле обязательно для заполнения";
+                                            }
+                                          },
+                                          formKey: formFamilyProviderWatch
+                                              .getFieldKey(field.key),
+                                          size: size,
+                                          suffixIcon:
+                                              _controller.text.trim().isEmpty
+                                                  ? IconButton(
+                                                    onPressed: () async {
+                                                      final result =
+                                                          await FilePicker
+                                                              .platform
+                                                              .pickFiles();
+
+                                                      if (result == null)
+                                                        return;
+
+                                                      final file =
+                                                          result.files.first;
+
+                                                      setState(() {
+                                                        _controller.text =
+                                                            file.name ?? '';
+                                                        _pickedFile = file;
+                                                      });
+                                                    },
+                                                    icon: Icon(
+                                                      Icons
+                                                          .file_download_outlined,
+                                                      color: primaryButtonColor,
+                                                    ),
+                                                  )
+                                                  : IconButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _controller.text = '';
+                                                        _pickedFile = null;
+                                                      });
+                                                    },
+                                                    icon: Icon(
+                                                      Icons.delete_outline,
+                                                      color: primaryButtonColor,
+                                                    ),
+                                                  ),
+                                        ),
+                                      ],
                                     );
 
                                   case 'TEXT_AREA':
                                     return InputTextField(
+                                      field: field,
                                       onChanged: (value) {
                                         ref
                                             .read(formProviderFamily(docId))
@@ -1580,6 +2368,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                     );
                                   case 'TIME':
                                     return InputTextField(
+                                      field: field,
                                       onChanged: (value) {
                                         ref
                                             .read(formProviderFamily(docId))
@@ -1644,7 +2433,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                             ),
                                             content: SizedBox(
                                               width: double.maxFinite,
-                                              height: size.screenHeight * 0.5,
+                                              // height: size.screenHeight * 0.5,
                                               child: SingleChildScrollView(
                                                 child: Column(
                                                   crossAxisAlignment:
@@ -1652,11 +2441,19 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                   children: [
                                                     textWithH1Style(
                                                       fieldGroups.title.ru!,
+                                                      textAlign:
+                                                          TextAlign.start,
                                                       fontsize: 18,
                                                     ),
-                                                    Divider(
-                                                      color: primaryGreenColor,
-                                                    ),
+                                                    fieldGroups
+                                                            .title
+                                                            .ru!
+                                                            .isNotEmpty
+                                                        ? Divider(
+                                                          color:
+                                                              primaryGreenColor,
+                                                        )
+                                                        : SizedBox.shrink(),
                                                     SizedBox(
                                                       height: size.otstup10,
                                                     ),
@@ -1687,6 +2484,8 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                                             16,
                                                                       ),
                                                                   child: InputTextField(
+                                                                    field:
+                                                                        field,
                                                                     inputFormatters: [
                                                                       innFormatter,
                                                                     ],
@@ -1716,37 +2515,39 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                                           currentLocale,
                                                                         ),
                                                                     hintText:
-                                                                        (field.key ==
-                                                                                    "APPLICANT_TIN" ||
-                                                                                field.key ==
-                                                                                    "TRUSTED_TIN")
-                                                                            ? (field.placeholder
-                                                                                        .getText(
-                                                                                          currentLocale,
-                                                                                        )
-                                                                                        .isNotEmpty ==
-                                                                                    true
-                                                                                ? field.placeholder.getText(
-                                                                                  currentLocale,
-                                                                                )
-                                                                                : "___ ___ ___")
-                                                                            : (field.type ==
-                                                                                    "DATE" ||
-                                                                                field.type ==
-                                                                                    "DATE_OF_BIRTH")
-                                                                            ? (field.placeholder
-                                                                                        .getText(
-                                                                                          currentLocale,
-                                                                                        )
-                                                                                        .isNotEmpty ==
-                                                                                    true
-                                                                                ? field.placeholder.getText(
-                                                                                  currentLocale,
-                                                                                )
-                                                                                : "дд.мм.гггг")
-                                                                            : field.placeholder.getText(
-                                                                              currentLocale,
-                                                                            ),
+                                                                        "",
+                                                                    // (field.key ==
+                                                                    //             "APPLICANT_TIN" ||
+                                                                    //         field.key ==
+                                                                    //             "TRUSTED_TIN")
+                                                                    //     ? (field.placeholder
+                                                                    //                 .getText(
+                                                                    //                   currentLocale,
+                                                                    //                 )
+                                                                    //                 .isNotEmpty ==
+                                                                    //             true
+                                                                    //         ? ""
+                                                                    //         // field.placeholder.getText(
+                                                                    //         //   currentLocale,
+                                                                    //         // )
+                                                                    //         : "___ ___ ___")
+                                                                    //     : (field.type ==
+                                                                    //             "DATE" ||
+                                                                    //         field.type ==
+                                                                    //             "DATE_OF_BIRTH")
+                                                                    //     ? (field.placeholder
+                                                                    //                 .getText(
+                                                                    //                   currentLocale,
+                                                                    //                 )
+                                                                    //                 .isNotEmpty ==
+                                                                    //             true
+                                                                    //         ? field.placeholder.getText(
+                                                                    //           currentLocale,
+                                                                    //         )
+                                                                    //         : "дд.мм.гггг")
+                                                                    //     : field.placeholder.getText(
+                                                                    //       currentLocale,
+                                                                    //     ),
                                                                     controller:
                                                                         _controller,
                                                                     onChanged: (
@@ -1801,6 +2602,8 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                                 return field.visible ==
                                                                         true
                                                                     ? InputTextField(
+                                                                      field:
+                                                                          field,
                                                                       inputFormatters: [
                                                                         dateFormatter,
                                                                       ],
@@ -2010,6 +2813,426 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                                   },
                                                                 );
 
+                                                              case 'FILE':
+                                                                return Padding(
+                                                                  padding:
+                                                                      EdgeInsets.all(
+                                                                        8,
+                                                                      ),
+                                                                  child: Column(
+                                                                    children: [
+                                                                      InputTextField(
+                                                                        field:
+                                                                            field,
+                                                                        onChanged: (
+                                                                          value,
+                                                                        ) {
+                                                                          ref
+                                                                              .read(
+                                                                                formProviderFamily(
+                                                                                  docId,
+                                                                                ),
+                                                                              )
+                                                                              .setValue(
+                                                                                field.key,
+                                                                                value,
+                                                                              );
+                                                                        },
+                                                                        onTap: () async {
+                                                                          final result =
+                                                                              await FilePicker.platform.pickFiles();
+
+                                                                          if (result ==
+                                                                              null)
+                                                                            return;
+
+                                                                          final file =
+                                                                              result.files.first;
+
+                                                                          setState(() {
+                                                                            _controller.text =
+                                                                                file.name ??
+                                                                                '';
+                                                                          });
+                                                                        },
+                                                                        labelText: field
+                                                                            .title
+                                                                            .getText(
+                                                                              currentLocale,
+                                                                            ),
+                                                                        hintText:
+                                                                            field.placeholder.getText(
+                                                                              currentLocale,
+                                                                            ) ??
+                                                                            'Выберите файл',
+                                                                        controller:
+                                                                            _controller,
+                                                                        validator: (
+                                                                          value,
+                                                                        ) {
+                                                                          if (value ==
+                                                                                  null ||
+                                                                              value.isEmpty) {
+                                                                            return "Поле обязательно для заполнения";
+                                                                          }
+                                                                        },
+                                                                        formKey: formFamilyProviderWatch.getFieldKey(
+                                                                          field
+                                                                              .key,
+                                                                        ),
+                                                                        size:
+                                                                            size,
+                                                                        suffixIcon:
+                                                                            _controller.text.trim().isEmpty
+                                                                                ? IconButton(
+                                                                                  onPressed: () async {
+                                                                                    final result =
+                                                                                        await FilePicker.platform.pickFiles();
+
+                                                                                    if (result ==
+                                                                                        null)
+                                                                                      return;
+
+                                                                                    final file =
+                                                                                        result.files.first;
+
+                                                                                    //UPLOADING FILE
+                                                                                    ////////////////
+                                                                                    ///////////////
+
+                                                                                    setState(
+                                                                                      () async {
+                                                                                        _controller.text =
+                                                                                            file.name ??
+                                                                                            '';
+                                                                                        _pickedFile =
+                                                                                            file;
+
+                                                                                        // await ShagiPolucheniyeUslugiService().uploadFile(
+                                                                                        //   applicationId,
+                                                                                        // );
+
+                                                                                        // await ShagiPolucheniyeUslugiService().getUploadedFileInfo(
+                                                                                        //   applicationId,
+                                                                                        // );
+                                                                                      },
+                                                                                    );
+                                                                                  },
+                                                                                  icon: Icon(
+                                                                                    Icons.file_download_outlined,
+                                                                                    color:
+                                                                                        primaryButtonColor,
+                                                                                  ),
+                                                                                )
+                                                                                : IconButton(
+                                                                                  onPressed: () {
+                                                                                    setState(
+                                                                                      () {
+                                                                                        _controller.text = '';
+                                                                                        _pickedFile =
+                                                                                            null;
+                                                                                      },
+                                                                                    );
+                                                                                  },
+                                                                                  icon: Icon(
+                                                                                    Icons.delete_outline,
+                                                                                    color:
+                                                                                        primaryButtonColor,
+                                                                                  ),
+                                                                                ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              case 'DROP_DOWN':
+                                                                final stepsInfoAsync =
+                                                                    ref.watch(
+                                                                      shagiProvider(
+                                                                        docId,
+                                                                      ),
+                                                                    );
+
+                                                                List<
+                                                                  ChoiceOption
+                                                                >
+                                                                baseOptions =
+                                                                    field
+                                                                        .choiceOptions;
+
+                                                                return stepsInfoAsync.when(
+                                                                  loading:
+                                                                      () => buildDropdownSkeleton(
+                                                                        field,
+                                                                        isLoading:
+                                                                            true,
+                                                                      ),
+                                                                  error:
+                                                                      (
+                                                                        err,
+                                                                        stack,
+                                                                      ) => buildDropdownSkeleton(
+                                                                        field,
+                                                                        error:
+                                                                            err.toString(),
+                                                                      ),
+                                                                  data: (
+                                                                    stepsInfo,
+                                                                  ) {
+                                                                    if (baseOptions
+                                                                            .isEmpty &&
+                                                                        field.actionId !=
+                                                                            null) {
+                                                                      baseOptions =
+                                                                          stepsInfo
+                                                                              .dropDownOptions[field
+                                                                              .actionId] ??
+                                                                          [];
+                                                                    }
+                                                                    final bool
+                                                                    isDependent =
+                                                                        field.actionKey ==
+                                                                            null &&
+                                                                        field.choiceOptionsAuto !=
+                                                                            null;
+
+                                                                    if (!isDependent) {
+                                                                      return _buildDropdown(
+                                                                        field:
+                                                                            field,
+                                                                        options:
+                                                                            baseOptions,
+                                                                        selectedValue:
+                                                                            formFamilyProviderRead.getValue(
+                                                                                  field.key,
+                                                                                )
+                                                                                as String?,
+                                                                        onChanged: (
+                                                                          String?
+                                                                          newValue,
+                                                                        ) {
+                                                                          if (newValue ==
+                                                                              null)
+                                                                            return;
+
+                                                                          formFamilyProviderRead.setValue(
+                                                                            field.key,
+                                                                            newValue,
+                                                                          );
+                                                                          Future.microtask(() {
+                                                                            ref
+                                                                                .read(
+                                                                                  selectedValueProvider.notifier,
+                                                                                )
+                                                                                .update(
+                                                                                  (
+                                                                                    state,
+                                                                                  ) =>
+                                                                                      newValue,
+                                                                                );
+                                                                          });
+                                                                        },
+                                                                        size:
+                                                                            size,
+                                                                      );
+                                                                    }
+                                                                    final selectedParentCode =
+                                                                        ref.watch(
+                                                                          selectedValueProvider,
+                                                                        );
+
+                                                                    if (selectedParentCode
+                                                                        .isEmpty) {
+                                                                      return _buildDropdown(
+                                                                        field:
+                                                                            field,
+                                                                        options:
+                                                                            [],
+                                                                        selectedValue:
+                                                                            null,
+                                                                        onChanged:
+                                                                            (
+                                                                              value,
+                                                                            ) =>
+                                                                                null,
+                                                                        size:
+                                                                            size,
+                                                                      );
+                                                                    }
+
+                                                                    final dependentAsync = ref.watch(
+                                                                      dependentDropdownProvider((
+                                                                        applicationId:
+                                                                            stepsInfo.applicationId,
+                                                                        locale:
+                                                                            currentLocale,
+                                                                        actionKey:
+                                                                            field.choiceOptionsAuto!,
+                                                                        parentCode:
+                                                                            selectedParentCode,
+                                                                        parentActionId:
+                                                                            "REGION_ID",
+                                                                      )),
+                                                                    );
+
+                                                                    return dependentAsync.when(
+                                                                      loading:
+                                                                          () => buildDropdownSkeleton(
+                                                                            field,
+                                                                            isLoading:
+                                                                                true,
+                                                                          ),
+                                                                      error:
+                                                                          (
+                                                                            err,
+                                                                            _,
+                                                                          ) => buildDropdownSkeleton(
+                                                                            field,
+                                                                            error:
+                                                                                err.toString(),
+                                                                          ),
+                                                                      data: (
+                                                                        dataMap,
+                                                                      ) {
+                                                                        final dependentOptions =
+                                                                            (dataMap[field.actionId] ??
+                                                                                    <
+                                                                                      ChoiceOption
+                                                                                    >[])
+                                                                                .toSet()
+                                                                                .toList();
+
+                                                                        String?
+                                                                        currentValue =
+                                                                            formFamilyProviderRead.getValue(
+                                                                                  field.key,
+                                                                                )
+                                                                                as String?;
+
+                                                                        if (currentValue !=
+                                                                                null &&
+                                                                            !dependentOptions.any(
+                                                                              (
+                                                                                opt,
+                                                                              ) =>
+                                                                                  opt.code ==
+                                                                                  currentValue,
+                                                                            )) {
+                                                                          Future.microtask(() {
+                                                                            formFamilyProviderRead.setValue(
+                                                                              field.key,
+                                                                              null,
+                                                                            );
+                                                                          });
+                                                                          currentValue =
+                                                                              null;
+                                                                        }
+
+                                                                        return _buildDropdown(
+                                                                          field:
+                                                                              field,
+                                                                          options:
+                                                                              dependentOptions,
+                                                                          selectedValue:
+                                                                              currentValue,
+                                                                          onChanged: (
+                                                                            String?
+                                                                            newValue,
+                                                                          ) {
+                                                                            Future.microtask(() {
+                                                                              formFamilyProviderRead.setValue(
+                                                                                field.key,
+                                                                                newValue,
+                                                                              );
+                                                                            });
+                                                                          },
+                                                                          size:
+                                                                              size,
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                );
+
+                                                              case 'TEXT_BLOCK':
+                                                                return Padding(
+                                                                  padding:
+                                                                      const EdgeInsets.symmetric(
+                                                                        vertical:
+                                                                            12,
+                                                                      ),
+                                                                  child: Container(
+                                                                    decoration: BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                            12,
+                                                                          ),
+                                                                      color:
+                                                                          field.textBlockColor ==
+                                                                                  'ORANGE'
+                                                                              ? Color(
+                                                                                0xFFffefe3,
+                                                                              )
+                                                                              : field.textBlockColor ==
+                                                                                  'BLUE'
+                                                                              ? Color(
+                                                                                0xFFeaf5ff,
+                                                                              )
+                                                                              : Color(
+                                                                                0xFFeafff3,
+                                                                              ),
+                                                                    ),
+                                                                    padding:
+                                                                        const EdgeInsets.all(
+                                                                          16,
+                                                                        ),
+                                                                    child: Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Text(
+                                                                          field.title.getText(
+                                                                            currentLocale,
+                                                                          ),
+                                                                          style: TextStyle(
+                                                                            fontSize:
+                                                                                18,
+                                                                            fontWeight:
+                                                                                FontWeight.normal,
+                                                                            color:
+                                                                                field.textBlockColor ==
+                                                                                        'ORANGE'
+                                                                                    ? Color(
+                                                                                      0xFFF79B58,
+                                                                                    )
+                                                                                    : field.textBlockColor ==
+                                                                                        'BLUE'
+                                                                                    ? Color(
+                                                                                      0xFF4ca2f2,
+                                                                                    )
+                                                                                    : primaryButtonColor,
+                                                                          ),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              8,
+                                                                        ),
+                                                                        Text(
+                                                                          field.textBlockContent.getText(
+                                                                            currentLocale,
+                                                                          ),
+                                                                          style: TextStyle(
+                                                                            fontSize:
+                                                                                16,
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                );
+
                                                               default:
                                                                 return Padding(
                                                                   padding:
@@ -2063,7 +3286,13 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                         primaryGreenColor,
                                                     borderColor:
                                                         primaryButtonColor,
-                                                    onPressed: () {},
+                                                    onPressed: () async {
+                                                      // ref.read(
+                                                      //   uploadeMethodFileProvider(
+                                                      //     applicationId,
+                                                      //   ),
+                                                      // );
+                                                    },
                                                     child: textWithH1Style(
                                                       "Сохранить",
                                                       color: Colors.white,
@@ -2072,118 +3301,10 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                                   ),
                                                 ],
                                               ),
-                                              // TextButton(
-                                              //   onPressed:
-                                              //       () =>
-                                              //           Navigator.of(
-                                              //             context,
-                                              //           ).pop(),
-                                              //   child: const Text("Отмена"),
-                                              // ),
-                                              // SizedBox(width: size.otstup15),
-                                              // ElevatedButton(
-                                              //   onPressed: () {
-                                              //     // Здесь можно добавить валидацию формы, если нужно
-                                              //     Navigator.of(context).pop();
-                                              //   },
-                                              //   child: const Text("Сохранить"),
-                                              // ),
                                             ],
                                           );
                                         },
                                       );
-                                      // showDialog(
-                                      //   context: context,
-                                      //   builder: (context) {
-                                      //     return Container(
-                                      //       height: size.screenHeight*0.4,
-                                      //       child: Column(
-                                      //         mainAxisSize: MainAxisSize.max,
-
-                                      //         children:
-                                      //             fieldGroups.fields.map((
-                                      //               field,
-                                      //             ) {
-                                      //               final selectedItem = ref
-                                      //                   .watch(
-                                      //                     selectedValueProvider,
-                                      //                   );
-                                      //               final _controller =
-                                      //                   formFamilyProviderWatch
-                                      //                       .getTextController(
-                                      //                         field.key,
-                                      //                       );
-                                      //               switch (field.type) {
-                                      //                 case 'INPUT':
-                                      //                   return InputTextField(
-                                      //                     onTap: () {},
-                                      //                     size: size,
-                                      //                     formKey:
-                                      //                         formFamilyProviderWatch
-                                      //                             .getFieldKey(
-                                      //                               field.key,
-                                      //                             ),
-                                      //                     labelText: field.title
-                                      //                         .getText(
-                                      //                           currentLocale,
-                                      //                         ),
-                                      //                     hintText: field
-                                      //                         .placeholder
-                                      //                         .getText(
-                                      //                           currentLocale,
-                                      //                         ),
-                                      //                     controller:
-                                      //                         _controller,
-                                      //                     // onFieldSubmitted: (value) {
-                                      //                     //   // formFamilyProviderRead.setValue(
-                                      //                     //   //   field.key,
-                                      //                     //   //   value,
-                                      //                     //   // );
-                                      //                     // },
-                                      //                     onChanged: (value) {
-                                      //                       ref
-                                      //                           .read(
-                                      //                             formProviderFamily(
-                                      //                               docId,
-                                      //                             ),
-                                      //                           )
-                                      //                           .setValue(
-                                      //                             field.key,
-                                      //                             value,
-                                      //                           );
-                                      //                     },
-                                      //                     validator: (value) {
-                                      //                       if (value == null ||
-                                      //                           value.isEmpty) {
-                                      //                         return "Поле обязательно для заполнения";
-                                      //                       }
-                                      //                       if (field.key ==
-                                      //                               'APPLICANT_TIN' &&
-                                      //                           value.length <
-                                      //                               9) {
-                                      //                         return "Введите минимальную длину";
-                                      //                       }
-
-                                      //                       return null;
-                                      //                     },
-                                      //                   );
-
-                                      //                 default:
-                                      //                   return Padding(
-                                      //                     padding:
-                                      //                         const EdgeInsets.only(
-                                      //                           bottom: 12,
-                                      //                         ),
-                                      //                     child: Text(
-                                      //                       "Неизвестный тип: ${field.type}",
-                                      //                     ),
-                                      //                   );
-                                      //               }
-                                      //             }).toList(),
-                                      //       ),
-                                      //     );
-                                      //   },
-                                      // );
                                     },
                                     child: Row(
                                       children: [
@@ -2211,6 +3332,48 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                 ],
                               ),
                             ),
+
+                            file.when(
+                              data: (data) {
+                                return Column(
+                                  children: [
+                                    Divider(),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        textWithH1Style("belka.png"),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              onPressed: () {},
+                                              icon: Icon(
+                                                Icons.edit_rounded,
+                                                color: Colors.blue,
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () {},
+                                              icon: Icon(
+                                                Icons.delete,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              },
+                              error:
+                                  (st, error) =>
+                                      Center(child: Text("${error}")),
+                              loading:
+                                  () => Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                            ),
                           ],
                         ),
                   ],
@@ -2220,315 +3383,226 @@ class _StepsPageState extends ConsumerState<StepsPage> {
           ),
         )
         : step.type == 'PAYMENT'
-        ? Container()
+        ? Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: greyTextFBorderColor),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: size.otstup18,
+              vertical: size.otstup15,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    textWithH1Style(
+                      "Электронная подпись",
+                      textAlign: TextAlign.start,
+                    ),
+                    SizedBox(height: size.otstup5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        textWithH2BlackStyle(
+                          "№ инвойса:",
+                          textAlign: TextAlign.start,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 16,
+                        ),
+                        SizedBox(height: size.otstup5),
+
+                        textWithH2BlackStyle(
+                          " 5555555555555",
+                          color: primaryGreenColor,
+                          fontSize: 16,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Divider(color: greyTextFBorderColor),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    textWithH1Style(
+                      "Номер заявки:",
+                      fontW: FontWeight.normal,
+                      fontsize: 16,
+                    ),
+                    SizedBox(height: size.otstup5),
+
+                    textWithH2BlackStyle("1208", textAlign: TextAlign.start),
+                  ],
+                ),
+                Divider(color: greyTextFBorderColor),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    textWithH1Style(
+                      "Дата:",
+                      fontW: FontWeight.normal,
+                      fontsize: 16,
+                    ),
+                    SizedBox(height: size.otstup5),
+
+                    textWithH2BlackStyle("12.08.2026"),
+                  ],
+                ),
+                Divider(color: greyTextFBorderColor),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    textWithH1Style(
+                      "Сумма:",
+                      fontW: FontWeight.normal,
+                      fontsize: 16,
+                    ),
+                    SizedBox(height: size.otstup5),
+
+                    Row(
+                      children: [
+                        textWithH2BlackStyle("120 "),
+                        textWithH2BlackStyle("Сомони"),
+                      ],
+                    ),
+                  ],
+                ),
+                Divider(color: greyTextFBorderColor),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    textWithH1Style(
+                      "Статус:",
+                      fontW: FontWeight.normal,
+                      fontsize: 16,
+                    ),
+                    SizedBox(height: size.otstup5),
+                    textWithH2BlackStyle("Не оплачен", color: Colors.red),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        )
         : RequirementStep(stepRequirement: requirements, documentId: docId);
     // : Container();
   }
 }
 
-class FontSettingContainer extends StatelessWidget {
-  const FontSettingContainer({super.key, required this.size});
-
-  final AdaptiveSizes size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: greyBorderColor),
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: size.otstup5,
-          vertical: size.otstup5,
-        ),
-        child: Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: greyBorderColor),
-                shape: BoxShape.circle,
-                color: Color(0xFFEBFFF3),
-              ),
-              child: Icon(Icons.add, color: primaryGreenColor),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.otstup15),
-              child: Text("Aaa", style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: greyBorderColor),
-                shape: BoxShape.circle,
-                color: Color(0xFFEBFFF3),
-              ),
-              child: Icon(Icons.remove, color: primaryGreenColor),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class InputTextField extends StatelessWidget {
-  final String labelText;
-  final String hintText;
-  final double? width;
-  final TextEditingController controller;
-  // final void Function(String)? onFieldSubmitted;
-  final void Function(String)? onChanged;
-  final String? Function(String?)? validator;
-  final Widget? suffixIcon;
-  final Key? formKey;
-  final AdaptiveSizes size;
-  final void Function()? onTap;
-  final int maxLength;
-  final TextInputType? keyboardType;
-  final FocusNode? focusNode;
-  final bool? isFocused;
-  final bool? readOnly;
-  final List<TextInputFormatter>? inputFormatters;
-  const InputTextField({
-    super.key,
-    required this.labelText,
-    required this.hintText,
-    this.width,
-    required this.controller,
-    // required this.onFieldSubmitted,
-    required this.onChanged,
-    required this.validator,
-    this.suffixIcon,
-    required this.formKey,
-    required this.size,
-    required this.onTap,
-    this.maxLength = 1,
-    this.keyboardType,
-    this.focusNode,
-    this.isFocused,
-    this.readOnly,
-    this.inputFormatters,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
+Widget _buildDropdown({
+  required Field field,
+  required List<ChoiceOption> options,
+  required void Function(String?) onChanged,
+  String? selectedValue,
+  AdaptiveSizes? size,
+}) {
+  return Padding(
+    padding: const EdgeInsets.only(top: 8, bottom: 10),
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
           text: TextSpan(
             children: [
               TextSpan(
-                text: labelText,
-                style: TextStyle(
+                text: field.title.ru,
+                style: const TextStyle(
                   color: primaryButtonColor,
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              TextSpan(
+              const TextSpan(
                 text: '* ',
                 style: TextStyle(color: primaryButtonColor, fontSize: 16),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 6),
-        GestureDetector(
-          onTap: () {},
-          child: SizedBox(
-            key: formKey,
-            width: width ?? double.infinity,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: size.otstup10),
-              child: TextFormField(
-                inputFormatters: inputFormatters,
-                readOnly: readOnly ?? false,
-                showCursor: isFocused,
-                focusNode: focusNode,
-                cursorOpacityAnimates: false,
-                keyboardType: keyboardType,
-                maxLines: maxLength,
-                validator: validator,
-                // onFieldSubmitted: onFieldSubmitted,
-                onChanged: onChanged,
-                controller: controller,
-                scrollPadding: EdgeInsets.zero,
-
-                decoration: InputDecoration(
-                  suffixIcon: suffixIcon,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: greyTextFBorderColor,
-                      width: 2,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: primaryButtonColor),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.red),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.red),
-                  ),
-                  hintText: hintText,
-                  hintStyle: TextStyle(fontWeight: FontWeight.w500),
-
-                  // suffixIcon: Icon(Icons.abc),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 14,
-                  ),
-                ),
-              ),
+        const SizedBox(height: 9),
+        DropdownButtonFormField2<String>(
+          value: selectedValue,
+          hint: SizedBox(
+            width: size!.screenWidth * 0.65,
+            child: Text(
+              field.placeholder.ru ?? '',
+              style: TextStyle(overflow: TextOverflow.ellipsis),
             ),
           ),
+          // hint: Text('Выберите  '),
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.only(left: 0, right: 8),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.grey[400]!, width: 2),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: primaryButtonColor),
+            ),
+            border: const OutlineInputBorder(),
+          ),
+          dropdownStyleData: DropdownStyleData(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.white,
+            ),
+          ),
+          items:
+              options.map((option) {
+                return DropdownMenuItem<String>(
+                  value: option.code,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: size.otstup10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: size.screenWidth * 0.6,
+                          child: Text(
+                            option.name.ru ??
+                                option.name.en ??
+                                option.code ??
+                                "",
+                            style: const TextStyle(
+                              height: 1.1,
+                              color: Colors.black,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Container(
+                          width: size.screenWidth * 0.6,
+                          height: 0.5,
+                          color: primaryGreenColor,
+                          margin: const EdgeInsets.only(top: 3),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+          selectedItemBuilder: (context) {
+            return options.map<Widget>((option) {
+              return SizedBox(
+                width: size!.screenWidth * 0.6,
+                child: Text(
+                  option.name.ru ?? option.name.en ?? option.code ?? "",
+                  style: const TextStyle(color: Colors.black),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            }).toList();
+          },
+          onChanged: onChanged,
         ),
       ],
-    );
-  }
-}
-
-// Widget buildDropdown(List<ChoiceOption> options) {
-//   final validItems =
-//       options
-//           .where((opt) => opt.code != null && opt.code!.isNotEmpty)
-//           .map(
-//             (opt) => DropdownMenuItem<String>(
-//               value: opt.code,
-//               child: SizedBox(
-//                 width: size.screenWidth * 0.7,
-//                 child: Text(
-//                   opt.name.ru ?? opt.name.en ?? opt.code ?? '',
-//                   overflow: TextOverflow.ellipsis,
-//                 ),
-//               ),
-//             ),
-//           )
-//           .toList();
-
-//   // Если ничего нет — показываем серую заглушку
-//   if (validItems.isEmpty) {
-//     validItems.add(
-//       const DropdownMenuItem<String>(
-//         enabled: false,
-//         child: Text(
-//           'Нет доступных вариантов',
-//           style: TextStyle(color: Colors.grey),
-//         ),
-//       ),
-//     );
-//   }
-
-//   return Padding(
-//     padding: const EdgeInsets.only(top: 8, bottom: 10),
-//     child: Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         // Заголовок с красной звёздочкой
-//         RichText(
-//           text: TextSpan(
-//             children: [
-//               TextSpan(
-//                 text: field.title.ru,
-//                 style: const TextStyle(
-//                   color: primaryButtonColor,
-//                   fontSize: 15,
-//                   fontWeight: FontWeight.bold,
-//                 ),
-//               ),
-//               const TextSpan(
-//                 text: ' *',
-//                 style: TextStyle(color: primaryButtonColor, fontSize: 16),
-//               ),
-//             ],
-//           ),
-//         ),
-//         const SizedBox(height: 9),
-
-//         // Сам дропдаун
-//         DropdownButtonFormField2<String>(
-//           value:
-//               currentValue, // ← это переменная из внешнего scope (уже объявлена выше)
-//           hint: Text(field.placeholder.ru ?? 'Выберите значение'),
-//           isExpanded: true,
-//           items: validItems,
-//           dropdownStyleData: DropdownStyleData(
-//             decoration: BoxDecoration(
-//               borderRadius: BorderRadius.circular(16),
-//               color: Colors.white,
-//             ),
-//           ),
-//           decoration: InputDecoration(
-//             contentPadding: const EdgeInsets.only(left: 0, right: 8),
-//             border: const OutlineInputBorder(),
-//             enabledBorder: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(10),
-//               borderSide: BorderSide(color: Colors.grey[400]!, width: 2),
-//             ),
-//             focusedBorder: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(10),
-//               borderSide: const BorderSide(color: primaryButtonColor),
-//             ),
-//           ),
-//           onChanged: (String? newValue) {
-//             // ← ЭТО САМОЕ ГЛАВНОЕ!
-//             ref.read(formFamilyProvider.notifier).setValue(field.key, newValue);
-//             // Зависимые дропдауны сами перезагрузятся
-//           },
-//         ),
-//       ],
-//     ),
-//   );
-// }
-
-// DropdownButton<String>(
-//   isExpanded: true,
-//   value: selectedValue,
-
-//   //  Это ключевой момент!
-
-//   onChanged: (value) {
-//     // твой обработчик
-//   },
-// ),
-
-List<DropdownMenuItem<String>> _buildDropdownItems(
-  List<ChoiceOption> options,
-  AdaptiveSizes size,
-) {
-  return options.map<DropdownMenuItem<String>>((option) {
-    return DropdownMenuItem<String>(
-      value: option.code,
-      child: Padding(
-        padding: EdgeInsets.only(top: size.otstup10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: size.screenWidth * 0.75,
-              child: Text(
-                option.name.ru ?? option.name.en ?? option.code ?? '',
-                style: const TextStyle(height: 1.1, color: Colors.black),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Container(
-              width: size.screenWidth * 0.75,
-              height: 0.5,
-              color: primaryGreenColor,
-              margin: const EdgeInsets.only(top: 3),
-            ),
-          ],
-        ),
-      ),
-    );
-  }).toList();
+    ),
+  );
 }

@@ -50,39 +50,16 @@ final shagiProvider = FutureProvider.family<StepsInfoAndRequirement, int>((
           .toSet()
           .toList();
 
-          for (var element in actionKeys) {
-            print("******CHOICEOPTIONAUTO**************");
-            print(element);
-            print("********************");
-
-          }
-  // final actionKeysForRef =
-  //     stepResponse.data.fieldGroups
-  //         .expand((group) => group.fields)
-  //         .where(
-  //           (field) =>
-  //               field.type == "DROP_DOWN" &&
-  //               field.actionKey!=null
-  //         )
-  //         .map((field) => field.actionKey!)
-  //         .toSet()
-  //         .toList();
-
-  //         for (var element in actionKeys) {
-  //           print("********************");
-  //           print(element);
-  //           print("********************");
-
-  //         }
+  for (var element in actionKeys) {
+    print("******CHOICEOPTIONAUTO**************");
+    print(element);
+    print("********************");
+  }
 
   // 5. Параллельно zagrughaem все DropDown
   final dropDownFutures = actionKeys.map((actionKey) {
     return repo1.getDropDownInfo(applicationId, currentLocale, actionKey);
   });
-
-  // final refDropdowns=actionKeysForRef.map((action){
-  //   return repo1.getSubRegionDropDown(applicationId, currentLocale, action, , code)
-  // })
 
   final dropDownResponses = await Future.wait(dropDownFutures);
 
@@ -94,7 +71,6 @@ final shagiProvider = FutureProvider.family<StepsInfoAndRequirement, int>((
       print("/////////ACTIONID/////////////");
       print(event.actionId);
       print("//////////////////////");
-
     }
   }
 

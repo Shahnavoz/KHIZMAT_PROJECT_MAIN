@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,11 +13,10 @@ import 'package:khizmat_new/feature/home/data/providers/all_updated_date_provide
 import 'package:khizmat_new/feature/home/presentation/pages/Notification_page.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/card_test_page.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/scan_qr_page.dart';
+import 'package:khizmat_new/feature/home/presentation/pages/search_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/buttons_bar_titles.dart';
-import 'package:khizmat_new/feature/home/presentation/widgets/container_as_button.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/horizontal_scrollable_widget.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/main_category_services_page.dart';
-import 'package:khizmat_new/feature/home/presentation/widgets/main_page_popular_services.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/tab_bar_uvedomleniya_page.dart';
 
 final queryProvider = StateProvider<String>((ref) => "");
@@ -135,9 +133,9 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                 Container(
                   child: Image.asset(
                     appThemeProvider
-                        ? "assets/images/image 17.png"
+                        ? "assets/images/image 22.png"
                         : "assets/images/DARK MAIN.png",
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fitHeight,
                   ),
                 ),
                 CustomScrollView(
@@ -260,6 +258,19 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                       nonActiveTextColor: Colors.black,
                                     ),
                                     MyTextFieldWithPrefix(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => SearchPage(
+                                                  categories: categories,
+                                                  documents: documents,
+                                                  currentLocale: currentLocale,
+                                                ),
+                                          ),
+                                        );
+                                      },
                                       width: size.screenWidth * 0.92,
                                       borderColor: greyTextFBorderColor,
                                       controller: searchController1,
@@ -441,158 +452,158 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                               style: h2TitleNotSoBold,
                                             ),
                                           ),
-                                          SizedBox(height: size.otstup20),
-                                          MainPagePopularServices(
-                                            size: size,
-                                            categories: categories,
-                                          ),
+                                          // SizedBox(height: size.otstup20),
+                                          // MainPagePopularServices(
+                                          //   size: size,
+                                          //   categories: categories,
+                                          // ),
                                           SizedBox(height: size.otstup18),
-                                          CarouselSlider.builder(
-                                            itemCount: 3,
-                                            itemBuilder: (
-                                              context,
-                                              index,
-                                              newIndex,
-                                            ) {
-                                              return Stack(
-                                                clipBehavior: Clip.none,
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      gradient:
-                                                          borderLinearGradient,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            12,
-                                                          ),
-                                                    ),
-                                                    child: Container(
-                                                      margin: EdgeInsets.all(
-                                                        3.3,
-                                                      ),
-                                                      width: double.infinity,
+                                          // CarouselSlider.builder(
+                                          //   itemCount: 3,
+                                          //   itemBuilder: (
+                                          //     context,
+                                          //     index,
+                                          //     newIndex,
+                                          //   ) {
+                                          //     return Stack(
+                                          //       clipBehavior: Clip.none,
+                                          //       children: [
+                                          //         Container(
+                                          //           decoration: BoxDecoration(
+                                          //             gradient:
+                                          //                 borderLinearGradient,
+                                          //             borderRadius:
+                                          //                 BorderRadius.circular(
+                                          //                   12,
+                                          //                 ),
+                                          //           ),
+                                          //           child: Container(
+                                          //             margin: EdgeInsets.all(
+                                          //               3.3,
+                                          //             ),
+                                          //             width: double.infinity,
 
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              12,
-                                                            ),
-                                                        gradient:
-                                                            RadialGradient(
-                                                              radius: 1.5,
-                                                              colors: [
-                                                                Color(
-                                                                  0xFF015057,
-                                                                ),
+                                          //             decoration: BoxDecoration(
+                                          //               borderRadius:
+                                          //                   BorderRadius.circular(
+                                          //                     12,
+                                          //                   ),
+                                          //               gradient:
+                                          //                   RadialGradient(
+                                          //                     radius: 1.5,
+                                          //                     colors: [
+                                          //                       Color(
+                                          //                         0xFF015057,
+                                          //                       ),
 
-                                                                // Color(
-                                                                //   0xFF000707,
-                                                                // ),
-                                                                Color(
-                                                                  0xFF5EB681,
-                                                                ),
+                                          //                       // Color(
+                                          //                       //   0xFF000707,
+                                          //                       // ),
+                                          //                       Color(
+                                          //                         0xFF5EB681,
+                                          //                       ),
 
-                                                                Color(
-                                                                  0xFF2BBA7D,
-                                                                ),
-                                                              ],
-                                                              stops: [
-                                                                0.0,
-                                                                0.0,
-                                                                1.0,
-                                                              ],
-                                                            ),
-                                                      ),
-                                                      height: 165,
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  size.otstup20,
-                                                              vertical:
-                                                                  size.otstup20,
-                                                            ),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            ContainerAsButton(
-                                                              textColor:
-                                                                  Colors.black,
-                                                              size: size,
-                                                              text: "Категория",
-                                                              backGroundColor:
-                                                                  // Color(
-                                                                  //   0xFF2BBA7D,
-                                                                  // ),
-                                                                  Colors.white,
-                                                            ),
-                                                            SizedBox(
-                                                              height:
-                                                                  size.otstup20,
-                                                            ),
-                                                            SizedBox(
-                                                              width:
-                                                                  size.screenWidth *
-                                                                  0.7,
-                                                              child: textWithH1Style(
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .start,
-                                                                "Государственная вакцинация населения",
-                                                                color:
-                                                                    Colors
-                                                                        .white,
-                                                                fontsize: 20,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                    bottom: 0,
-                                                    right: 0,
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            10,
-                                                          ),
-                                                      child: Image.asset(
-                                                        "assets/images/Vector (6).png",
-                                                        width:
-                                                            size.screenWidth *
-                                                            0.43,
-                                                      ),
-                                                    ),
-                                                  ),
+                                          //                       Color(
+                                          //                         0xFF2BBA7D,
+                                          //                       ),
+                                          //                     ],
+                                          //                     stops: [
+                                          //                       0.0,
+                                          //                       0.0,
+                                          //                       1.0,
+                                          //                     ],
+                                          //                   ),
+                                          //             ),
+                                          //             height: 165,
+                                          //             child: Padding(
+                                          //               padding:
+                                          //                   EdgeInsets.symmetric(
+                                          //                     horizontal:
+                                          //                         size.otstup20,
+                                          //                     vertical:
+                                          //                         size.otstup20,
+                                          //                   ),
+                                          //               child: Column(
+                                          //                 crossAxisAlignment:
+                                          //                     CrossAxisAlignment
+                                          //                         .start,
+                                          //                 children: [
+                                          //                   ContainerAsButton(
+                                          //                     textColor:
+                                          //                         Colors.black,
+                                          //                     size: size,
+                                          //                     text: "Категория",
+                                          //                     backGroundColor:
+                                          //                         // Color(
+                                          //                         //   0xFF2BBA7D,
+                                          //                         // ),
+                                          //                         Colors.white,
+                                          //                   ),
+                                          //                   SizedBox(
+                                          //                     height:
+                                          //                         size.otstup20,
+                                          //                   ),
+                                          //                   SizedBox(
+                                          //                     width:
+                                          //                         size.screenWidth *
+                                          //                         0.7,
+                                          //                     child: textWithH1Style(
+                                          //                       textAlign:
+                                          //                           TextAlign
+                                          //                               .start,
+                                          //                       "Государственная вакцинация населения",
+                                          //                       color:
+                                          //                           Colors
+                                          //                               .white,
+                                          //                       fontsize: 20,
+                                          //                     ),
+                                          //                   ),
+                                          //                 ],
+                                          //               ),
+                                          //             ),
+                                          //           ),
+                                          //         ),
+                                          //         Positioned(
+                                          //           bottom: 0,
+                                          //           right: 0,
+                                          //           child: ClipRRect(
+                                          //             borderRadius:
+                                          //                 BorderRadius.circular(
+                                          //                   10,
+                                          //                 ),
+                                          //             child: Image.asset(
+                                          //               "assets/images/Vector (6).png",
+                                          //               width:
+                                          //                   size.screenWidth *
+                                          //                   0.43,
+                                          //             ),
+                                          //           ),
+                                          //         ),
 
-                                                  Positioned(
-                                                    bottom: 20,
-                                                    right: 20,
-                                                    child: IconButton(
-                                                      onPressed: () {},
-                                                      icon: Icon(
-                                                        Icons
-                                                            .arrow_forward_ios_rounded,
-                                                        size:
-                                                            size.cancelIconSize50,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                            options: CarouselOptions(
-                                              autoPlay: true,
-                                              viewportFraction: 1,
-                                              aspectRatio: 2.2,
-                                              enlargeCenterPage: true,
-                                            ),
-                                          ),
+                                          //         Positioned(
+                                          //           bottom: 20,
+                                          //           right: 20,
+                                          //           child: IconButton(
+                                          //             onPressed: () {},
+                                          //             icon: Icon(
+                                          //               Icons
+                                          //                   .arrow_forward_ios_rounded,
+                                          //               size:
+                                          //                   size.cancelIconSize50,
+                                          //               color: Colors.white,
+                                          //             ),
+                                          //           ),
+                                          //         ),
+                                          //       ],
+                                          //     );
+                                          //   },
+                                          //   options: CarouselOptions(
+                                          //     autoPlay: true,
+                                          //     viewportFraction: 1,
+                                          //     aspectRatio: 2.2,
+                                          //     enlargeCenterPage: true,
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
                                     ),

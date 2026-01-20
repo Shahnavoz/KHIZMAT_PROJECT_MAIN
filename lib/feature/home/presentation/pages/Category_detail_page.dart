@@ -150,7 +150,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                               ),
                               SizedBox(height: size.otstup10),
                               SizedBox(
-                                width: size.screenWidth * 0.66,
+                                width: size.screenWidth * 0.8,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -160,7 +160,21 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                       ),
                                       textAlign: TextAlign.start,
                                       color: Colors.black54,
-                                      maxLines: !showAll ? 3 : 10,
+                                      maxLines: showAll ? 10 : 2,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          showAll = !showAll;
+                                        });
+                                      },
+                                      child: textWithH1Style(
+                                        showAll != true
+                                            ? "Подробнее"
+                                            : "Свернуть",
+                                        fontsize: 16,
+                                        color: primaryButtonColor,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -172,10 +186,10 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                               Column(
                                 children: [
                                   SizedBox(height: 20),
-                                  SvgPicture.asset(
-                                    "assets/images/Vector (3).svg",
-                                    width: 80,
-                                  ),
+                                  // SvgPicture.asset(
+                                  //   "assets/images/Vector (3).svg",
+                                  //   width: 80,
+                                  // ),
                                 ],
                               ),
                               Positioned(
@@ -205,7 +219,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                         size: size,
                         currentLocale: currentLocale,
                         selectedIndex: selectedIndex,
-                        oneActiveColor: primaryGreenColor,
+                        oneActiveColor: Colors.black,
                         nonActiveColor: Colors.grey[200],
                         activeTextColor: Colors.white,
                         nonActiveTextColor: Colors.black,
@@ -250,109 +264,126 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
 
                                   return GestureDetector(
                                     onTap: () async {
-                                      final allSpecializations =
-                                          model.uslugaSpecialization[doc.id] ??
-                                          [];
+                                      // final allSpecializations =
+                                      //     model.uslugaSpecialization[doc.id] ??
+                                      //     [];
 
-                                      if (allSpecializations.isEmpty) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (context) => UslugaInfoPage(
-                                                  uslugaInfo:
-                                                      uslugaDetailInfo[index],
-                                                  specializations: [],
-                                                  index: index,
-                                                  requirements: [],
-                                                ),
-                                          ),
-                                        );
-                                        return;
-                                      }
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => UslugaInfoPage(
+                                                uslugaInfo:
+                                                    uslugaDetailInfo[index],
+                                                specializations: [],
+                                                index: index,
+                                                requirements: [],
+                                                categoryId: widget.category.id,
+                                                doc: doc,
+                                              ),
+                                        ),
+                                      );
 
-                                      final selectedSpec =
-                                          allSpecializations.first;
+                                      // if (allSpecializations.isEmpty) {
+                                      //   Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder:
+                                      //           (context) => UslugaInfoPage(
+                                      //             uslugaInfo:
+                                      //                 uslugaDetailInfo[index],
+                                      //             specializations: [],
+                                      //             index: index,
+                                      //             requirements: [],
+                                      //           ),
+                                      //     ),
+                                      //   );
+                                      //   return;
+                                      // }
 
-                                      try {
-                                        // Ждём, пока загрузятся requirements
-                                        final allRequirements = await ref.read(
-                                          requirementsProvider((
-                                            doc.id,
-                                            selectedSpec.id,
-                                          )).future,
-                                        );
+                                      // final selectedSpec =
+                                      //     allSpecializations.first;
 
-                                        // Только после загрузки — переходим
-                                        if (!context.mounted) return;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (context) => UslugaInfoPage(
-                                                  uslugaInfo:
-                                                      uslugaDetailInfo[index],
-                                                  specializations:
-                                                      allSpecializations,
-                                                  index: index,
-                                                  requirements: allRequirements,
-                                                ),
-                                          ),
-                                        );
-                                      } catch (e) {
-                                        if (!context.mounted) return;
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              "Ошибка загрузки: $e",
-                                            ),
-                                          ),
-                                        );
-                                      }
+                                      // try {
+                                      //   // Ждём, пока загрузятся requirements
+                                      //   final allRequirements = await ref.read(
+                                      //     requirementsProvider((
+                                      //       doc.id,
+                                      //       selectedSpec.id,
+                                      //     )).future,
+                                      //   );
+
+                                      //   // Только после загрузки — переходим
+                                      //   if (!context.mounted) return;
+                                      //   Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder:
+                                      //           (context) => UslugaInfoPage(
+                                      //             uslugaInfo:
+                                      //                 uslugaDetailInfo[index],
+                                      //             specializations:
+                                      //                 allSpecializations,
+                                      //             index: index,
+                                      //             requirements: allRequirements,
+                                      //           ),
+                                      //     ),
+                                      //   );
+                                      // } catch (e) {
+                                      //   if (!context.mounted) return;
+                                      //   ScaffoldMessenger.of(
+                                      //     context,
+                                      //   ).showSnackBar(
+                                      //     SnackBar(
+                                      //       content: Text(
+                                      //         "Ошибка загрузки: $e",
+                                      //       ),
+                                      //     ),
+                                      //   );
+                                      // }
                                     },
                                     child: ListTile(
                                       contentPadding: EdgeInsets.symmetric(
                                         horizontal: size.otstup20,
                                         vertical: size.otstup10,
                                       ),
-                                      leading: Container(
-                                        decoration: BoxDecoration(
-                                          color:
-                                              index % 2 == 0
-                                                  ? primaryGreenColor
-                                                  : secondaryGreenColor,
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(13.0),
-                                          child: Image.network(
-                                            filteredDocuments[index].icon,
-                                            color: Colors.white,
-                                            width: size.imageSize50,
-                                          ),
-                                        ),
-                                      ),
+                                      // leading: Container(
+                                      //   decoration: BoxDecoration(
+                                      //     color:
+                                      //         index % 2 == 0
+                                      //             ? primaryGreenColor
+                                      //             : secondaryGreenColor,
+                                      //     borderRadius: BorderRadius.circular(
+                                      //       10,
+                                      //     ),
+                                      //   ),
+                                      //   child: Padding(
+                                      //     padding: const EdgeInsets.all(13.0),
+                                      //     child: Image.network(
+                                      //       filteredDocuments[index].icon,
+                                      //       color: Colors.white,
+                                      //       width: size.imageSize50,
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       title: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           SizedBox(
                                             child: textWithH1Style(
                                               color: Colors.black,
-                                              filteredDocuments[index]
-                                                  .title
+                                              filteredDocuments[index].title
                                                   .getText(currentLocale),
                                               textAlign: TextAlign.start,
-                                              fontsize: 14,
+                                              fontsize: 16,
                                               fontW: FontWeight.w700,
                                               // maxLines: 3,
                                             ),
                                           ),
+
                                           // textWithH1Style(
                                           //   filteredDocuments[index]
                                           //       .category
@@ -363,6 +394,12 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                           //   fontsize: 16,
                                           //   maxLines: 3,
                                           // ),
+                                          SizedBox(height: size.otstup5),
+                                          textWithH1Style(textAlign: TextAlign.start,
+                                            "Срок получения: ${uslugaDetailInfo[index].data.expiryDate == 0 ? "Онлайн (мгновенно)" : uslugaDetailInfo[index].data.expiryDate} ${uslugaDetailInfo[index].data.expiryDate != 0 ? "дней" : " "}",
+                                            fontsize: 16,
+                                            color: primaryGreenColor,
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -382,7 +419,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                   },
                   error:
                       (error, st) => Center(
-                        child: Text('Errroooror!!${error.toString()},${st}'),
+                        child: Text('Errrooor!!${error.toString()},${st}'),
                       ),
                   loading:
                       () => SizedBox(height: 450, child: CategoryPageShimmer()),

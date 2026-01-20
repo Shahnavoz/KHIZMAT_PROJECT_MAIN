@@ -3,12 +3,12 @@ import 'package:khizmat_new/feature/home/data/models/usluga_specialization.dart'
 
 class CombinedUslugaData {
   final Map<int, List<UslugaDetailInfo>> uslugaDetailInfo;
-  final Map<int, List<MySpecialization>> uslugaSpecialization;
+  // final Map<int, List<MySpecialization>> uslugaSpecialization;
   // final Map<int, List<Requirement>> uslugaRequirement;
 
   CombinedUslugaData({
     required this.uslugaDetailInfo,
-    required this.uslugaSpecialization,
+    // required this.uslugaSpecialization,
     // required this.uslugaRequirement,
   });
 }

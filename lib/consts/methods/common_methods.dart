@@ -28,36 +28,93 @@ void makePhoneCall(String phoneNumber) async {
   }
 }
 
-
-
-/// Открывает Telegram по username, ID, боту или каналу
 Future<void> openTelegram(String telegramIdentifier) async {
-  // Убираем лишние символы: @, пробелы и т.д.
-  final cleaned = telegramIdentifier.trim().replaceAll('@', '');
-
-  if (cleaned.isEmpty) {
+  final username = telegramIdentifier.trim().replaceAll('@', '').trim();
+  
+  if (username.isEmpty) {
     throw Exception("Telegram username не может быть пустым");
   }
 
-  // Список возможных ссылок (пробуем по очереди — что сработает, то и откроет)
   final urls = [
-    'tg://resolve?domain=$cleaned',           // Основной способ (открывает в приложении)
-    'https://t.me/$cleaned',                   // Открывает в браузере → перекидывает в приложение
-    'https://telegram.me/$cleaned',            // Альтернатива
+    'https://t.me/$username', 
+    'https://telegram.me/$username', 
+    'tg://resolve?domain=$username',  
   ];
+
+  Exception? lastError;
 
   for (final urlString in urls) {
     final uri = Uri.parse(urlString);
     try {
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-        return; // Успешно открыли — выходим
-      }
+      await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      return; 
     } catch (e) {
-      continue; // Пробуем следующий вариант
+      lastError = e as Exception? ?? Exception(e.toString());
     }
   }
 
-  // Если ничего не сработало
-  throw Exception("Не удалось открыть Telegram. Установлено ли приложение?");
+  throw Exception(
+    "Не удалось открыть Telegram.\n\n"
+    "• Установлено ли приложение Telegram?\n"
+    "• На Android → добавьте <queries> в AndroidManifest.xml\n"
+    "• Попробуйте открыть https://t.me/$username в браузере телефона"
+  );
+}
+
+/// Открывает Telegram по username, ID, боту или каналу
+// Future<void> openTelegram(String telegramIdentifier) async {
+//   // Убираем лишние символы: @, пробелы и т.д.
+//   final cleaned = telegramIdentifier.trim().replaceAll('@', '');
+
+//   if (cleaned.isEmpty) {
+//     throw Exception("Telegram username не может быть пустым");
+//   }
+
+//   // Список возможных ссылок (пробуем по очереди — что сработает, то и откроет)
+//   final urls = [
+//     'tg://resolve?domain=$cleaned', // Основной способ (открывает в приложении)
+//     'https://t.me/$cleaned', // Открывает в браузере → перекидывает в приложение
+//     'https://telegram.me/$cleaned', // Альтернатива
+//   ];
+
+//   for (final urlString in urls) {
+//     final uri = Uri.parse(urlString);
+//     try {
+//       if (await canLaunchUrl(uri)) {
+//         await launchUrl(uri, mode: LaunchMode.externalApplication);
+//         return; // Успешно открыли — выходим
+//       }
+//     } catch (e) {
+//       continue; // Пробуем следующий вариант
+//     }
+//   }
+
+//   // Если ничего не сработало
+//   throw Exception("Не удалось открыть Telegram. Установлено ли приложение?");
+// }
+
+String? validateCertificateOwner(
+  String? value, {
+  bool isIndividualEntrepreneur = false,
+}) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Поле обязательно для заполнения';
+  }
+
+  final parts = value.trim().split(' ');
+
+  if (!isIndividualEntrepreneur) {
+    if (parts.length < 3) {
+      return 'Введите полное ФИО (Фамилия Имя Отчество)';
+    }
+  } else {
+    if (parts.length < 4) {
+      return 'Введите ФИО и статус ИП полностью';
+    }
+  }
+
+  return null;
 }

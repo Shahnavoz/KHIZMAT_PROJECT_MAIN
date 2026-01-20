@@ -34,6 +34,16 @@ TextStyle categoryTextRobotoTitle = GoogleFonts.roboto(
   fontSize: 16,
   // fontWeight: FontWeight.normal,
 );
+TextStyle Roboto15T = GoogleFonts.roboto(
+  fontSize: 15,
+  fontWeight: FontWeight.w400,
+  color: Color(0xFF686868)
+);
+TextStyle Roboto15C = GoogleFonts.roboto(
+  fontSize: 15,
+  fontWeight: FontWeight.w200,
+  color: Color(0xFFAFAFAF)
+);
 
 TextStyle h2Title = GoogleFonts.robotoFlex(
   fontSize: 15,
@@ -66,14 +76,19 @@ Widget textH2GreyTitle(
   String text, {
   Color textColor = primaryGreyTextColor,
   FontWeight fontWeight = FontWeight.w400,
+  double fontSize=15
 }) {
   return Text(
     text,
+    // maxLines: 1,
+    // overflow: TextOverflow.ellipsis,
     style: GoogleFonts.robotoFlex(
-      fontSize: 15,
+      fontSize: fontSize,
       fontWeight: fontWeight,
       // height: 15,
       color: textColor,
+      
+      
     ),
   );
 }
@@ -90,7 +105,7 @@ Widget textWithH1Style(
     maxLines: maxLines,
     text,
     overflow: TextOverflow.ellipsis,
-    style: GoogleFonts.ibmPlexSans(
+    style: GoogleFonts.roboto(
       fontSize: fontsize,
       fontWeight: fontW,
       height: 1.2,
@@ -117,7 +132,7 @@ Widget textCWithH2GreyStyle(
   Color color = primaryGreyTextColor,
   FontWeight fontweight = FontWeight.w400,
   int? maxLines,
-  double fontSize=15
+  double fontSize = 15,
 }) {
   return Text(
     maxLines: maxLines,
@@ -138,7 +153,7 @@ Widget textWithH2BlackStyle(
   double fontSize = 15,
   FontWeight fontWeight = FontWeight.bold,
   Color color = Colors.black,
-  int maxline=2
+  int maxline = 2,
 }) {
   return Text(
     text,
@@ -146,7 +161,6 @@ Widget textWithH2BlackStyle(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
-      
     ),
     textAlign: textAlign,
     maxLines: maxline,
@@ -177,8 +191,6 @@ Widget sameStyleDifColor(String text, {Color color = const Color(0xFF4E4E4E)}) {
   );
 }
 
-
-
 Widget scrollTextWithH1Style(
   String text, {
   TextAlign textAlign = TextAlign.start,
@@ -200,7 +212,7 @@ Widget scrollTextWithH1Style(
                 Colors.transparent,
                 Colors.black,
                 Colors.black,
-                Colors.transparent
+                Colors.transparent,
               ],
               stops: [0.0, 0.05, 0.95, 1.0],
             ).createShader(rect);
@@ -237,16 +249,14 @@ Widget scrollTextWithH1Style(
   );
 }
 
-
-
 Widget smartScrollableLastLine(
   String text, {
   double fontSize = 18,
   Color color = Colors.black,
   FontWeight fontWeight = FontWeight.w500,
   TextAlign textAlign = TextAlign.start,
-  int maxLines = 3,            
-  double extraRightPadding = 120.0, 
+  int maxLines = 3,
+  double extraRightPadding = 120.0,
 }) {
   return LayoutBuilder(
     builder: (context, constraints) {
@@ -301,12 +311,18 @@ Widget smartScrollableLastLine(
               right: 0,
               height: lineHeight + 4,
               child: ShaderMask(
-                shaderCallback: (rect) => const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [Colors.transparent, Colors.black, Colors.black, Colors.transparent],
-                  stops: [0.0, 0.05, 0.95, 1.0],
-                ).createShader(rect),
+                shaderCallback:
+                    (rect) => const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black,
+                        Colors.black,
+                        Colors.transparent,
+                      ],
+                      stops: [0.0, 0.05, 0.95, 1.0],
+                    ).createShader(rect),
                 blendMode: BlendMode.dstIn,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,

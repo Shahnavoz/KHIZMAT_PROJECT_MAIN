@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
+import 'package:khizmat_new/feature/documents/presentation/pages/my_documents_page.dart';
 import 'package:khizmat_new/feature/history/presentation/pages/history_page.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/new_home_page.dart';
 import 'package:khizmat_new/feature/profile/presentation/pages/profile_page.dart';
@@ -26,15 +27,20 @@ class _BottomNavPageState extends State<BottomNavPage> {
     "assets/icons/mainPageIcon.svg",
     "assets/icons/UslugaPageIcon.svg",
     "assets/icons/historyPageIcon.svg",
-    "assets/icons/profilePageIcon.svg"
+    "assets/icons/profilePageIcon.svg",
     // Icons.home,
     // Icons.account_balance,
     // Icons.access_time,
     // Icons.person,
   ];
 
-  final List<String> labels = ["Главная", "Услуги", "История", "Профиль"];
-  List<Widget> pages = [NewHomePage(), Scaffold(), HistoryPage(), ProfilePage()];
+  final List<String> labels = ["Главная", "Документы", "История", "Профиль"];
+  List<Widget> pages = [
+    NewHomePage(),
+    MyDocumentsPage(),
+    HistoryPage(),
+    ProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +69,10 @@ class _BottomNavPageState extends State<BottomNavPage> {
                   //   size: size.cancelIconSize50,
                   //   color: isActive ? navActiveIconColor : navIconColor,
                   // ),
-                  SvgPicture.asset(icons[index]),
+                  SvgPicture.asset(
+                    icons[index],
+                    color: isActive ? primaryButtonColor : greyBorderColor,
+                  ),
                   const SizedBox(height: 7),
                   if (!isActive)
                     Text(
@@ -92,196 +101,3 @@ class _BottomNavPageState extends State<BottomNavPage> {
     );
   }
 }
-      // BottomNavigationBar(
-      //   onTap: (value) {
-      //     setState(() {
-      //       currentIndex = value;
-      //     });
-      //   },
-      //   showSelectedLabels: false,
-      //   type: BottomNavigationBarType.fixed,
-      //   currentIndex: currentIndex,
-      //   // selectedItemColor: primaryButtonColor,
-      //   selectedIconTheme: IconThemeData(color: primaryButtonColor),
-      //   unselectedIconTheme: IconThemeData(color: navIconColor),
-      //   unselectedLabelStyle: TextStyle(
-      //     color: Colors.black,
-      //     fontWeight: FontWeight.bold,
-      //   ),
-      //   items: [
-      //     BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.account_balance),
-      //       label: "Услуги",
-      //     ),
-      //     BottomNavigationBarItem(icon: Icon(Icons.history), label: "История"),
-      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: "Профиль"),
-      //   ],
-      // ),
-
-      //  Center(child: Text("data")),
-
-      // Stack(
-      //   children: [
-      //     Positioned(
-      //       bottom: 0,
-      //       left: 0,
-      //       child: Container(
-      //         width: size.screenWidth,
-      //         height: 80,
-      //         // color: Colors.grey,
-      //         child: Stack(
-      //           children: [
-      //             CustomPaint(
-      //               size: Size(size.screenWidth, size.screenHeight),
-      //               painter: BNBCustomPainter(),
-      //             ),
-
-      //             Center(
-      //               heightFactor: 0.6,
-      //               child: Container(
-      //                 decoration: BoxDecoration(
-      //                   color: Colors.white,
-      //                   shape: BoxShape.circle,
-      //                 ),
-      //                 child: Padding(
-      //                   padding: const EdgeInsets.all(18.0),
-      //                   child: Icon(Icons.qr_code, color: Colors.amber),
-      //                 ),
-      //               ),
-
-      //               //  FloatingActionButton(
-      //               //   shape: ShapeBorder.lerp(a, b, t),
-      //               //   onPressed: () {},
-      //               //   backgroundColor: Colors.amber,
-      //               //   child: Icon(Icons.qr_code),
-      //               //   elevation: 0.1,
-      //               // ),
-      //             ),
-
-      //             Container(
-      //               width: size.screenWidth,
-      //               height: 80,
-      //               child: Row(
-      //                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //                 children:List.generate(icons.length, (index)=>IconButton(onPressed: (){}, icon: icons[index])),
-      //                 //  [
-      //                 //   IconButton(onPressed: (){}, icon: Icon(Icons.home)),
-      //                 //   IconButton(onPressed: (){}, icon: Icon(Icons. payment)),
-      //                 //   SizedBox(width: size.screenWidth*0.020,),
-      //                 //   IconButton(onPressed: (){}, icon: Icon(Icons.grid_view)),
-      //                 //   IconButton(onPressed: (){}, icon: Icon(Icons.person)),
-      //                 //   // IconButton(onPressed: (){}, icon: Icon(Icons.home)),
-      //                 // ],
-      //               ),
-      //             )
-      //           ],
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
-      // bottomNavigationBar: CurvedNavigationBar(
-      //   // letIndexChange: (value) {
-      //   //   if(currentIndex==2){
-      //   //     return false;
-      //   //   }else{
-      //   //     return true;
-      //   //   }
-      //   // },
-      //   onTap: (value) {
-      //     setState(() {
-      //       currentIndex = value;
-      //     });
-      //   },
-      //   index: currentIndex,
-      //   // color:currentIndex==2? activeIconColor : Colors.white,
-      //   buttonBackgroundColor:
-      //       currentIndex == 2 ? activeIconColor : nonActiveIconColor,
-      //   backgroundColor: Colors.transparent,
-      //   items: [
-      //     Column(
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         Icon(
-      //           Icons.home_filled,
-      //           color: currentIndex == 0 ? activeIconColor : nonActiveIconColor,
-      //         ),
-      //         currentIndex != 0
-      //             ? Text("Главная", style: TextStyle(color: nonActiveIconColor))
-      //             : SizedBox.shrink(),
-      //       ],
-      //     ),
-      //     Column(
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         Icon(
-      //           Icons.payments_rounded,
-      //           color: currentIndex == 1 ? activeIconColor : nonActiveIconColor,
-      //         ),
-      //         Text("Платежи", style: TextStyle(color: nonActiveIconColor)),
-      //       ],
-      //     ),
-      //     Container(
-      //       decoration: BoxDecoration(shape: BoxShape.circle),
-      //       child: Icon(
-      //         Icons.qr_code,
-      //         size: 50,
-      //         color: currentIndex == 2 ? Colors.white : activeIconColor,
-      //       ),
-      //     ),
-      //     Column(
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         Icon(
-      //           Icons.grid_view_rounded,
-      //           color: currentIndex == 3 ? activeIconColor : nonActiveIconColor,
-      //         ),
-      //         Text("Услуги", style: TextStyle(color: nonActiveIconColor)),
-      //       ],
-      //     ),
-      //     Column(
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         Icon(
-      //           Icons.person_2,
-      //           color: currentIndex == 4 ? activeIconColor : nonActiveIconColor,
-      //         ),
-      //         Text("Документы", style: TextStyle(color: nonActiveIconColor)),
-      //       ],
-      //     ),
-      //   ],
-      // ),
-//     );
-//   }
-// }
-
-// class BNBCustomPainter extends CustomPainter {
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     Paint paint =
-//         Paint()
-//           ..color = Colors.white
-//           ..style = PaintingStyle.fill;
-//     Path path = Path()..moveTo(0, 0);
-//     path.quadraticBezierTo(size.width * 0.20, 0, size.width * 0.35, 0);
-//     path.quadraticBezierTo(size.width * 0.40, 0, size.width * 0.40, 20);
-//     path.arcToPoint(
-//       Offset(size.width * 0.60, 20),
-//       radius: Radius.circular(10),
-//       clockwise: false,
-//     );
-//     path.quadraticBezierTo(size.width * 0.60, 0, size.width * 0.65, 0);
-//     path.quadraticBezierTo(size.width * 0.80, 0, size.width, 0);
-//     path.lineTo(size.width, size.height);
-//     path.lineTo(0, size.height);
-//     path.close();
-
-//     canvas.drawPath(path, paint);
-//   }
-
-//   @override
-//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-//     return false;
-//   }
-// }

@@ -69,7 +69,7 @@ final combinedUslugaDataProvider = FutureProvider.family<
   if (documents.isEmpty) {
     return CombinedUslugaData(
       uslugaDetailInfo: {categoryId: []},
-      uslugaSpecialization: {},
+      // uslugaSpecialization: {}, 
     );
   }
 
@@ -77,21 +77,21 @@ final combinedUslugaDataProvider = FutureProvider.family<
   final results = await Future.wait(
     documents.map((doc) async {
       final detail = await repo.getUslugaDetailInfo(doc.id);
-      final specResp = await repo.getUsluguSpecialization(doc.id);
+      // final specResp = await repo.getUsluguSpecialization(doc.id);
 
-      final specs = specResp.data.specializations;
-      final sortedSpecs =
-          specs.isEmpty
-                ? <MySpecialization>[]
-                : List<MySpecialization>.from(specs)
-            ..sort(
-              (a, b) => (a.position ?? 999999).compareTo(b.position ?? 999999),
-            );
+      // final specs = specResp.data.specializations;
+      // final sortedSpecs =
+      //     specs.isEmpty
+      //           ? <MySpecialization>[]
+      //           : List<MySpecialization>.from(specs)
+      //       ..sort(
+      //         (a, b) => (a.position ?? 999999).compareTo(b.position ?? 999999),
+      //       );
 
       return _DocResult(
         docId: doc.id,
         detail: detail,
-        specializations: sortedSpecs,
+        // specializations: sortedSpecs,
         categoryId: detail.data.categoryId,
       );
     }),
@@ -99,28 +99,28 @@ final combinedUslugaDataProvider = FutureProvider.family<
 
   // 3. Группируем
   final detailList = <UslugaDetailInfo>[];
-  final specMap = <int, List<MySpecialization>>{};
+  // final specMap = <int, List<MySpecialization>>{};
 
   for (final r in results) {
     detailList.add(r.detail);
-    specMap[r.docId] = r.specializations;
+    // specMap[r.docId] = r.specializations;
   }
 
   return CombinedUslugaData(
     uslugaDetailInfo: {categoryId: detailList},
-    uslugaSpecialization: specMap,
+    // uslugaSpecialization: specMap,
   );
 });
 
 class _DocResult {
   final int docId;
   final UslugaDetailInfo detail;
-  final List<MySpecialization> specializations;
+  // final List<MySpecialization> specializations;
   final int categoryId;
   _DocResult({
     required this.docId,
     required this.detail,
-    required this.specializations,
+    // required this.specializations,
     required this.categoryId,
   });
 }

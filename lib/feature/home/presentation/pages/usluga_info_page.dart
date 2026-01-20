@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +10,7 @@ import 'package:khizmat_new/feature/authorization/presentation/widgets/my__butto
 import 'package:khizmat_new/feature/home/data/models/usluga_detail_info.dart';
 import 'package:khizmat_new/feature/home/data/models/usluga_requirement.dart';
 import 'package:khizmat_new/feature/home/data/models/usluga_specialization.dart';
+import 'package:khizmat_new/feature/home/data/providers/all_updated_date_provider.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/steps_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/detail_info_row_widget.dart';
 
@@ -19,12 +19,16 @@ class UslugaInfoPage extends ConsumerStatefulWidget {
   final List<MySpecialization> specializations;
   final List<Requirement> requirements;
   final int index;
+  final int categoryId;
+  final Document doc;
   const UslugaInfoPage({
     super.key,
     required this.uslugaInfo,
     required this.specializations,
     required this.index,
     required this.requirements,
+    required this.categoryId,
+    required this.doc,
   });
 
   @override
@@ -44,148 +48,174 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
     final currentLocale = ref.watch(localeProvider);
     final infoDoc = widget.uslugaInfo.data.document;
     final allInfo = widget.uslugaInfo.data;
-    // List<MySpecialization> specs = [];
-    // if (widget.specializations.isNotEmpty &&
-    //     widget.index < widget.specializations.length) {
-    //   final item = widget.specializations[widget.index];
-    //   specs = item.data.specializations ?? [];
-    // }
 
-    final List<Widget> expansionTiles = [];
-    expansionTiles.add(
-      MyExpansionTile(
-        size: size,
-        title: "Детальная информация",
-        detailInfo: widget.uslugaInfo,
-        currentLocale: currentLocale,
-      ),
+    final combinedDataUslugi = ref.watch(
+      specializationProvider(widget.categoryId),
     );
 
-    if (widget.specializations.isNotEmpty) {
-      expansionTiles.add(
-        Padding(
-          padding: EdgeInsets.only(top: size.otstup10),
-          child: SpecializationTile(
-            size: size,
-            title: "Специализации",
-            specializations: widget.specializations,
-            currentLocale: currentLocale,
-          ),
-        ),
-      );
-    }
+    return combinedDataUslugi.when(
+      data: (data) {
+        final allSpecializations =
+            data.uslugaSpecialization[widget.doc.id] ?? [];
 
-    if (widget.specializations.isNotEmpty && widget.requirements.isNotEmpty) {
-      expansionTiles.add(
-        Padding(
-          padding: EdgeInsets.only(top: size.otstup10),
-          child: RequirementTile(
+        final List<Widget> tiles = [
+          MyExpansionTile(
             size: size,
-            title: 'Требования',
-            requirements: widget.requirements,
+            title: "Детальная информация",
+            detailInfo: widget.uslugaInfo,
             currentLocale: currentLocale,
           ),
-        ),
-      );
-    }
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Column(
-          children: [
-            textWithH1Style(
-              "Назад",
-              fontW: FontWeight.w500,
-              color: Colors.black,
-            ),
-            SizedBox(height: 5),
-          ],
-        ),
-        leading: Padding(
-          padding: EdgeInsets.only(left: 25),
-          child: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: greyTextFBorderColor)),
-          borderRadius: BorderRadius.horizontal(
-            right: Radius.circular(10),
-            left: Radius.circular(10),
-          ),
-          color: Colors.white,
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: size.otstup18,
-            vertical: size.otstup20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  textWithH1Style("Стоимость:"),
-                  textWithH1Style("${allInfo.serviceCost.toString()}c"),
-                ],
-              ),
-              SizedBox(height: size.otstup20),
-              My_Button(
-                borderRadius: 50,
-                width: double.infinity,
+        ];
+
+        if (allSpecializations.isNotEmpty) {
+          tiles.add(
+            Padding(
+              padding: EdgeInsets.only(top: size.otstup10),
+              child: SpecializationTile(
                 size: size,
-                backgroundColor: primaryButtonColor,
-                borderColor: primaryButtonColor,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => StepsPage(
-                            docId: widget.uslugaInfo.data.document.id,
-                            index: widget.index,
+                title: "Специализации",
+                specializations: allSpecializations,
+                currentLocale: currentLocale,
+              ),
+            ),
+          );
+
+          final selectedSpec = allSpecializations.first;
+          tiles.add(
+            Padding(
+              padding: EdgeInsets.only(top: size.otstup10),
+              child: Consumer(
+                builder: (context, ref, child) {
+                  // print(
+                  //   "Consumer требований: docId=${widget.doc.id}, specId=${selectedSpec.id}",
+                  // );
+
+                  final requirementsAsync = ref.watch(
+                    requirementsProvider((widget.doc.id, selectedSpec.id!)),
+                  );
+
+                  return requirementsAsync.when(
+                    data: (requirements) {
+                      // print("Требования загружены: ${requirements.length} шт.");
+                      return requirements.isEmpty
+                          ? SizedBox.shrink()
+                          : RequirementTile(
+                            size: size,
+                            title: 'Требования',
+                            requirements: requirements,
+                            currentLocale: currentLocale,
+                          );
+                    },
+                    loading:
+                        () => const Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(),
+                        ),
+                    error:
+                        (err, stack) => Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Text(
+                            "Ошибка загрузки требований: $err",
+                            style: TextStyle(color: Colors.red),
                           ),
-                    ),
-                    // MaterialPageRoute(builder: (context) => WebviewPage()),
+                        ),
                   );
                 },
-                child: textWithH1Style(
-                  "Получить услугу",
-                  color: Colors.white,
-                  fontsize: 15,
-                ),
               ),
-            ],
-          ),
-        ),
-      ),
-      body: Stack(
-        children: [
-          Container(
-            child: Image.asset(
-              "assets/images/WHITE MAINcut.png",
-              fit: BoxFit.cover,
-              width: double.infinity,
+            ),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.white,
+            title: Column(
+              children: [
+                textWithH1Style(
+                  "Назад",
+                  fontW: FontWeight.w500,
+                  color: Colors.black,
+                ),
+                SizedBox(height: 5),
+              ],
+            ),
+            leading: Padding(
+              padding: EdgeInsets.only(left: 25),
+              child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              ),
             ),
           ),
-          Container(
-            decoration: BoxDecoration(color: Colors.white.withOpacity(0.7)),
-          ),
-          SingleChildScrollView(
-            child: Container(
-              decoration: BoxDecoration(),
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              border: Border(top: BorderSide(color: greyTextFBorderColor)),
+              borderRadius: BorderRadius.horizontal(
+                right: Radius.circular(10),
+                left: Radius.circular(10),
+              ),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: size.otstup18,
+                vertical: size.otstup20,
+              ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    // decoration: BoxDecoration(color: Colors.white),
-                    child: Padding(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      textWithH1Style("Стоимость:"),
+                      textWithH1Style("${allInfo.serviceCost.toString()}c"),
+                    ],
+                  ),
+                  SizedBox(height: size.otstup20),
+                  My_Button(
+                    borderRadius: 50,
+                    width: double.infinity,
+                    size: size,
+                    backgroundColor: primaryButtonColor,
+                    borderColor: primaryButtonColor,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => StepsPage(
+                                docId: widget.uslugaInfo.data.document.id,
+                                index: widget.index,
+                              ),
+                        ),
+                      );
+                    },
+                    child: textWithH1Style(
+                      "Получить услугу",
+                      color: Colors.white,
+                      fontsize: 15,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          body: Stack(
+            children: [
+              Image.asset(
+                "assets/images/WHITE MAINcut.png",
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+              Container(color: Colors.white.withOpacity(0.7)),
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: size.otstup20,
                         vertical: size.otstup10,
@@ -210,7 +240,6 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                                 vertical: size.otstup20,
                               ),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
@@ -229,9 +258,6 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                                           padding: const EdgeInsets.all(6.0),
                                           child: Image.asset(
                                             "assets/icons/image 15.png",
-                                            cacheWidth:
-                                                (size.screenWidth * 0.1)
-                                                    .toInt(),
                                           ),
                                         ),
                                       ),
@@ -268,8 +294,8 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                                   textWithH1Style(
                                     allInfo.organization.getText(currentLocale),
                                     fontsize: 15,
-                                    textAlign: TextAlign.start,
                                     fontW: FontWeight.w500,
+                                    textAlign: TextAlign.start,
                                   ),
                                 ],
                               ),
@@ -278,54 +304,65 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                         ],
                       ),
                     ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        ),
                       ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: size.otstup15,
-                        vertical: size.otstup15,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              MyTypeContainer(
-                                size: size,
-                                typeName: infoDoc.typeTitle.getText(
-                                  currentLocale,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: size.otstup15,
+                          vertical: size.otstup15,
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                MyTypeContainer(
+                                  size: size,
+                                  typeName: infoDoc.typeTitle.getText(
+                                    currentLocale,
+                                  ),
+                                  typeText: "Тип документа",
                                 ),
-                                typeText: "Тип документа",
-                              ),
-                              MyTypeContainer(
-                                size: size,
-                                typeText: "Срок действия",
-                                typeName:
-                                    "${allInfo.expiryDate.toString()} (год)",
-                              ),
-                            ],
-                          ),
-
-                          SizedBox(height: 10),
-
-                          Column(children: expansionTiles),
-                        ],
+                                MyTypeContainer(
+                                  size: size,
+                                  typeText: "Срок действия",
+                                  typeName: "${allInfo.expiryDate} (год)",
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                            Column(children: tiles),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      loading:
+          () => Scaffold(
+            backgroundColor: Colors.white,
+            body: Center(
+              child: CircularProgressIndicator(
+                color: primaryGreenColor,
+                strokeWidth: 1,
               ),
             ),
           ),
-        ],
-      ),
+      error:
+          (err, stack) =>
+              Scaffold(body: Center(child: Text("Ошибка загрузки: $err"))),
     );
   }
 }
@@ -382,17 +419,16 @@ class _MyExpansionTileState extends State<MyExpansionTile> {
               ),
               buildCustomRow(
                 "Государственная пошлина",
-                info.usageFee == false ? "Не имеется" : "",//field?
+                info.usageFee == false ? "Не имеется" : "", //field?
                 fontsize: 15,
               ),
               buildCustomRow(
                 "Ежемесячный сбор",
-                "Не применяется",//field?
+                "Не применяется", //field?
                 fontsize: 15,
               ),
               buildCustomRow(
                 "Подтверждающий документ",
-                
 
                 '${info.documentNumber ?? ""}(${info.documentDate.day}.${info.documentDate.month.toString().padLeft(2, "0")}.${info.documentDate.year})',
                 fontsize: 15,
@@ -400,7 +436,6 @@ class _MyExpansionTileState extends State<MyExpansionTile> {
               GestureDetector(
                 onTap: () {
                   openUrl(info.documentLink.toString());
-                  
                 },
                 child: buildCustomRow(
                   "Ссылка на подтверждающий документ",
@@ -436,7 +471,6 @@ class RequirementTile extends ConsumerStatefulWidget {
 }
 
 class _RequirementTileState extends ConsumerState<RequirementTile> {
-  int? _expandedIndex;
   @override
   Widget build(BuildContext context) {
     return Container(

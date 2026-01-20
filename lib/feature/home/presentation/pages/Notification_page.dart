@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
@@ -126,6 +125,13 @@ class _NotificationPageState extends State<NotificationPage> {
                                         color: greyTextFBorderColor,
                                       ),
                                       color: Color(0xFFF7FFFB),
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xFFF6FFFA),
+                                          Color(0xFFFFFFFF),
+                                        ],
+                                        stops: [0.0,1.0]
+                                      ),
                                       borderRadius: BorderRadius.circular(15),
                                     ),
                                     child: Column(
@@ -147,11 +153,9 @@ class _NotificationPageState extends State<NotificationPage> {
                                                 horizontal: size.otstup10,
                                                 vertical: size.otstup10,
                                               ),
-                                              child: textCWithH2GreyStyle(
-                                                maxLines: 15,
+                                              child: Text(
                                                 "Уважаемый абонент!Разрешение на начало строитель, выожрмол яво псмыфворпмс  ч фыпсдшг чффшспш пфысшг фпсноыча.",
-                                                textAlign: TextAlign.start,
-                                                fontSize: 15,
+                                                style: Roboto15T,
                                               ),
                                             ),
                                           ),
@@ -162,10 +166,9 @@ class _NotificationPageState extends State<NotificationPage> {
                                             horizontal: size.otstup10,
                                             vertical: size.otstup10,
                                           ),
-                                          child: textWithH1Style(
+                                          child: Text(
                                             "15:30",
-                                            color: greyDateColor,
-                                            textAlign: TextAlign.start,
+                                            style: Roboto15C,
                                           ),
                                         ),
                                       ],
