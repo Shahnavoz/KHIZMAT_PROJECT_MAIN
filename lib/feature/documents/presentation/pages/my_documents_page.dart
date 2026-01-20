@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/authorization/presentation/pages/main_question_page.dart';
+import 'package:khizmat_new/feature/home/data/models/my_documents_model.dart';
+import 'package:khizmat_new/feature/home/data/providers/my_documents_provider.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart';
 
-class MyDocumentsPage extends StatefulWidget {
+class MyDocumentsPage extends ConsumerStatefulWidget {
   const MyDocumentsPage({super.key});
 
   @override
-  State<MyDocumentsPage> createState() => _MyDocumentsPageState();
+  ConsumerState<MyDocumentsPage> createState() => _MyDocumentsPageState();
 }
 
-class _MyDocumentsPageState extends State<MyDocumentsPage> {
+class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
   var controller = TextEditingController();
   int selectedIndex = 0;
   int statusSelectedIndex = 0;
@@ -26,7 +28,9 @@ class _MyDocumentsPageState extends State<MyDocumentsPage> {
   @override
   Widget build(BuildContext context) {
     final size = AdaptiveSizes(context);
+    final asyncDocs = ref.watch(myDocumentsProvider);
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: CustomAppbar(
         title: "Шахриер Мирзония",
         leadingWidget: CircleAvatar(),
@@ -124,568 +128,693 @@ class _MyDocumentsPageState extends State<MyDocumentsPage> {
               ),
 
               SizedBox(height: size.screenHeight * 0.05),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(top: BorderSide(color: greyBorderColor)),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child:
-                    selectedIndex == 0
-                        ? Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: size.otstup20,
-                            vertical: size.otstup15,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              textWithH1Style(
-                                "Мои документы",
-                                textAlign: TextAlign.start,
+              asyncDocs.when(
+                data: (data) {
+                  final document = data.data.registers;
+                  final docsNonAsigned =
+                      document
+                          .where(
+                            (e) => e.status.status == StatusEnum.NOT_SIGNED,
+                          )
+                          .toList();
+                  final docsAsigned =
+                      document
+                          .where((e) => e.status.status == StatusEnum.ACTIVE)
+                          .toList();
+                  print('/////////////////////////');
+
+                  for (var element in docsAsigned) {
+                    print(element.document.ru);
+                  }
+                  print('/////////////////////////');
+
+                  final docs = data.data.registers;
+                  for (var doc in docs) {
+                    print(
+                      "→ ${doc.status}   → ${doc.status.runtimeType}   → ${doc.document?.ru}",
+                    );
+                  }
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border(top: BorderSide(color: greyBorderColor)),
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white
+                    ),
+                    child:
+                        selectedIndex == 0
+                            ? Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: size.otstup20,
+                                vertical: size.otstup15,
                               ),
-                              SizedBox(height: size.otstup18),
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: greyTextFBorderColor,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  textWithH1Style(
+                                    "Мои документы",
+                                    textAlign: TextAlign.start,
                                   ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: size.otstup10,
-                                    vertical: size.otstup5,
+                                  SizedBox(height: size.otstup18),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: greyTextFBorderColor,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: size.otstup10,
+                                        vertical: size.otstup5,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: List.generate(tabBars.length, (
+                                          index,
+                                        ) {
+                                          return Padding(
+                                            padding: EdgeInsets.symmetric(
+                                              // horizontal: size.otstup5,
+                                            ),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  statusSelectedIndex = index;
+                                                });
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color:
+                                                        statusSelectedIndex ==
+                                                                index
+                                                            ? greyBorderColor
+                                                            : greyTextFBorderColor,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  color:
+                                                      statusSelectedIndex ==
+                                                              index
+                                                          ? Colors.black
+                                                          : Colors.transparent,
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: size.otstup10,
+                                                    horizontal: size.otstup15,
+                                                  ),
+                                                  child: textWithH1Style(
+                                                    tabBars[index],
+                                                    fontsize: 16,
+                                                    color:
+                                                        statusSelectedIndex ==
+                                                                index
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                      ),
+                                    ),
                                   ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: List.generate(tabBars.length, (
-                                      index,
-                                    ) {
-                                      return Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          // horizontal: size.otstup5,
-                                        ),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              statusSelectedIndex = index;
-                                            });
-                                          },
-                                          child: Container(
+
+                                  SizedBox(height: size.otstup15),
+
+                                  statusSelectedIndex == 0
+                                      ? ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          final category =
+                                              document[index].category;
+                                          final documents =
+                                              document[index].document;
+                                          return Container(
                                             decoration: BoxDecoration(
                                               border: Border.all(
-                                                color:
-                                                    selectedIndex == index
-                                                        ? greyBorderColor
-                                                        : greyTextFBorderColor,
+                                                color: greyBorderColor,
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(5),
-                                              color:
-                                                  statusSelectedIndex == index
-                                                      ? Colors.black
-                                                      : Colors.transparent,
                                             ),
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: size.otstup10,
-                                                horizontal: size.otstup15,
-                                              ),
-                                              child: textWithH1Style(
-                                                tabBars[index],
-                                                fontsize: 16,
-                                                color:
-                                                    statusSelectedIndex == index
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  ),
-                                ),
-                              ),
-
-                              SizedBox(height: size.otstup15),
-
-                              statusSelectedIndex == 0
-                                  ? ListView.separated(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: greyBorderColor,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: size.otstup15,
-                                                vertical: size.otstup15,
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: size.otstup15,
+                                                    vertical: size.otstup15,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
-                                                      Image.asset(
-                                                        "assets/icons/Group 831885639.png",
-                                                      ),
-                                                      SizedBox(
-                                                        width: size.otstup15,
-                                                      ),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                      Row(
                                                         children: [
-                                                          textWithH1Style(
-                                                            "Справка несудимости",
-                                                            fontsize: 16,
-                                                          ),
-                                                          textWithH2BlackStyle(
-                                                            "Справки",
-                                                            fontSize: 16,
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            color:
-                                                                primaryGreenColor,
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                            color:
-                                                                greyBorderColor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                5,
-                                                              ),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets.all(
-                                                                6.0,
-                                                              ),
-                                                          child: Center(
-                                                            child: Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  top: BorderSide(
-                                                    color: greyBorderColor,
-                                                  ),
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                color: Color(0xFFF6FFFA),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: size.otstup15,
-                                                  vertical: size.otstup15,
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    textWithH1Style(
-                                                      "Дата выдачи: 01.12.25",
-                                                      fontsize: 14,
-                                                      color: greyBorderColor,
-                                                      fontW: FontWeight.w500,
-                                                    ),
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            index == 0
-                                                                ? Color(
-                                                                  0xFF53CDE5,
-                                                                )
-                                                                : Color(
-                                                                  0xFFF7EAEA,
+                                                          SizedBox(
+                                                            width:
+                                                                size.imageSize100,
+                                                            child:
+                                                                Image.network(
+                                                                  category
+                                                                      .iconId,
                                                                 ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              5,
-                                                            ),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  size.otstup30,
-                                                              vertical:
-                                                                  size.otstup10,
-                                                            ),
-                                                        child: textWithH1Style(
-                                                          index == 0
-                                                              ? "Активный"
-                                                              : "Не подписанный",
-                                                          fontsize: 13,
-                                                          color:
-                                                              index == 0
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .black,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    separatorBuilder:
-                                        (context, index) =>
-                                            SizedBox(height: size.otstup10),
-                                    itemCount: 2,
-                                  )
-                                  : statusSelectedIndex == 1
-                                  ? ListView.separated(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: greyBorderColor,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: size.otstup15,
-                                                vertical: size.otstup15,
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Image.asset(
-                                                        "assets/icons/Group 831885639.png",
-                                                      ),
-                                                      SizedBox(
-                                                        width: size.otstup15,
-                                                      ),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          textWithH1Style(
-                                                            "Справка несудимости",
-                                                            fontsize: 16,
                                                           ),
-                                                          textWithH2BlackStyle(
-                                                            "Справки",
-                                                            fontSize: 16,
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            color:
-                                                                primaryGreenColor,
-                                                            fontWeight:
-                                                                FontWeight.w400,
+                                                          SizedBox(
+                                                            width:
+                                                                size.otstup15,
+                                                          ),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              textWithH1Style(
+                                                                category
+                                                                    .title
+                                                                    .ru,
+                                                                fontsize: 16,
+                                                              ),
+                                                              SizedBox(
+                                                                width:
+                                                                    size.screenWidth *
+                                                                    0.6,
+                                                                child: textWithH2BlackStyle(
+                                                                  documents.ru,
+                                                                  fontSize: 16,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .start,
+                                                                  color:
+                                                                      primaryGreenColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  maxline: 2,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              border: Border.all(
+                                                                color:
+                                                                    greyBorderColor,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets.all(
+                                                                    6.0,
+                                                                  ),
+                                                              child: Center(
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .arrow_forward_ios,
+                                                                ),
+                                                              ),
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
                                                     ],
                                                   ),
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                            color:
-                                                                greyBorderColor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                5,
-                                                              ),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets.all(
-                                                                6.0,
-                                                              ),
-                                                          child: Center(
-                                                            child: Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                                ),
 
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  top: BorderSide(
-                                                    color: greyBorderColor,
-                                                  ),
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                color: Color(0XffF6FFFA),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: size.otstup15,
-                                                  vertical: size.otstup15,
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    textWithH1Style(
-                                                      "Дата выдачи: 01.12.25",
-                                                      fontsize: 14,
-                                                      color: greyBorderColor,
-                                                      fontW: FontWeight.w300,
-                                                    ),
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Color(
-                                                          0xFF53CDE5,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              5,
-                                                            ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                        color: greyBorderColor,
                                                       ),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.symmetric(
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          5,
+                                                        ),
+                                                    color: Color(0xFFF6FFFA),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal:
+                                                              size.otstup15,
+                                                          vertical:
+                                                              size.otstup15,
+                                                        ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        // textWithH1Style(
+                                                        //   "Дата выдачи: ${document[index].registrationDate.name }",
+                                                        //   fontsize: 14,
+                                                        //   color:
+                                                        //       greyBorderColor,
+                                                        //   fontW:
+                                                        //       FontWeight.w500,
+                                                        // ),
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                            color:
+                                                                document[index]
+                                                                            .status
+                                                                            .status
+                                                                            .index ==
+                                                                        0
+                                                                    ? Color(
+                                                                      0xFF53CDE5,
+                                                                    )
+                                                                    : Color(
+                                                                      0xFFF7EAEA,
+                                                                    ),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  5,
+                                                                ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets.symmetric(
                                                               horizontal:
                                                                   size.otstup30,
                                                               vertical:
                                                                   size.otstup10,
                                                             ),
-                                                        child: textWithH1Style(
-                                                          "Активный",
-                                                          fontsize: 13,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    separatorBuilder:
-                                        (context, index) =>
-                                            SizedBox(height: size.otstup10),
-                                    itemCount: 2,
-                                  )
-                                  : ListView.separated(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: greyBorderColor,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: size.otstup15,
-                                                vertical: size.otstup15,
-                                              ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Image.asset(
-                                                        "assets/icons/Group 831885639.png",
-                                                      ),
-                                                      SizedBox(
-                                                        width: size.otstup15,
-                                                      ),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          textWithH1Style(
-                                                            "Справка несудимости",
-                                                            fontsize: 16,
+                                                            child: textWithH1Style(
+                                                              document[index]
+                                                                  .status
+                                                                  .title
+                                                                  .ru,
+                                                              fontsize: 13,
+                                                              color:
+                                                                  document[index]
+                                                                              .status
+                                                                              .status
+                                                                              .index ==
+                                                                          0
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .black,
+                                                            ),
                                                           ),
-                                                          textWithH2BlackStyle(
-                                                            "Справки",
-                                                            fontSize: 16,
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                            color:
-                                                                primaryGreenColor,
-                                                            fontWeight:
-                                                                FontWeight.w400,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        separatorBuilder:
+                                            (context, index) =>
+                                                SizedBox(height: size.otstup10),
+                                        itemCount: document.length,
+                                      )
+                                      : statusSelectedIndex == 1
+                                      ? ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          final category1 =
+                                              docsAsigned[index].category;
+                                          final document1 =
+                                              docsAsigned[index].document;
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: greyBorderColor,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: size.otstup15,
+                                                    vertical: size.otstup15,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width:
+                                                                size.imageSize100,
+                                                            child:
+                                                                Image.network(
+                                                                  category1
+                                                                      .iconId,
+                                                                ),
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                size.otstup15,
+                                                          ),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              textWithH1Style(
+                                                                category1
+                                                                    .title
+                                                                    .ru,
+                                                                fontsize: 16,
+                                                              ),
+                                                              SizedBox(
+                                                                width:
+                                                                    size.screenWidth *
+                                                                    0.6,
+                                                                child: textWithH2BlackStyle(
+                                                                  document1.ru,
+                                                                  fontSize: 16,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .start,
+                                                                  color:
+                                                                      primaryGreenColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              border: Border.all(
+                                                                color:
+                                                                    greyBorderColor,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets.all(
+                                                                    6.0,
+                                                                  ),
+                                                              child: Center(
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .arrow_forward_ios,
+                                                                ),
+                                                              ),
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
                                                     ],
                                                   ),
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                            color:
-                                                                greyBorderColor,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                5,
-                                                              ),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets.all(
-                                                                6.0,
-                                                              ),
-                                                          child: Center(
-                                                            child: Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                                ),
 
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  top: BorderSide(
-                                                    color: greyBorderColor,
-                                                  ),
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                color: Color(0xFFF6FFFA),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: size.otstup15,
-                                                  vertical: size.otstup15,
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    textWithH1Style(
-                                                      "Дата выдачи: 01.12.25",
-                                                      fontsize: 14,
-                                                      color: greyBorderColor,
-                                                    ),
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Color(
-                                                          0xFFF7EAEA,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              5,
-                                                            ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                        color: greyBorderColor,
                                                       ),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.symmetric(
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          5,
+                                                        ),
+                                                    color: Color(0XffF6FFFA),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal:
+                                                              size.otstup15,
+                                                          vertical:
+                                                              size.otstup15,
+                                                        ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        // textWithH1Style(
+                                                        //   "Дата выдачи: 01.12.25",
+                                                        //   fontsize: 14,
+                                                        //   color:
+                                                        //       greyBorderColor,
+                                                        //   fontW:
+                                                        //       FontWeight.w300,
+                                                        // ),
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                            color: Color(
+                                                              0xFF53CDE5,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  5,
+                                                                ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets.symmetric(
                                                               horizontal:
                                                                   size.otstup30,
                                                               vertical:
                                                                   size.otstup10,
                                                             ),
-                                                        child: textWithH1Style(
-                                                          "Не подписанный",
-                                                          fontsize: 13,
-                                                          color: Colors.black,
+                                                            child: textWithH1Style(
+                                                              docsAsigned[index]
+                                                                  .status
+                                                                  .title
+                                                                  .ru,
+                                                              fontsize: 13,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
                                                         ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        separatorBuilder:
+                                            (context, index) =>
+                                                SizedBox(height: size.otstup10),
+                                        itemCount: docsAsigned.length,
+                                      )
+                                      : ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          final category2 =
+                                              docsNonAsigned[index].category;
+                                          final document2 =
+                                              docsNonAsigned[index].document;
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: greyBorderColor,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: size.otstup15,
+                                                    vertical: size.otstup15,
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width:
+                                                                size.imageSize100,
+                                                            child:
+                                                                Image.network(
+                                                                  category2
+                                                                      .iconId,
+                                                                ),
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                size.otstup15,
+                                                          ),
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              textWithH1Style(
+                                                                category2
+                                                                    .title
+                                                                    .ru,
+                                                                fontsize: 16,
+                                                              ),
+                                                              SizedBox(
+                                                                width:
+                                                                    size.screenWidth *
+                                                                    0.6,
+                                                                child: textWithH2BlackStyle(
+                                                                  document2.ru,
+                                                                  fontSize: 16,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .start,
+                                                                  color:
+                                                                      primaryGreenColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              border: Border.all(
+                                                                color:
+                                                                    greyBorderColor,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets.all(
+                                                                    6.0,
+                                                                  ),
+                                                              child: Center(
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .arrow_forward_ios,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                        color: greyBorderColor,
                                                       ),
                                                     ),
-                                                  ],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          5,
+                                                        ),
+                                                    color: Color(0xFFF6FFFA),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal:
+                                                              size.otstup15,
+                                                          vertical:
+                                                              size.otstup15,
+                                                        ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        // textWithH1Style(
+                                                        //   "Дата выдачи: 01.12.25",
+                                                        //   fontsize: 14,
+                                                        //   color:
+                                                        //       greyBorderColor,
+                                                        // ),
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                            color: Color(
+                                                              0xFFF7EAEA,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  5,
+                                                                ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets.symmetric(
+                                                              horizontal:
+                                                                  size.otstup30,
+                                                              vertical:
+                                                                  size.otstup10,
+                                                            ),
+                                                            child: textWithH1Style(
+                                                              docsNonAsigned[index]
+                                                                  .status
+                                                                  .title
+                                                                  .ru,
+                                                              fontsize: 13,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    separatorBuilder:
-                                        (context, index) =>
-                                            SizedBox(height: size.otstup10),
-                                    itemCount: 2,
-                                  ),
-                            ],
-                          ),
-                        )
-                        : Column(),
+                                          );
+                                        },
+                                        separatorBuilder:
+                                            (context, index) =>
+                                                SizedBox(height: size.otstup10),
+                                        itemCount: docsNonAsigned.length,
+                                      ),
+                                ],
+                              ),
+                            )
+                            : Column(),
+                  );
+                },
+                error: (error, st) => Center(child: Text("error")),
+                loading: () => Center(child: CircularProgressIndicator()),
               ),
             ],
           ),
