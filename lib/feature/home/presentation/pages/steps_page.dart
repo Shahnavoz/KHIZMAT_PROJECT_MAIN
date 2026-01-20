@@ -1617,6 +1617,359 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                     print(baseOptions.map((e) => e.name.ru));
 
                                     return stepsInfoAsync.when(
+<<<<<<< HEAD
+                                      data: (stepsInfo) {
+                                        return field.choiceOptions.isEmpty
+                                            ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 8,
+                                                bottom: 10,
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: field.title.ru,
+                                                          style: const TextStyle(
+                                                            color:
+                                                                primaryButtonColor,
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        const TextSpan(
+                                                          text: '* ',
+                                                          style: TextStyle(
+                                                            color:
+                                                                primaryButtonColor,
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 9),
+                                                  DropdownButtonFormField2<
+                                                    String
+                                                  >(
+                                                    dropdownStyleData:
+                                                        DropdownStyleData(
+                                                          decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  16,
+                                                                ),
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                    decoration: InputDecoration(
+                                                      contentPadding:
+                                                          const EdgeInsets.only(
+                                                            left: 0,
+                                                            right: 8,
+                                                          ),
+                                                      border:
+                                                          const OutlineInputBorder(),
+                                                      enabledBorder: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              10,
+                                                            ),
+                                                        borderSide: BorderSide(
+                                                          color:
+                                                              Colors.grey[400]!,
+                                                          width: 2,
+                                                        ),
+                                                      ),
+                                                      focusedBorder: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              10,
+                                                            ),
+                                                        borderSide:
+                                                            const BorderSide(
+                                                              color:
+                                                                  primaryButtonColor,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                    hint: Text(
+                                                      field.placeholder.ru ??
+                                                          '',
+                                                    ),
+
+                                                    items:
+                                                        (stepsInfo.dropDownOptions[field
+                                                                    .actionId] ??
+                                                                [])
+                                                            .map((option) {
+                                                              return DropdownMenuItem<
+                                                                String
+                                                              >(
+                                                                value:
+                                                                    option.code,
+                                                                child: Padding(
+                                                                  padding:
+                                                                      EdgeInsets.only(
+                                                                        top:
+                                                                            size.otstup10,
+                                                                      ),
+                                                                  child: Column(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width:
+                                                                            size.screenWidth *
+                                                                            0.7,
+                                                                        child: Text(
+                                                                          option.name.ru ??
+                                                                              option.name.en ??
+                                                                              option.code ??
+                                                                              "",
+
+                                                                          style: const TextStyle(
+                                                                            height:
+                                                                                1.1,
+                                                                            // fontSize:
+                                                                            //     14,
+                                                                            color:
+                                                                                Colors.black,
+                                                                          ),
+                                                                          maxLines:
+                                                                              2,
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
+                                                                        ),
+                                                                      ),
+                                                                      Container(
+                                                                        width:
+                                                                            size.screenWidth *
+                                                                            0.7,
+                                                                        height:
+                                                                            0.5,
+                                                                        color:
+                                                                            primaryGreenColor,
+                                                                        margin: const EdgeInsets.only(
+                                                                          top:
+                                                                              3,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            })
+                                                            .toList(),
+                                                    selectedItemBuilder: (
+                                                      BuildContext context,
+                                                    ) {
+                                                      return (stepsInfo
+                                                                  .dropDownOptions[field
+                                                                  .actionId] ??
+                                                              [])
+                                                          .map<Widget>((
+                                                            option,
+                                                          ) {
+                                                            return SizedBox(
+                                                              width:
+                                                                  size.screenWidth *
+                                                                  0.7,
+                                                              child: Text(
+                                                                option
+                                                                        .name
+                                                                        .ru ??
+                                                                    option
+                                                                        .name
+                                                                        .en ??
+                                                                    option
+                                                                        .code ??
+                                                                    "",
+                                                                style: const TextStyle(
+                                                                  // fontSize: 14,
+                                                                  color:
+                                                                      Colors
+                                                                          .black,
+                                                                ),
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            );
+                                                          })
+                                                          .toList();
+                                                    },
+                                                    onChanged: (value) {
+                                                      if (value != null) {
+                                                        formFamilyProviderRead
+                                                            .setValue(
+                                                              field.key,
+                                                              value,
+                                                            );
+                                                      }
+                                                      final selected =
+                                                          ref
+                                                              .watch(
+                                                                selectedValueProvider
+                                                                    .notifier,
+                                                              )
+                                                              .state = value!;
+                                                      // Загружаем dependent options
+                                                      final dependentAsync = ref.watch(
+                                                        dependentDropdownProvider((
+                                                          applicationId:
+                                                              stepsInfo
+                                                                  .applicationId,
+                                                          locale: currentLocale,
+                                                          actionKey:
+                                                              field.actionKey!,
+                                                          parentCode: selected,
+                                                          parentActionId:
+                                                              field.actionId!,
+                                                        )),
+                                                      );
+
+                                                      setState(() {
+                                                        options = dependentAsync.when(
+                                                          error:
+                                                              (stack, error) =>
+                                                                  [],
+                                                          loading: () => [],
+                                                          data:
+                                                              (map) =>
+                                                                  options =
+                                                                      map[field
+                                                                          .actionId] ??
+                                                                      [],
+                                                        );
+                                                      });
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                            : Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 8,
+                                                bottom: 10,
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: field.title.ru,
+                                                          style: const TextStyle(
+                                                            color:
+                                                                primaryButtonColor,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        const TextSpan(
+                                                          text: '* ',
+                                                          style: TextStyle(
+                                                            color:
+                                                                primaryButtonColor,
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 9),
+                                                  DropdownButtonFormField2<
+                                                    String
+                                                  >(
+                                                    dropdownStyleData:
+                                                        DropdownStyleData(
+                                                          decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  16,
+                                                                ),
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                    decoration: InputDecoration(
+                                                      contentPadding:
+                                                          const EdgeInsets.only(
+                                                            left: 0,
+                                                            right: 8,
+                                                          ),
+                                                      border:
+                                                          const OutlineInputBorder(),
+                                                      enabledBorder: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              10,
+                                                            ),
+                                                        borderSide: BorderSide(
+                                                          color:
+                                                              Colors.grey[400]!,
+                                                          width: 2,
+                                                        ),
+                                                      ),
+                                                      focusedBorder: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              10,
+                                                            ),
+                                                        borderSide:
+                                                            const BorderSide(
+                                                              color:
+                                                                  primaryButtonColor,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                    hint: Text(
+                                                      field.placeholder.ru ??
+                                                          '',
+                                                    ),
+                                                    items:
+                                                        options.map((option) {
+                                                          return DropdownMenuItem<
+                                                            String
+                                                          >(
+                                                            value: option.code,
+                                                            child: Text(
+                                                              option.name.ru ??
+                                                                  option
+                                                                      .name
+                                                                      .en ??
+                                                                  option.code ??
+                                                                  "",
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                    onChanged: (value) {
+                                                      if (value != null) {
+                                                        formFamilyProviderRead
+                                                            .setValue(
+                                                              field.key,
+                                                              value,
+                                                            );
+                                                      }
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                      },
+=======
+>>>>>>> 35ef8e78142de4c13898339516c8f520adca90e2
                                       loading:
                                           () => buildDropdownSkeleton(
                                             field,

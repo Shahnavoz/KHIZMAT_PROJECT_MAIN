@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
@@ -33,12 +35,12 @@ TextStyle categoryTextRobotoTitle = GoogleFonts.roboto(
 TextStyle Roboto15T = GoogleFonts.roboto(
   fontSize: 15,
   fontWeight: FontWeight.w400,
-  color: Color(0xFF686868)
+  color: Color(0xFF686868),
 );
 TextStyle Roboto15C = GoogleFonts.roboto(
   fontSize: 15,
   fontWeight: FontWeight.w200,
-  color: Color(0xFFAFAFAF)
+  color: Color(0xFFAFAFAF),
 );
 
 TextStyle h2Title = GoogleFonts.robotoFlex(
@@ -72,7 +74,7 @@ Widget textH2GreyTitle(
   String text, {
   Color textColor = primaryGreyTextColor,
   FontWeight fontWeight = FontWeight.w400,
-  double fontSize=15
+  double fontSize = 15,
 }) {
   return Text(
     text,
@@ -83,8 +85,6 @@ Widget textH2GreyTitle(
       fontWeight: fontWeight,
       // height: 15,
       color: textColor,
-      
-      
     ),
   );
 }
@@ -108,6 +108,7 @@ Widget textWithH1Style(
       color: color,
     ),
     textAlign: textAlign,
+  
   );
 }
 
@@ -160,6 +161,7 @@ Widget textWithH2BlackStyle(
     ),
     textAlign: textAlign,
     maxLines: maxline,
+    overflow: TextOverflow.ellipsis,
   );
 }
 
