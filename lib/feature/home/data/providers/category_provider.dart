@@ -23,6 +23,8 @@ final uploadedFileProvider = FutureProvider.family<UploadedFileInfo?, int>((
   final repo = ShagiPolucheniyeUslugiService();
   return repo.getUploadedFileInfo(applicationId);
 });
+
+
 final uploadeMethodFileProvider =
     FutureProvider.family<UploadedFileModel?, int>((ref, applicationId) async {
       final repo = ShagiPolucheniyeUslugiService();

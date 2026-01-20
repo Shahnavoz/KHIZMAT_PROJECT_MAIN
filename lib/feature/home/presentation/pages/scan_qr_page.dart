@@ -114,7 +114,7 @@ class _ScanQrPageState extends State<ScanQrPage> {
                             if (type == 'url')
                               ElevatedButton.icon(
                                 onPressed: () {
-                                  // _launchUrl(data);
+                                  _launchUrl(data);
                                 },
                                 icon: Icon(Icons.open_in_new),
                                 label: Text("Open URL"),
@@ -172,11 +172,25 @@ class _ScanQrPageState extends State<ScanQrPage> {
     );
   }
 
+  // Future<void> _launchUrl(String url) async {
+  //   if (await canLaunchUrl(Uri.parse(url))) {
+  //     await launchUrl(Uri.parse(url));
+  //   }
+  // }
+
   Future<void> _launchUrl(String url) async {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    }
+  final uri = Uri.parse(url);
+  
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+  } else {
+    // Показать пользователю, что ссылка не открывается
+    print('Не удалось открыть ссылку: $url');
   }
+}
 
   Future<void> _saveContact(String vcardData) async {
     final lines = vcardData.split('\n');
@@ -403,7 +417,7 @@ class _ScannerBorderPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    const double cornerLength = 30;
+    const double cornerLength = 25;
     final double width = size.width;
     final double height = size.height;
 

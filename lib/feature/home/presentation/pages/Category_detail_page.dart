@@ -150,7 +150,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                               ),
                               SizedBox(height: size.otstup10),
                               SizedBox(
-                                width: size.screenWidth * 0.66,
+                                width: size.screenWidth * 0.8,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -165,11 +165,13 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                     GestureDetector(
                                       onTap: () {
                                         setState(() {
-                                          showAll=!showAll;
+                                          showAll = !showAll;
                                         });
                                       },
                                       child: textWithH1Style(
-                                        showAll!=true ? "Подробнее" : "Свернуть",
+                                        showAll != true
+                                            ? "Подробнее"
+                                            : "Свернуть",
                                         fontsize: 16,
                                         color: primaryButtonColor,
                                       ),
@@ -184,10 +186,10 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                               Column(
                                 children: [
                                   SizedBox(height: 20),
-                                  SvgPicture.asset(
-                                    "assets/images/Vector (3).svg",
-                                    width: 80,
-                                  ),
+                                  // SvgPicture.asset(
+                                  //   "assets/images/Vector (3).svg",
+                                  //   width: 80,
+                                  // ),
                                 ],
                               ),
                               Positioned(
@@ -217,7 +219,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                         size: size,
                         currentLocale: currentLocale,
                         selectedIndex: selectedIndex,
-                        oneActiveColor: primaryGreenColor,
+                        oneActiveColor: Colors.black,
                         nonActiveColor: Colors.grey[200],
                         activeTextColor: Colors.white,
                         nonActiveTextColor: Colors.black,
@@ -345,25 +347,25 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                         horizontal: size.otstup20,
                                         vertical: size.otstup10,
                                       ),
-                                      leading: Container(
-                                        decoration: BoxDecoration(
-                                          color:
-                                              index % 2 == 0
-                                                  ? primaryGreenColor
-                                                  : secondaryGreenColor,
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(13.0),
-                                          child: Image.network(
-                                            filteredDocuments[index].icon,
-                                            color: Colors.white,
-                                            width: size.imageSize50,
-                                          ),
-                                        ),
-                                      ),
+                                      // leading: Container(
+                                      //   decoration: BoxDecoration(
+                                      //     color:
+                                      //         index % 2 == 0
+                                      //             ? primaryGreenColor
+                                      //             : secondaryGreenColor,
+                                      //     borderRadius: BorderRadius.circular(
+                                      //       10,
+                                      //     ),
+                                      //   ),
+                                      //   child: Padding(
+                                      //     padding: const EdgeInsets.all(13.0),
+                                      //     child: Image.network(
+                                      //       filteredDocuments[index].icon,
+                                      //       color: Colors.white,
+                                      //       width: size.imageSize50,
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       title: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -376,11 +378,12 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                               filteredDocuments[index].title
                                                   .getText(currentLocale),
                                               textAlign: TextAlign.start,
-                                              fontsize: 14,
+                                              fontsize: 16,
                                               fontW: FontWeight.w700,
                                               // maxLines: 3,
                                             ),
                                           ),
+
                                           // textWithH1Style(
                                           //   filteredDocuments[index]
                                           //       .category
@@ -391,6 +394,12 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                           //   fontsize: 16,
                                           //   maxLines: 3,
                                           // ),
+                                          SizedBox(height: size.otstup5),
+                                          textWithH1Style(textAlign: TextAlign.start,
+                                            "Срок получения: ${uslugaDetailInfo[index].data.expiryDate == 0 ? "Онлайн (мгновенно)" : uslugaDetailInfo[index].data.expiryDate} ${uslugaDetailInfo[index].data.expiryDate != 0 ? "дней" : " "}",
+                                            fontsize: 16,
+                                            color: primaryGreenColor,
+                                          ),
                                         ],
                                       ),
                                     ),

@@ -458,7 +458,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         (context) => CategoryDetailPage(
                           categories: widget.categories,
                           category: category,
-                          docId: widget.documents[index].id,
+                          docId: category.parentId!,
                           documents: widget.documents,
                         ),
                   ),
