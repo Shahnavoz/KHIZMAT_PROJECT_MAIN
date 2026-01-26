@@ -244,6 +244,10 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                               ),
                             ),
                             SizedBox(height: size.otstup30),
+<<<<<<< HEAD
+=======
+
+>>>>>>> 75389bbd2b59181da69adea4618127a5b94d44b3
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Padding(
@@ -397,6 +401,110 @@ class _StepsPageState extends ConsumerState<StepsPage> {
               ],
             ),
           ),
+<<<<<<< HEAD
+=======
+
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Builder(
+              builder: (context) {
+                return asyncSteps.when(
+                  data: (allStepsInfo) {
+                    final stepsAndFields = allStepsInfo.stepsInfo[0].data;
+                    final steps =
+                        stepsAndFields.steps.toList()
+                          ..sort((a, b) => a.position!.compareTo(b.position!));
+                    final currentStepIdx = ref.watch(currentStepProvider);
+
+                    final step = steps.map((s) => s.type).toList();
+
+
+                    if (steps.isEmpty ||
+                        currentStepIdx < 0 ||
+                        currentStepIdx >= steps.length) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: greyTextFBorderColor),
+                        ),
+                        borderRadius: BorderRadius.horizontal(
+                          right: Radius.circular(10),
+                          left: Radius.circular(10),
+                        ),
+                        color: Colors.white,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: size.otstup18,
+                        vertical: size.otstup20,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          My_Button(
+                            width: double.infinity,
+                            size: size,
+                            backgroundColor: Colors.white,
+                            borderColor: greyTextFBorderColor,
+                            borderRadius: 10,
+                            onPressed: () {
+                              // Полный доступ к steps, currentStepIdx, allStepsInfo!
+                              print(
+                                "Сохранить черновик: шаг ${currentStepIdx + 1}/${steps.length}",
+                              );
+                              // Твоя логика сохранения: saveDraft(steps, currentStepIdx, allStepsInfo);
+                            },
+                            child: textWithH1Style(
+                              step[currentStep] == 'PAYMENT'
+                                  ? "Заполнить заново"
+                                  : "Сохранить как черновик",
+                              fontsize: 15,
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          My_Button(
+                            width: double.infinity,
+                            size: size,
+                            backgroundColor: primaryButtonColor,
+                            borderColor: primaryButtonColor,
+                            borderRadius: 10,
+                            onPressed: () {
+                              step[currentStep] == 'PAYMENT'
+                                  ? Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => GosOrganizationsPage(),
+                                    ),
+                                  )
+                                  : Container();
+                              // Доступ ко всем данным для _onContinuePressed
+                              // _onContinuePressed(allStepsInfo, currentStepIdx);
+                              // Или: ref.read(currentStepProvider.notifier).state = currentStepIdx + 1;
+                            },
+                            child: textWithH1Style(
+                              step[currentStep] == 'PAYMENT'
+                                  ? "Перейти к оплате"
+                                  : "Продолжить",
+                              fontsize: 15,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  loading: () => const SizedBox.shrink(),
+                  error: (error, st) => const SizedBox.shrink(),
+                );
+              },
+            ),
+          ),
+>>>>>>> 75389bbd2b59181da69adea4618127a5b94d44b3
         ],
       ),
     );
