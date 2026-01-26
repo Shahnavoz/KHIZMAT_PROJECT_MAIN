@@ -1,25 +1,25 @@
 // To parse this JSON data, do
 //
-//     final myDocumentsDetailModel = myDocumentsDetailModelFromJson(jsonString);
+//     final myDocumentDetailInfoModel = myDocumentDetailInfoModelFromJson(jsonString);
 
 import 'dart:convert';
 
-MyDocumentsDetailModel myDocumentsDetailModelFromJson(String str) => MyDocumentsDetailModel.fromJson(json.decode(str));
+MyDocumentDetailInfoModel myDocumentDetailInfoModelFromJson(String str) => MyDocumentDetailInfoModel.fromJson(json.decode(str));
 
-String myDocumentsDetailModelToJson(MyDocumentsDetailModel data) => json.encode(data.toJson());
+String myDocumentDetailInfoModelToJson(MyDocumentDetailInfoModel data) => json.encode(data.toJson());
 
-class MyDocumentsDetailModel {
+class MyDocumentDetailInfoModel {
     int statusCode;
     String statusMessage;
     Data data;
 
-    MyDocumentsDetailModel({
+    MyDocumentDetailInfoModel({
         required this.statusCode,
         required this.statusMessage,
         required this.data,
     });
 
-    factory MyDocumentsDetailModel.fromJson(Map<String, dynamic> json) => MyDocumentsDetailModel(
+    factory MyDocumentDetailInfoModel.fromJson(Map<String, dynamic> json) => MyDocumentDetailInfoModel(
         statusCode: json["status_code"],
         statusMessage: json["status_message"],
         data: Data.fromJson(json["data"]),
@@ -44,8 +44,8 @@ class Data {
     String tin;
     String pin;
     String name;
-    Document region;
-    Document subRegion;
+    dynamic region;
+    dynamic subRegion;
     dynamic address;
     String registerNumber;
     dynamic serial;
@@ -65,7 +65,7 @@ class Data {
     bool usageFee;
     List<dynamic> steps;
     List<dynamic> payments;
-    dynamic pkiSignatures;
+    PkiSignatures pkiSignatures;
     List<dynamic> attachments;
     List<dynamic> fees;
     List<Application> applications;
@@ -127,8 +127,8 @@ class Data {
         tin: json["tin"],
         pin: json["pin"],
         name: json["name"],
-        region: Document.fromJson(json["region"]),
-        subRegion: Document.fromJson(json["subRegion"]),
+        region: json["region"],
+        subRegion: json["subRegion"],
         address: json["address"],
         registerNumber: json["register_number"],
         serial: json["serial"],
@@ -148,7 +148,7 @@ class Data {
         usageFee: json["usage_fee"],
         steps: List<dynamic>.from(json["steps"].map((x) => x)),
         payments: List<dynamic>.from(json["payments"].map((x) => x)),
-        pkiSignatures: json["pkiSignatures"],
+        pkiSignatures: PkiSignatures.fromJson(json["pkiSignatures"]),
         attachments: List<dynamic>.from(json["attachments"].map((x) => x)),
         fees: List<dynamic>.from(json["fees"].map((x) => x)),
         applications: List<Application>.from(json["applications"].map((x) => Application.fromJson(x))),
@@ -169,8 +169,8 @@ class Data {
         "tin": tin,
         "pin": pin,
         "name": name,
-        "region": region.toJson(),
-        "subRegion": subRegion.toJson(),
+        "region": region,
+        "subRegion": subRegion,
         "address": address,
         "register_number": registerNumber,
         "serial": serial,
@@ -190,7 +190,7 @@ class Data {
         "usage_fee": usageFee,
         "steps": List<dynamic>.from(steps.map((x) => x)),
         "payments": List<dynamic>.from(payments.map((x) => x)),
-        "pkiSignatures": pkiSignatures,
+        "pkiSignatures": pkiSignatures.toJson(),
         "attachments": List<dynamic>.from(attachments.map((x) => x)),
         "fees": List<dynamic>.from(fees.map((x) => x)),
         "applications": List<dynamic>.from(applications.map((x) => x.toJson())),
@@ -204,9 +204,9 @@ class Addition {
     String key;
     String titleKey;
     int position;
-    dynamic title;
-    dynamic value;
-    List<DuplicableValue> duplicableValues;
+    Document title;
+    String? value;
+    List<DuplicableValue>? duplicableValues;
     String type;
 
     Addition({
@@ -223,9 +223,9 @@ class Addition {
         key: json["key"],
         titleKey: json["title_key"],
         position: json["position"],
-        title: json["title"],
+        title: Document.fromJson(json["title"]),
         value: json["value"],
-        duplicableValues: List<DuplicableValue>.from(json["duplicable_values"].map((x) => DuplicableValue.fromJson(x))),
+        duplicableValues: json["duplicable_values"] == null ? [] : List<DuplicableValue>.from(json["duplicable_values"]!.map((x) => DuplicableValue.fromJson(x))),
         type: json["type"],
     );
 
@@ -233,9 +233,9 @@ class Addition {
         "key": key,
         "title_key": titleKey,
         "position": position,
-        "title": title,
+        "title": title.toJson(),
         "value": value,
-        "duplicable_values": List<dynamic>.from(duplicableValues.map((x) => x.toJson())),
+        "duplicable_values": duplicableValues == null ? [] : List<dynamic>.from(duplicableValues!.map((x) => x.toJson())),
         "type": type,
     };
 }
@@ -473,6 +473,74 @@ class Step {
         "title": title.toJson(),
         "position": position,
         "count": count,
+    };
+}
+
+class PkiSignatures {
+    String ru;
+    String tj;
+    String en;
+    String serialNumber;
+    String pkiIssuerFirstName;
+    String pkiIssuerLastName;
+    String pkiIssuerOrganization;
+    String pkiIssuerPhoneNumber;
+    String pkiOwnerFirstName;
+    String pkiOwnerLastName;
+    String pkiOwnerOrganization;
+    String pkiOwnerPhoneNumber;
+    DateTime pkiOwnerValidFrom;
+    DateTime pkiOwnerValidTo;
+
+    PkiSignatures({
+        required this.ru,
+        required this.tj,
+        required this.en,
+        required this.serialNumber,
+        required this.pkiIssuerFirstName,
+        required this.pkiIssuerLastName,
+        required this.pkiIssuerOrganization,
+        required this.pkiIssuerPhoneNumber,
+        required this.pkiOwnerFirstName,
+        required this.pkiOwnerLastName,
+        required this.pkiOwnerOrganization,
+        required this.pkiOwnerPhoneNumber,
+        required this.pkiOwnerValidFrom,
+        required this.pkiOwnerValidTo,
+    });
+
+    factory PkiSignatures.fromJson(Map<String, dynamic> json) => PkiSignatures(
+        ru: json["ru"],
+        tj: json["tj"],
+        en: json["en"],
+        serialNumber: json["serialNumber"],
+        pkiIssuerFirstName: json["pkiIssuerFirstName"],
+        pkiIssuerLastName: json["pkiIssuerLastName"],
+        pkiIssuerOrganization: json["pkiIssuerOrganization"],
+        pkiIssuerPhoneNumber: json["pkiIssuerPhoneNumber"],
+        pkiOwnerFirstName: json["pkiOwnerFirstName"],
+        pkiOwnerLastName: json["pkiOwnerLastName"],
+        pkiOwnerOrganization: json["pkiOwnerOrganization"],
+        pkiOwnerPhoneNumber: json["pkiOwnerPhoneNumber"],
+        pkiOwnerValidFrom: DateTime.parse(json["pkiOwnerValidFrom"]),
+        pkiOwnerValidTo: DateTime.parse(json["pkiOwnerValidTo"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "ru": ru,
+        "tj": tj,
+        "en": en,
+        "serialNumber": serialNumber,
+        "pkiIssuerFirstName": pkiIssuerFirstName,
+        "pkiIssuerLastName": pkiIssuerLastName,
+        "pkiIssuerOrganization": pkiIssuerOrganization,
+        "pkiIssuerPhoneNumber": pkiIssuerPhoneNumber,
+        "pkiOwnerFirstName": pkiOwnerFirstName,
+        "pkiOwnerLastName": pkiOwnerLastName,
+        "pkiOwnerOrganization": pkiOwnerOrganization,
+        "pkiOwnerPhoneNumber": pkiOwnerPhoneNumber,
+        "pkiOwnerValidFrom": pkiOwnerValidFrom.toIso8601String(),
+        "pkiOwnerValidTo": pkiOwnerValidTo.toIso8601String(),
     };
 }
 

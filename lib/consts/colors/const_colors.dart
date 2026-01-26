@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 const Color backgroundColor = Color(0xFFE5F5EE);
 const Color primaryButtonColor = Color(0xFF26AC71);
+const Color darkPrimaryGreenColor = Color(0xFF52A071);
 const Color primaryGreenColor = Color(0xFF5EB681);
 const Color secondaryGreenColor = Color(0xFF4C9283);
 const Color secondaryColorForScroll = Color(0xFF90C0BD);
