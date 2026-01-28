@@ -1,35 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
-import 'package:khizmat_new/feature/documents/data/models/my_documents_detail_model.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/detail_info_row_widget.dart';
 
-class ExpansionTileForElectronalSignaturesPage extends StatefulWidget {
-  const ExpansionTileForElectronalSignaturesPage({
+class ExpansionTileForTakenDocuments extends StatefulWidget {
+  const ExpansionTileForTakenDocuments({
     super.key,
     required this.size,
     required this.title,
     required this.currentLocale,
-    required this.docModel,
     required this.index,
   });
 
   final AdaptiveSizes size;
   final String title;
   final Locale currentLocale;
-  final MyDocumentDetailInfoModel? docModel;
   final int index;
 
   @override
-  State<ExpansionTileForElectronalSignaturesPage> createState() =>
-      _ExpansionTileForElectronalSignaturesPageState();
+  State<ExpansionTileForTakenDocuments> createState() =>
+      _ExpansionTileForTakenDocumentsState();
 }
 
-class _ExpansionTileForElectronalSignaturesPageState
-    extends State<ExpansionTileForElectronalSignaturesPage> {
+class _ExpansionTileForTakenDocumentsState
+    extends State<ExpansionTileForTakenDocuments> {
   @override
   Widget build(BuildContext context) {
-    final info = widget.docModel!.data;
+    // final info = widget.docModel!.data;
     ;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: widget.size.otstup15),
@@ -55,24 +52,22 @@ class _ExpansionTileForElectronalSignaturesPageState
               ),
             ),
             children: [
-              info.pkiSignatures != null
-                  ? Column(
-                    children: [
-                      buildCustomRow("Имя", info.name),
-                      buildCustomRow("Фамилия", "", fontsize: 15),
-                      buildCustomRow(
-                        "Серийный номер сертификата",
-                        info.pkiSignatures!.serialNumber,
-                        fontsize: 15,
-                      ),
-                      buildCustomRow(
-                        "Подпись",
-                        info.pkiSignatures!.ru,
-                        fontsize: 15,
-                      ),
-                    ],
-                  )
-                  : SizedBox.shrink(),
+              Column(
+                children: [
+                  buildCustomRow("Наименование", 'Размер'),
+                  buildCustomRow("Фамилия", "", fontsize: 15),
+                  buildCustomRow(
+                    "Серийный номер сертификата",
+                    'info.pkiSignatures!.serialNumber',
+                    fontsize: 15,
+                  ),
+                  buildCustomRow(
+                    "Подпись",
+                    'info.pkiSignatures!.ru',
+                    fontsize: 15,
+                  ),
+                ],
+              ),
             ],
           ),
         ),

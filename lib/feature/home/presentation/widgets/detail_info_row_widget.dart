@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 Widget buildCustomRow(String title, String value, {Color? color, double? fontsize}) {
@@ -26,7 +24,7 @@ Widget buildCustomRow(String title, String value, {Color? color, double? fontsiz
           child: Text(
             value,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 15,
               fontWeight: FontWeight.w600,
               color: color,
             ),

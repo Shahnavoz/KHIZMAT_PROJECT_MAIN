@@ -1,197 +1,217 @@
-// To parse this JSON data, do
-//
-//     final myDocumentsModel = myDocumentsModelFromJson(jsonString);
-
 import 'dart:convert';
 import 'dart:ui';
 
-MyDocumentsModel myDocumentsModelFromJson(String str) =>
+MyDocumentsModel myDocumentModelFromJson(String str) =>
     MyDocumentsModel.fromJson(json.decode(str));
 
-String myDocumentsModelToJson(MyDocumentsModel data) =>
+String myDocumentModelToJson(MyDocumentsModel data) =>
     json.encode(data.toJson());
 
 class MyDocumentsModel {
-  int statusCode;
-  String statusMessage;
-  Data data;
+  final int? statusCode;
+  final String? statusMessage;
+  final Data? data;
 
-  MyDocumentsModel({
-    required this.statusCode,
-    required this.statusMessage,
-    required this.data,
-  });
+  MyDocumentsModel({this.statusCode, this.statusMessage, this.data});
 
-  factory MyDocumentsModel.fromJson(Map<String, dynamic> json) =>
-      MyDocumentsModel(
-        statusCode: json["status_code"],
-        statusMessage: json["status_message"],
-        data: Data.fromJson(json["data"]),
-      );
+  factory MyDocumentsModel.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return MyDocumentsModel();
+    }
+    return MyDocumentsModel(
+      statusCode: json['status_code'] as int?,
+      statusMessage: json['status_message'] as String?,
+      data: Data.fromJson(json['data']),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    "status_code": statusCode,
-    "status_message": statusMessage,
-    "data": data.toJson(),
+    if (statusCode != null) 'status_code': statusCode,
+    if (statusMessage != null) 'status_message': statusMessage,
+    if (data != null) 'data': data!.toJson(),
   };
 }
 
 class Data {
-  List<Register> registers;
-  dynamic statistics;
-  int totalItems;
-  int totalPages;
-  int currentPage;
+  final List<Register> registers;
+  final dynamic statistics;
+  final int totalItems;
+  final int totalPages;
+  final int currentPage;
 
   Data({
-    required this.registers,
-    required this.statistics,
-    required this.totalItems,
-    required this.totalPages,
-    required this.currentPage,
-  });
+    List<Register>? registers,
+    this.statistics,
+    this.totalItems = 0,
+    this.totalPages = 0,
+    this.currentPage = 0,
+  }) : registers = registers ?? [];
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-    registers:
-        (json['registers'] as List<dynamic>)
-            .map((x) => Register.fromJson(x as Map<String, dynamic>))
-            .toList(),
-    statistics: json["statistics"],
-    totalItems: json["totalItems"],
-    totalPages: json["totalPages"],
-    currentPage: json["currentPage"],
-  );
+  factory Data.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return Data();
+    }
+    return Data(
+      registers:
+          (json['registers'] as List<dynamic>?)
+              ?.map((e) => Register.fromJson(e as Map<String, dynamic>?))
+              .whereType<Register>()
+              .toList() ??
+          [],
+      statistics: json['statistics'],
+      totalItems: json['totalItems'] as int? ?? 0,
+      totalPages: json['totalPages'] as int? ?? 0,
+      currentPage: json['currentPage'] as int? ?? 0,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    "registers": List<dynamic>.from(registers.map((x) => x.toJson())),
-    "statistics": statistics,
-    "totalItems": totalItems,
-    "totalPages": totalPages,
-    "currentPage": currentPage,
+    'registers': registers.map((e) => e.toJson()).toList(),
+    'statistics': statistics,
+    'totalItems': totalItems,
+    'totalPages': totalPages,
+    'currentPage': currentPage,
   };
 }
 
 class Register {
-  int id;
-  bool active;
-  StatusClass status;
-  Type type;
-  Document typeTitle;
-  Document document;
-  Category category;
-  ExpiryDate expiryDate;
-  Name name;
-  String tin;
-  String pin;
-  String registerNumber;
-  dynamic serial;
-  String number;
-  RegistrationDate registrationDate;
-  dynamic feesPeriodEnd;
-  bool importRegister;
+  final int? id;
+  final bool? active;
+  final Status? status;
+  final String? type;
+  final MultiLang? typeTitle;
+  final MultiLang? document;
+  final Category? category;
+  final String? expiryDate;
+  final String? name;
+  final String? tin;
+  final String? pin;
+  final String? registerNumber;
+  final dynamic serial;
+  final String? number;
+  final String? registrationDate;
+  final dynamic feesPeriodEnd;
+  final bool? importRegister;
 
   Register({
-    required this.id,
-    required this.active,
-    required this.status,
-    required this.type,
-    required this.typeTitle,
-    required this.document,
-    required this.category,
-    required this.expiryDate,
-    required this.name,
-    required this.tin,
-    required this.pin,
-    required this.registerNumber,
-    required this.serial,
-    required this.number,
-    required this.registrationDate,
-    required this.feesPeriodEnd,
-    required this.importRegister,
+    this.id,
+    this.active,
+    this.status,
+    this.type,
+    this.typeTitle,
+    this.document,
+    this.category,
+    this.expiryDate,
+    this.name,
+    this.tin,
+    this.pin,
+    this.registerNumber,
+    this.serial,
+    this.number,
+    this.registrationDate,
+    this.feesPeriodEnd,
+    this.importRegister,
   });
 
-  factory Register.fromJson(Map<String, dynamic> json) => Register(
-    id: json["id"],
-    active: json["active"],
-    status: StatusClass.fromJson(json["status"]),
-    type: typeValues.map[json["type"]]!,
-    typeTitle: Document.fromJson(json["type_title"]),
-    document: Document.fromJson(json["document"]),
-    category: Category.fromJson(json["category"]),
-    expiryDate: expiryDateValues.map[json["expiry_date"]]!,
-    name: nameValues.map[json["name"]]!,
-    tin: json["tin"],
-    pin: json["pin"],
-    registerNumber: json["register_number"],
-    serial: json["serial"],
-    number: json["number"],
-    registrationDate: registrationDateValues.map[json["registration_date"]]!,
-    feesPeriodEnd: json["fees_period_end"],
-    importRegister: json["import_register"],
-  );
+  factory Register.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return Register();
+
+    return Register(
+      id: json['id'] as int?,
+      active: json['active'] as bool?,
+      status: Status.fromJson(json['status']),
+      type: json['type'] as String?,
+      typeTitle: MultiLang.fromJson(json['type_title']),
+      document: MultiLang.fromJson(json['document']),
+      category: Category.fromJson(json['category']),
+      expiryDate: json['expiry_date']?.toString(),
+      name: json['name']?.toString(),
+      tin: json['tin'] as String?,
+      pin: json['pin'] as String?,
+      registerNumber: json['register_number'] as String?,
+      serial: json['serial'],
+      number: json['number'] as String?,
+      registrationDate: json['registration_date']?.toString(),
+      feesPeriodEnd: json['fees_period_end'],
+      importRegister: json['import_register'] as bool?,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "active": active,
-    "status": status.toJson(),
-    "type": typeValues.reverse[type],
-    "type_title": typeTitle.toJson(),
-    "document": document.toJson(),
-    "category": category.toJson(),
-    "expiry_date": expiryDateValues.reverse[expiryDate],
-    "name": nameValues.reverse[name],
-    "tin": tin,
-    "pin": pin,
-    "register_number": registerNumber,
-    "serial": serial,
-    "number": number,
-    "registration_date": registrationDateValues.reverse[registrationDate],
-    "fees_period_end": feesPeriodEnd,
-    "import_register": importRegister,
+    if (id != null) 'id': id,
+    if (active != null) 'active': active,
+    if (status != null) 'status': status!.toJson(),
+    if (type != null) 'type': type,
+    if (typeTitle != null) 'type_title': typeTitle!.toJson(),
+    if (document != null) 'document': document!.toJson(),
+    if (category != null) 'category': category!.toJson(),
+    if (expiryDate != null) 'expiry_date': expiryDate,
+    if (name != null) 'name': name,
+    if (tin != null) 'tin': tin,
+    if (pin != null) 'pin': pin,
+    if (registerNumber != null) 'register_number': registerNumber,
+    'serial': serial,
+    if (number != null) 'number': number,
+    if (registrationDate != null) 'registration_date': registrationDate,
+    'fees_period_end': feesPeriodEnd,
+    if (importRegister != null) 'import_register': importRegister,
   };
 }
 
 class Category {
-  Document title;
-  String iconId;
-  dynamic gradientStartColor;
-  dynamic gradientEndColor;
+  final MultiLang? title;
+  final String? iconId;
+  final String? gradientStartColor;
+  final String? gradientEndColor;
 
   Category({
-    required this.title,
-    required this.iconId,
-    required this.gradientStartColor,
-    required this.gradientEndColor,
+    this.title,
+    this.iconId,
+    this.gradientStartColor,
+    this.gradientEndColor,
   });
 
-  factory Category.fromJson(Map<String, dynamic> json) => Category(
-    title: Document.fromJson(json["title"]),
-    iconId: json["icon_id"],
-    gradientStartColor: json["gradient_start_color"],
-    gradientEndColor: json["gradient_end_color"],
-  );
+  factory Category.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return Category();
+    return Category(
+      title: MultiLang.fromJson(json['title']),
+      iconId: json['icon_id'] as String?,
+      gradientStartColor: json['gradient_start_color'] as String?,
+      gradientEndColor: json['gradient_end_color'] as String?,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    "title": title.toJson(),
-    "icon_id": iconId,
-    "gradient_start_color": gradientStartColor,
-    "gradient_end_color": gradientEndColor,
+    if (title != null) 'title': title!.toJson(),
+    if (iconId != null) 'icon_id': iconId,
+    if (gradientStartColor != null) 'gradient_start_color': gradientStartColor,
+    if (gradientEndColor != null) 'gradient_end_color': gradientEndColor,
   };
 }
 
-class Document {
-  String tj;
-  String ru;
-  String en;
+class MultiLang {
+  final String? tj;
+  final String? ru;
+  final String? en;
 
-  Document({required this.tj, required this.ru, required this.en});
+  MultiLang({this.tj, this.ru, this.en});
 
-  factory Document.fromJson(Map<String, dynamic> json) =>
-      Document(tj: json["tj"], ru: json["ru"], en: json["en"]);
+  factory MultiLang.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return MultiLang();
+    return MultiLang(
+      tj: json['tj'] as String?,
+      ru: json['ru'] as String?,
+      en: json['en'] as String?,
+    );
+  }
 
-  Map<String, dynamic> toJson() => {"tj": tj, "ru": ru, "en": en};
+  Map<String, dynamic> toJson() => {
+    if (tj != null) 'tj': tj,
+    if (ru != null) 'ru': ru,
+    if (en != null) 'en': en,
+  };
 
-  String getText(Locale locale) {
+   String getText(Locale locale) {
     switch (locale.languageCode) {
       case 'ru':
         return ru ?? en ?? tj ?? '';
@@ -201,77 +221,62 @@ class Document {
       case 'fr':
         return tj ?? ru ?? en ?? '';
       default:
-        return ru ?? en ?? tj ?? "";
+        return ru ?? en ?? tj ?? '';
     }
   }
 }
 
-enum ExpiryDate { EMPTY, THE_12112312 }
+class Status {
+  final StatusValue value;
+  final String? background;
+  final MultiLang? title;
 
-final expiryDateValues = EnumValues({
-  "": ExpiryDate.EMPTY,
-  "12.11.2312": ExpiryDate.THE_12112312,
-});
+  Status({StatusValue? value, this.background, this.title})
+    : value = value ?? StatusValue.unknown;
 
-enum Name { EMPTY }
+  factory Status.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return Status();
+    }
 
-final nameValues = EnumValues({"Тестов Тест Тестович": Name.EMPTY});
-
-enum RegistrationDate { THE_23012026, THE_24012026 }
-
-final registrationDateValues = EnumValues({
-  "23.01.2026": RegistrationDate.THE_23012026,
-  "24.01.2026": RegistrationDate.THE_24012026,
-});
-
-class StatusClass {
-  StatusEnum status;
-  Background background;
-  Document title;
-
-  StatusClass({
-    required this.status,
-    required this.background,
-    required this.title,
-  });
-
-  factory StatusClass.fromJson(Map<String, dynamic> json) => StatusClass(
-    status: statusEnumValues.map[json["status"]]!,
-    background: backgroundValues.map[json["background"]]!,
-    title: Document.fromJson(json["title"]),
-  );
+    return Status(
+      value: StatusValue.fromApi(json['status'] as String?),
+      background: json['background'] as String?,
+      title: MultiLang.fromJson(json['title']),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    "status": statusEnumValues.reverse[status],
-    "background": backgroundValues.reverse[background],
-    "title": title.toJson(),
+    'status': value.toApi(),
+    if (background != null) 'background': background,
+    if (title != null) 'title': title!.toJson(),
   };
+
+  bool get isActive => value == StatusValue.active;
+  bool get isNotAsigned => value == StatusValue.notSigned;
+  bool get isExpired => value == StatusValue.expired;
+  bool get isUnknown => value == StatusValue.unknown;
 }
 
-enum Background { THE_3_ED857 }
+enum StatusValue {
+  active('ACTIVE'),
+  expired('EXPIRED'),
+  notSigned('NOT_SIGNED'),
+  unknown('UNKNOWN'); 
 
-final backgroundValues = EnumValues({"#3ED857": Background.THE_3_ED857});
+  final String apiValue;
+  const StatusValue(this.apiValue);
 
-enum StatusEnum { ACTIVE }
-
-final statusEnumValues = EnumValues({"ACTIVE": StatusEnum.ACTIVE});
-
-enum Type { CERTIFICATE, CONCLUSION, PERMIT }
-
-final typeValues = EnumValues({
-  "CERTIFICATE": Type.CERTIFICATE,
-  "CONCLUSION": Type.CONCLUSION,
-  "PERMIT": Type.PERMIT,
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
+ 
+  factory StatusValue.fromApi(String? value) {
+    if (value == null) return StatusValue.unknown;
+    final normalized = value.trim().toUpperCase();
+    return StatusValue.values.firstWhere(
+      (e) => e.apiValue == normalized,
+      orElse: () => StatusValue.unknown,
+    );
   }
+
+  
+  String toApi() => apiValue;
 }

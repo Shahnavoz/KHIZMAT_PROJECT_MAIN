@@ -1,342 +1,351 @@
-// To parse this JSON data, do
-//
-//     final myApplicationsModel = myApplicationsModelFromJson(jsonString);
-
 import 'dart:convert';
+import 'dart:ui';
 
 MyApplicationsModel myApplicationsModelFromJson(String str) =>
     MyApplicationsModel.fromJson(json.decode(str));
 
-String myApplicationsModelToJson(MyApplicationsModel data) =>
+String myApplicationsResponseToJson(MyApplicationsModel data) =>
     json.encode(data.toJson());
 
 class MyApplicationsModel {
-  int statusCode;
-  String statusMessage;
-  Data data;
+  final int? statusCode;
+  final String? statusMessage;
+  final ResponseData? data;
 
   MyApplicationsModel({
-    required this.statusCode,
-    required this.statusMessage,
-    required this.data,
+    this.statusCode,
+    this.statusMessage,
+    this.data,
   });
 
-  factory MyApplicationsModel.fromJson(Map<String, dynamic> json) =>
-      MyApplicationsModel(
-        statusCode: (json["status_code"] as num?)?.toInt() ?? 0,
-        statusMessage: json["status_message"] as String? ?? '',
-        data: Data.fromJson(json["data"] as Map<String, dynamic>? ?? {}),
-      );
+  factory MyApplicationsModel.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return MyApplicationsModel();
+    return MyApplicationsModel(
+      statusCode: json['status_code'] as int?,
+      statusMessage: json['status_message'] as String?,
+      data: ResponseData.fromJson(json['data']),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        "status_code": statusCode,
-        "status_message": statusMessage,
-        "data": data.toJson(),
+        if (statusCode != null) 'status_code': statusCode,
+        if (statusMessage != null) 'status_message': statusMessage,
+        if (data != null) 'data': data!.toJson(),
       };
 }
 
-class Data {
-  List<ApplicationList> applicationList;
-  dynamic statistics;
-  dynamic statisticsSubProcesses;
-  dynamic statisticsStatuses;
-  int totalItems;
-  int totalPages;
-  int currentPage;
+class ResponseData {
+  final List<ApplicationItem> applicationList;
+  final dynamic statistics;
+  final dynamic statisticsSubProcesses;
+  final dynamic statisticsStatuses;
+  final int totalItems;
+  final int totalPages;
+  final int currentPage;
 
-  Data({
-    required this.applicationList,
-    required this.statistics,
-    required this.statisticsSubProcesses,
-    required this.statisticsStatuses,
-    required this.totalItems,
-    required this.totalPages,
-    required this.currentPage,
-  });
+  ResponseData({
+    List<ApplicationItem>? applicationList,
+    this.statistics,
+    this.statisticsSubProcesses,
+    this.statisticsStatuses,
+    this.totalItems = 0,
+    this.totalPages = 0,
+    this.currentPage = 0,
+  }) : applicationList = applicationList ?? [];
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-        applicationList: (json["application_list"] as List<dynamic>? ?? [])
-            .map((x) => ApplicationList.fromJson(x as Map<String, dynamic>? ?? {}))
-            .toList(),
-        statistics: json["statistics"],
-        statisticsSubProcesses: json["statistics_sub_processes"],
-        statisticsStatuses: json["statistics_statuses"],
-        totalItems: (json["totalItems"] as num?)?.toInt() ?? 0,
-        totalPages: (json["totalPages"] as num?)?.toInt() ?? 0,
-        currentPage: (json["currentPage"] as num?)?.toInt() ?? 0,
-      );
+  factory ResponseData.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return ResponseData();
+    return ResponseData(
+      applicationList: (json['application_list'] as List<dynamic>?)
+              ?.map((e) => ApplicationItem.fromJson(e as Map<String, dynamic>?))
+              .whereType<ApplicationItem>()
+              .toList() ??
+          [],
+      statistics: json['statistics'],
+      statisticsSubProcesses: json['statistics_sub_processes'],
+      statisticsStatuses: json['statistics_statuses'],
+      totalItems: json['totalItems'] as int? ?? 0,
+      totalPages: json['totalPages'] as int? ?? 0,
+      currentPage: json['currentPage'] as int? ?? 0,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        "application_list": applicationList.map((x) => x.toJson()).toList(),
-        "statistics": statistics,
-        "statistics_sub_processes": statisticsSubProcesses,
-        "statistics_statuses": statisticsStatuses,
-        "totalItems": totalItems,
-        "totalPages": totalPages,
-        "currentPage": currentPage,
+        'application_list': applicationList.map((e) => e.toJson()).toList(),
+        'statistics': statistics,
+        'statistics_sub_processes': statisticsSubProcesses,
+        'statistics_statuses': statisticsStatuses,
+        'totalItems': totalItems,
+        'totalPages': totalPages,
+        'currentPage': currentPage,
       };
 }
 
-class ApplicationList {
-  int id;
-  dynamic subId;
-  Document document;
-  Category category;
-  String documentType;
-  Document type;
-  ApplicationType applicationType;
-  Status status;
-  Status reviewStatus;
-  Step step;
-  bool reApplication;
-  CabinetType? cabinetType;         
-  ApplicantName? applicantName;      
-  String applicantTin;
-  String registrationDate;
-  String reviewExpiry;
-  String correctionExpiry;
-  String paymentExpiry;
-  String? registrationNumber;
-  CreatedBy? createdBy;              
+enum StatusKey {
+  inProcess('IN_PROCESS'),//В процессе заполнения
+  notPaid('NOT_PAID'),//Не оплачен
+  completed('COMPLETED'),//Успешно рассмотрено
+  inPayment('IN_PAYMENT'),//В процессе оплаты
+  review('REVIEW'),//На рассмотрении
+  unknown('UNKNOWN');
 
-  ApplicationList({
-    required this.id,
-    required this.subId,
-    required this.document,
-    required this.category,
-    required this.documentType,
-    required this.type,
-    required this.applicationType,
-    required this.status,
-    required this.reviewStatus,
-    required this.step,
-    required this.reApplication,
+  final String apiValue;
+  const StatusKey(this.apiValue);
+
+  factory StatusKey.fromString(String? value) {
+    if (value == null || value.trim().isEmpty) return StatusKey.unknown;
+    final normalized = value.trim().toUpperCase();
+    return values.firstWhere(
+      (e) => e.apiValue == normalized,
+      orElse: () => StatusKey.unknown,
+    );
+  }
+
+  String toApiString() => apiValue;
+}
+
+class ApplicationStatus {
+  final StatusKey key;
+  final MultiLang? title;
+  final String? backgroundColor;
+  final String? can; // "edit", "view", null и т.д.
+
+  ApplicationStatus({
+    StatusKey? key,
+    this.title,
+    this.backgroundColor,
+    this.can,
+  }) : key = key ?? StatusKey.unknown;
+
+  factory ApplicationStatus.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return ApplicationStatus();
+    return ApplicationStatus(
+      key: StatusKey.fromString(json['key'] as String?),
+      title: MultiLang.fromJson(json['title']),
+      backgroundColor: json['background_color'] as String?,
+      can: json['can'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'key': key.toApiString(),
+        if (title != null) 'title': title!.toJson(),
+        if (backgroundColor != null) 'background_color': backgroundColor,
+        if (can != null) 'can': can,
+      };
+
+  bool get isInProcess => key == StatusKey.inProcess;
+  bool get isUnderReview => key == StatusKey.review;
+  bool get isPaymentProcess => key == StatusKey.inPayment;
+  bool get isCompleted => key == StatusKey.completed;
+}
+
+class ApplicationItem {
+  final int? id;
+  final int? subId;
+  final MultiLang? document;
+  final Category? category;
+  final String? documentType;
+  final MultiLang? type;
+  final ApplicationType? applicationType;
+  final ApplicationStatus? status;
+  final ApplicationStatus? reviewStatus;
+  final Step? step;
+  final bool? reApplication;
+  final String? cabinetType;
+  final String? applicantName;
+  final String? applicantTin;
+  final String? registrationDate;
+  final String? reviewExpiry;
+  final String? correctionExpiry;
+  final String? paymentExpiry;
+  final String? registrationNumber;
+  final String? createdBy;
+
+  ApplicationItem({
+    this.id,
+    this.subId,
+    this.document,
+    this.category,
+    this.documentType,
+    this.type,
+    this.applicationType,
+    this.status,
+    this.reviewStatus,
+    this.step,
+    this.reApplication = false,
     this.cabinetType,
     this.applicantName,
-    required this.applicantTin,
-    required this.registrationDate,
-    required this.reviewExpiry,
-    required this.correctionExpiry,
-    required this.paymentExpiry,
+    this.applicantTin,
+    this.registrationDate,
+    this.reviewExpiry,
+    this.correctionExpiry,
+    this.paymentExpiry,
     this.registrationNumber,
     this.createdBy,
   });
 
-  factory ApplicationList.fromJson(Map<String, dynamic> json) => ApplicationList(
-        id: (json["id"] as num?)?.toInt() ?? 0,
-        subId: json["sub_id"],
-        document: Document.fromJson(json["document"] as Map<String, dynamic>? ?? {}),
-        category: Category.fromJson(json["category"] as Map<String, dynamic>? ?? {}),
-        documentType: json["document_type"] as String? ?? '',
-        type: Document.fromJson(json["type"] as Map<String, dynamic>? ?? {}),
-        applicationType: ApplicationType.fromJson(json["application_type"] as Map<String, dynamic>? ?? {}),
-        status: Status.fromJson(json["status"] as Map<String, dynamic>? ?? {}),
-        reviewStatus: Status.fromJson(json["review_status"] as Map<String, dynamic>? ?? {}),
-        step: Step.fromJson(json["step"] as Map<String, dynamic>? ?? {}),
-        reApplication: json["re_application"] as bool? ?? false,
-        cabinetType: cabinetTypeValues.map[json["cabinet_type"] as String?],
-        applicantName: applicantNameValues.map[json["applicant_name"] as String?],
-        applicantTin: json["applicant_tin"] as String? ?? '',
-        registrationDate: json["registration_date"] as String? ?? '',
-        reviewExpiry: json["review_expiry"] as String? ?? '',
-        correctionExpiry: json["correction_expiry"] as String? ?? '',
-        paymentExpiry: json["payment_expiry"] as String? ?? '',
-        registrationNumber: json["registration_number"] as String?,
-        createdBy: createdByValues.map[json["created_by"] as String?],
-      );
+  factory ApplicationItem.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return ApplicationItem();
+    return ApplicationItem(
+      id: json['id'] as int?,
+      subId: json['sub_id'] as int?,
+      document: MultiLang.fromJson(json['document']),
+      category: Category.fromJson(json['category']),
+      documentType: json['document_type'] as String?,
+      type: MultiLang.fromJson(json['type']),
+      applicationType: ApplicationType.fromJson(json['application_type']),
+      status: ApplicationStatus.fromJson(json['status']),
+      reviewStatus: ApplicationStatus.fromJson(json['review_status']),
+      step: Step.fromJson(json['step']),
+      reApplication: json['re_application'] as bool? ?? false,
+      cabinetType: json['cabinet_type'] as String?,
+      applicantName: json['applicant_name'] as String?,
+      applicantTin: json['applicant_tin'] as String?,
+      registrationDate: json['registration_date'] as String?,
+      reviewExpiry: json['review_expiry'] as String?,
+      correctionExpiry: json['correction_expiry'] as String?,
+      paymentExpiry: json['payment_expiry'] as String?,
+      registrationNumber: json['registration_number'] as String?,
+      createdBy: json['created_by'] as String?,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "sub_id": subId,
-        "document": document.toJson(),
-        "category": category.toJson(),
-        "document_type": documentType,
-        "type": type.toJson(),
-        "application_type": applicationType.toJson(),
-        "status": status.toJson(),
-        "review_status": reviewStatus.toJson(),
-        "step": step.toJson(),
-        "re_application": reApplication,
-        "cabinet_type": cabinetType != null ? cabinetTypeValues.reverse[cabinetType] : null,
-        "applicant_name": applicantName != null ? applicantNameValues.reverse[applicantName] : null,
-        "applicant_tin": applicantTin,
-        "registration_date": registrationDate,
-        "review_expiry": reviewExpiry,
-        "correction_expiry": correctionExpiry,
-        "payment_expiry": paymentExpiry,
-        "registration_number": registrationNumber,
-        "created_by": createdBy != null ? createdByValues.reverse[createdBy] : null,
+        if (id != null) 'id': id,
+        if (subId != null) 'sub_id': subId,
+        if (document != null) 'document': document!.toJson(),
+        if (category != null) 'category': category!.toJson(),
+        if (documentType != null) 'document_type': documentType,
+        if (type != null) 'type': type!.toJson(),
+        if (applicationType != null) 'application_type': applicationType!.toJson(),
+        if (status != null) 'status': status!.toJson(),
+        if (reviewStatus != null) 'review_status': reviewStatus!.toJson(),
+        if (step != null) 'step': step!.toJson(),
+        if (reApplication != null) 're_application': reApplication,
+        if (cabinetType != null) 'cabinet_type': cabinetType,
+        if (applicantName != null) 'applicant_name': applicantName,
+        if (applicantTin != null) 'applicant_tin': applicantTin,
+        if (registrationDate != null) 'registration_date': registrationDate,
+        if (reviewExpiry != null) 'review_expiry': reviewExpiry,
+        if (correctionExpiry != null) 'correction_expiry': correctionExpiry,
+        if (paymentExpiry != null) 'payment_expiry': paymentExpiry,
+        if (registrationNumber != null) 'registration_number': registrationNumber,
+        if (createdBy != null) 'created_by': createdBy,
       };
 }
 
-enum ApplicantName { empty, unknown }
+// Вспомогательные классы (все безопасные)
 
-final applicantNameValues = EnumValues({
-  "Тестов Тест Тестович": ApplicantName.empty
-});
+class MultiLang {
+  final String? tj;
+  final String? ru;
+  final String? en;
 
-class ApplicationType {
-  Key? key;
-  Document title;
+  MultiLang({this.tj, this.ru, this.en});
 
-  ApplicationType({this.key, required this.title});
-
-  factory ApplicationType.fromJson(Map<String, dynamic> json) => ApplicationType(
-        key: keyValues.map[json["key"] as String?],
-        title: Document.fromJson(json["title"] as Map<String, dynamic>? ?? {}),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "key": key != null ? keyValues.reverse[key] : null,
-        "title": title.toJson(),
-      };
-}
-
-enum Key { registration, unknown }
-
-final keyValues = EnumValues({
-  "REGISTRATION": Key.registration,
-});
-
-class Document {
-  String tj;
-  String ru;
-  String en;
-
-  Document({
-    this.tj = '',
-    this.ru = '',
-    this.en = '',
-  });
-
-  factory Document.fromJson(Map<String, dynamic> json) => Document(
-        tj: json["tj"] as String? ?? '',
-        ru: json["ru"] as String? ?? '',
-        en: json["en"] as String? ?? '',
-      );
+  factory MultiLang.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return MultiLang();
+    return MultiLang(
+      tj: json['tj'] as String?,
+      ru: json['ru'] as String?,
+      en: json['en'] as String?,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        "tj": tj,
-        "ru": ru,
-        "en": en,
+        if (tj != null) 'tj': tj,
+        if (ru != null) 'ru': ru,
+        if (en != null) 'en': en,
       };
+
+  String get any => tj ?? ru ?? en ?? '';
+
+   String getText(Locale locale) {
+    switch (locale.languageCode) {
+      case 'ru':
+        return ru ?? en ?? tj ?? '';
+      case 'en':
+        return en ?? ru ?? tj ?? '';
+      case 'tj':
+      case 'fr':
+        return tj ?? ru ?? en ?? '';
+      default:
+        return ru ?? en ?? tj ?? '';
+    }
+  }
 }
-
-enum CabinetType { frontOffice, unknown }
-
-final cabinetTypeValues = EnumValues({
-  "FRONT_OFFICE": CabinetType.frontOffice,
-});
 
 class Category {
-  Document title;
-  String iconId;
-  dynamic gradientStartColor;
-  dynamic gradientEndColor;
+  final MultiLang? title;
+  final String? iconId;
+  final String? gradientStartColor;
+  final String? gradientEndColor;
 
   Category({
-    required this.title,
-    this.iconId = '',
+    this.title,
+    this.iconId,
     this.gradientStartColor,
     this.gradientEndColor,
   });
 
-  factory Category.fromJson(Map<String, dynamic> json) => Category(
-        title: Document.fromJson(json["title"] as Map<String, dynamic>? ?? {}),
-        iconId: json["icon_id"] as String? ?? '',
-        gradientStartColor: json["gradient_start_color"],
-        gradientEndColor: json["gradient_end_color"],
-      );
+  factory Category.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return Category();
+    return Category(
+      title: MultiLang.fromJson(json['title']),
+      iconId: json['icon_id'] as String?,
+      gradientStartColor: json['gradient_start_color'] as String?,
+      gradientEndColor: json['gradient_end_color'] as String?,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        "title": title.toJson(),
-        "icon_id": iconId,
-        "gradient_start_color": gradientStartColor,
-        "gradient_end_color": gradientEndColor,
+        if (title != null) 'title': title!.toJson(),
+        if (iconId != null) 'icon_id': iconId,
+        if (gradientStartColor != null) 'gradient_start_color': gradientStartColor,
+        if (gradientEndColor != null) 'gradient_end_color': gradientEndColor,
       };
 }
 
-enum CreatedBy { empty, unknown }
+class ApplicationType {
+  final String? key;
+  final MultiLang? title;
 
-final createdByValues = EnumValues({
-  "Тестов Тест": CreatedBy.empty,
-});
+  ApplicationType({this.key, this.title});
 
-class Status {
-  String key;
-  Document title;
-  BackgroundColor? backgroundColor;
-  Can? can;
-
-  Status({
-    this.key = '',
-    required this.title,
-    this.backgroundColor,
-    this.can,
-  });
-
-  factory Status.fromJson(Map<String, dynamic> json) => Status(
-        key: json["key"] as String? ?? '',
-        title: Document.fromJson(json["title"] as Map<String, dynamic>? ?? {}),
-        backgroundColor: backgroundColorValues.map[json["background_color"] as String?],
-        can: canValues.map[json["can"] as String?],
-      );
+  factory ApplicationType.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return ApplicationType();
+    return ApplicationType(
+      key: json['key'] as String?,
+      title: MultiLang.fromJson(json['title']),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        "key": key,
-        "title": title.toJson(),
-        "background_color": backgroundColor != null ? backgroundColorValues.reverse[backgroundColor] : null,
-        "can": can != null ? canValues.reverse[can] : null,
+        if (key != null) 'key': key,
+        if (title != null) 'title': title!.toJson(),
       };
 }
-
-enum BackgroundColor { ffad33, ffffff, the3Ed857, unknown }
-
-final backgroundColorValues = EnumValues({
-  "#FFAD33": BackgroundColor.ffad33,
-  "#FFFFFF": BackgroundColor.ffffff,
-  "#3ED857": BackgroundColor.the3Ed857,
-});
-
-enum Can { edit, view, unknown }
-
-final canValues = EnumValues({
-  "edit": Can.edit,
-  "view": Can.view,
-});
 
 class Step {
-  Document title;
-  int position;
-  int count;
+  final MultiLang? title;
+  final int? position;
+  final int? count;
 
-  Step({
-    required this.title,
-    this.position = 0,
-    this.count = 0,
-  });
+  Step({this.title, this.position, this.count});
 
-  factory Step.fromJson(Map<String, dynamic> json) => Step(
-        title: Document.fromJson(json["title"] as Map<String, dynamic>? ?? {}),
-        position: (json["position"] as num?)?.toInt() ?? 0,
-        count: (json["count"] as num?)?.toInt() ?? 0,
-      );
+  factory Step.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return Step();
+    return Step(
+      title: MultiLang.fromJson(json['title']),
+      position: json['position'] as int?,
+      count: json['count'] as int?,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        "title": title.toJson(),
-        "position": position,
-        "count": count,
+        if (title != null) 'title': title!.toJson(),
+        if (position != null) 'position': position,
+        if (count != null) 'count': count,
       };
-}
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
 }

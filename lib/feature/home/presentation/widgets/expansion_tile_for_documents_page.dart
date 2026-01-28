@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
-import 'package:khizmat_new/consts/methods/common_methods.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
-import 'package:khizmat_new/feature/documents/data/models/my_documents_model.dart';
-import 'package:khizmat_new/feature/home/data/models/usluga_detail_info.dart';
+import 'package:khizmat_new/feature/documents/data/models/my_documents_detail_model.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/detail_info_row_widget.dart';
 
 class ExpansionTileForDocumentsPage extends StatefulWidget {
@@ -19,7 +17,7 @@ class ExpansionTileForDocumentsPage extends StatefulWidget {
   final AdaptiveSizes size;
   final String title;
   final Locale currentLocale;
-  final MyDocumentsModel? docModel;
+  final MyDocumentDetailInfoModel? docModel;
   final int index;
 
   @override
@@ -32,7 +30,6 @@ class _ExpansionTileForDocumentsPageState
   @override
   Widget build(BuildContext context) {
     final info = widget.docModel!.data;
-    final registers = widget.docModel!.data.registers;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: widget.size.otstup15),
       decoration: BoxDecoration(
@@ -59,48 +56,36 @@ class _ExpansionTileForDocumentsPageState
             children: [
               buildCustomRow(
                 "Статус",
-                info.registers[widget.index].document.getText(
-                  widget.currentLocale,
-                ),
+                info.status.title.getText(widget.currentLocale),
               ),
               buildCustomRow(
                 "Наименование лицензиата",
-                registers[widget.index].name.toString(), //field?
+                info.name, //field?
                 fontsize: 15,
               ),
               buildCustomRow(
                 "Адрес", //field?
-                registers[widget.index].registrationDate.toString(),
+                info.address ?? '',
                 fontsize: 15,
               ),
-              buildCustomRow(
-                "ИНН лицензиата",
-
-                registers[widget.index].tin,
-                fontsize: 15,
-              ),
-              buildCustomRow(
-                "Номер документа",
-
-                registers[widget.index].number,
-                fontsize: 15,
-              ),
+              buildCustomRow("ИНН лицензиата", info.tin, fontsize: 15),
+              buildCustomRow("Номер документа", info.number, fontsize: 15),
               buildCustomRow(
                 "Номер в реестре",
 
-                registers[widget.index].registerNumber,
+                info.registerNumber,
                 fontsize: 15,
               ),
               buildCustomRow(
                 "Дата выдачи",
 
-                registers[widget.index].registrationDate.toString(),
+                info.registrationDate.toString(),
                 fontsize: 15,
               ),
               buildCustomRow(
                 "Действует до",
 
-                registers[widget.index].registrationDate.toString(),
+                info.registrationDate.toString(),
                 fontsize: 15,
               ),
               // GestureDetector(

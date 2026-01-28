@@ -17,6 +17,7 @@ import 'package:khizmat_new/feature/home/data/providers/controllers_provider.dar
 import 'package:khizmat_new/feature/home/data/providers/drop_down_params_provider.dart';
 import 'package:khizmat_new/feature/home/data/providers/steps_provider.dart';
 import 'package:khizmat_new/feature/home/data/repos/shagi_polucheniye_uslugi_service.dart';
+import 'package:khizmat_new/feature/home/presentation/pages/Gos_organizations_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/radio_button.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/requirement_step.dart';
@@ -83,55 +84,56 @@ class _StepsPageState extends ConsumerState<StepsPage> {
           child: FontSettingContainer(size: size),
         ),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: greyTextFBorderColor)),
-          borderRadius: BorderRadius.horizontal(
-            right: Radius.circular(10),
-            left: Radius.circular(10),
-          ),
-          color: Colors.white,
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: size.otstup18,
-            vertical: size.otstup20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              My_Button(
-                width: double.infinity,
-                size: size,
-                backgroundColor: Colors.white,
-                borderColor: greyTextFBorderColor,
-                borderRadius: 10,
-                onPressed: () {},
-                child: textWithH1Style(
-                  "Сохранить как черновик",
-                  fontsize: 15,
-                  // color: Colors.white,
-                ),
-              ),
-              My_Button(
-                width: double.infinity,
-                size: size,
-                backgroundColor: primaryButtonColor,
-                borderColor: primaryButtonColor,
-                borderRadius: 10,
-                onPressed: () {
-                  _onContinuePressed(asyncSteps, currentStep);
-                },
-                child: textWithH1Style(
-                  "Продoлжить",
-                  fontsize: 15,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      // bottomNavigationBar: 
+      // Container(
+      //   decoration: BoxDecoration(
+      //     border: Border(top: BorderSide(color: greyTextFBorderColor)),
+      //     borderRadius: BorderRadius.horizontal(
+      //       right: Radius.circular(10),
+      //       left: Radius.circular(10),
+      //     ),
+      //     color: Colors.white,
+      //   ),
+      //   child: Padding(
+      //     padding: EdgeInsets.symmetric(
+      //       horizontal: size.otstup18,
+      //       vertical: size.otstup20,
+      //     ),
+      //     child: Column(
+      //       mainAxisSize: MainAxisSize.min,
+      //       children: [
+      //         My_Button(
+      //           width: double.infinity,
+      //           size: size,
+      //           backgroundColor: Colors.white,
+      //           borderColor: greyTextFBorderColor,
+      //           borderRadius: 10,
+      //           onPressed: () {},
+      //           child: textWithH1Style(
+      //             "Сохранить как черновик",
+      //             fontsize: 15,
+      //             // color: Colors.white,
+      //           ),
+      //         ),
+      //         My_Button(
+      //           width: double.infinity,
+      //           size: size,
+      //           backgroundColor: primaryButtonColor,
+      //           borderColor: primaryButtonColor,
+      //           borderRadius: 10,
+      //           onPressed: () {
+      //             _onContinuePressed(asyncSteps, currentStep);
+      //           },
+      //           child: textWithH1Style(
+      //             "Продoлжить",
+      //             fontsize: 15,
+      //             color: Colors.white,
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
       body: Stack(
         children: [
           Container(
@@ -244,10 +246,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                               ),
                             ),
                             SizedBox(height: size.otstup30),
-<<<<<<< HEAD
-=======
 
->>>>>>> 75389bbd2b59181da69adea4618127a5b94d44b3
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Padding(
@@ -401,8 +400,6 @@ class _StepsPageState extends ConsumerState<StepsPage> {
               ],
             ),
           ),
-<<<<<<< HEAD
-=======
 
           Positioned(
             bottom: 0,
@@ -504,7 +501,6 @@ class _StepsPageState extends ConsumerState<StepsPage> {
               },
             ),
           ),
->>>>>>> 75389bbd2b59181da69adea4618127a5b94d44b3
         ],
       ),
     );

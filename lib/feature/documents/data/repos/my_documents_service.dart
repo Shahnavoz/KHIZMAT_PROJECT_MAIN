@@ -10,7 +10,7 @@ class MyDocumentsService {
       final token = await storage.read(key: 'token');
       final response = await http.get(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/register/list?page=0&size=10&sort=id,desc',
+          'https://apikhizmat.ehukumat.tj/v1/register/list?page=4&size=10&sort=id,desc',
         ),
 
         headers: <String, String>{
@@ -21,7 +21,7 @@ class MyDocumentsService {
       );
 
       if (response.statusCode == 200) {
-        final decode = myDocumentsModelFromJson(response.body);
+        final decode = myDocumentModelFromJson(response.body);
         return decode;
       } else {
         print("Response Statuscode: ${response.statusCode}");
