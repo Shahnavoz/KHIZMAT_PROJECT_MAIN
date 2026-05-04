@@ -47,58 +47,45 @@ class _RadioButtonState extends ConsumerState<RadioButton> {
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                            // horizontal: widget.size.otstup15,
-                            vertical: 8,
-                          ),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: size.otstup10,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: size.screenWidth * 0.64,
-                                      child: Text(
-                                        widget.options[index].name.getText(currentLocal),
-                                        
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => widget.onChanged?.call(widget.options[index]),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: size.otstup10,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width: size.screenWidth * 0.64,
+                                        child: Text(
+                                          widget.options[index].name.getText(currentLocal),
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Radio.adaptive(
-                                      activeColor: primaryButtonColor,
-                                      value:
-                                          widget
-                                              .options[index],
-                                      groupValue:
-                                          widget.choice,
-                                      onChanged: widget.onChanged,
-                                      // (ChoiceOption? val) {
-                                      //   if (val != null) {
-                                      //     setState(() {
-                                      //       widget.onChanged?.call(
-                                      //         val,
-                                      //       ); // уведомляем родителя
-                                      //     });
-                                      //   }
-                                      // },
-                                    ),
-                                  ],
+                                      Radio.adaptive(
+                                        activeColor: primaryButtonColor,
+                                        value: widget.options[index],
+                                        groupValue: widget.choice,
+                                        onChanged: widget.onChanged,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-
-                              index < widget.options.length - 1
-                                  ? Divider()
-                                  : SizedBox.shrink(),
-                            ],
+                                index < widget.options.length - 1
+                                    ? Divider()
+                                    : SizedBox.shrink(),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -108,15 +95,6 @@ class _RadioButtonState extends ConsumerState<RadioButton> {
                   ],
                 ),
               ),
-
-              // if (field.hasError)
-              //   Padding(
-              //     padding: EdgeInsets.only(left: 15),
-              //     child: Text(
-              //       field.errorText!,
-              //       style: TextStyle(color: Colors.redAccent),
-              //     ),
-              //   ),
             ],
           ),
         ),

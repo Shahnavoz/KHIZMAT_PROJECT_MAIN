@@ -3,6 +3,7 @@ import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/home/data/models/all_updated_date_model.dart';
+import 'package:khizmat_new/feature/home/presentation/pages/Category_detail_page.dart';
 
 class HorizontalScrollableWidget extends StatefulWidget {
   HorizontalScrollableWidget({
@@ -16,6 +17,7 @@ class HorizontalScrollableWidget extends StatefulWidget {
     this.activeTextColor,
     this.nonActiveTextColor,
     this.borderColor,
+    required this.documents,
   });
 
   final List<CategoryElement> categories;
@@ -23,10 +25,11 @@ class HorizontalScrollableWidget extends StatefulWidget {
   final Locale currentLocale;
   Color? oneActiveColor = secondaryColorForScroll;
   Color? nonActiveColor = secondaryColorForScroll;
-  int selectedIndex;
+  int? selectedIndex;
   Color? activeTextColor = Colors.white;
   Color? nonActiveTextColor = Colors.white;
   Color? borderColor;
+  List<UpdatedDateDocument> documents;
 
   @override
   State<HorizontalScrollableWidget> createState() =>
@@ -65,6 +68,18 @@ class _HorizontalScrollableWidgetState
                   setState(() {
                     widget.selectedIndex = index;
                   });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => CategoryDetailPage(
+                            categories: widget.categories,
+                            category: widget.categories[index],
+                            docId: widget.documents[index].id,
+                            documents: widget.documents,
+                          ),
+                    ),
+                  );
                 },
                 child: Container(
                   decoration: BoxDecoration(

@@ -60,7 +60,7 @@ class _ExpansionTileForDocumentsPageState
               ),
               buildCustomRow(
                 "Наименование лицензиата",
-                info.name!, //field?
+                info.name ?? "", //field?
                 fontsize: 15,
               ),
               buildCustomRow(

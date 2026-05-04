@@ -1,6 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:khizmat_new/feature/documents/data/models/my_application_detail_info_page.dart';
+import 'package:khizmat_new/core/config/app_config.dart';
+import 'package:khizmat_new/feature/documents/data/models/my_application_detail_info_model.dart';
 
 class MyApplicationsDetailInfoService {
   var storage = FlutterSecureStorage();
@@ -10,7 +11,7 @@ class MyApplicationsDetailInfoService {
       var token = await storage.read(key: 'token');
       var response = await http.get(
         Uri.parse(
-          "https://apikhizmat.ehukumat.tj/v1/application/view?id=$appId",
+          '${AppConfig.baseV1}/application/view?id=$appId',
         ),
 
         headers: <String, String>{

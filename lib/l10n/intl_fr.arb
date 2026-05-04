@@ -1,4 +1,5 @@
 {
+  "@@locale": "fr",
   "ru": "RU",
   "poluchay_uslugi_ne_vikhodya_iz_doma": "Хизматрасониҳоро бидуни баромадан аз хона гиред",
   "proizvesti_vkhod": "Ба барнома ворид шавед",
@@ -6,5 +7,80 @@
   "voyti_cherez_imzo": "Ворид шудан бо ИМЗО",
   "osnovniye_voprosi": "Саволҳои асосӣ",
   "ne_udayotsa_voyti": "Ворид шудан мумкин нест?",
-  "bottom_text": "© 2024-2025 ҶДММ \"Марказҳои тасдиқкунанда, хизматрасониҳои давлатӣ ва таҳияи барномаҳои рақамӣ\""
+  "bottom_text": "© 2024-2025 ҶДММ \"Марказҳои тасдиқкунанда, хизматрасониҳои давлатӣ ва таҳияи барномаҳои рақамӣ\"",
+  "allApplications": "Аризаҳо",
+  "poisk_uslug": "Ҷустуҷӯи хидматҳо",
+  "allCategories": "Ҳама категорияҳо",
+  "serviceCategories": "Категорияҳои хизматрасонӣ",
+  "noApplication": "Ҳеҷ aриза",
+  "all": "Ҳама",
+  "seenSuccessfully": "Бомуффақият баррасӣ карда шуд",
+  "naRasmotrenii": "Дар баррасӣ қарор дорад",
+  "inFillingProcess": "Дар ҷараёни пуркунӣ",
+  "applications": "Аризаҳо",
+  "InPaymentProcess": "Дар ҷараёни пардохт",
+  "rejected": "Радшуда",
+  "reviewPeriodExpired": "Муҳлати баррасӣ гузашт",
+  "applicationWasWithdrawn": "Ариза бозхонд шуд",
+  "active": "Фаъол",
+  "notAssigned": "Имзо нашудааст",
+  "hasExpired": "Муҳлаташ гузаштааст",
+  "searchDocsAndApplications": "Ҷустуҷӯи ҳуҷҷатҳо ва аризаҳо",
+  "myDocuments": "Ҳуҷҷатҳои ман",
+  "filtereddocumentsindexregistrationdate": "Оғози эътибор: {registrationDate}",
+  "@filtereddocumentsindexregistrationdate": {
+    "placeholders": {
+      "registrationDate": {
+        "type": "String"
+      }
+    }
+  },
+  "favorites": "Избранное",
+  "noDocuments": "Ҳуҷҷат нест",
+  "allDocuments": "Ҳама ҳуҷҷатҳо",
+  "search": "Ҷустуҷӯ",
+  "cancel": "Бекор кардан",
+  "startSearching": "Оғози ҷустуҷӯ!",
+  "nothingFound": "Ҳеҷ чиз ёфт нашуд",
+  "categories": "Категорияҳо",
+  "services": "Хизматрасониҳо",
+  "gosOrganizations": "Ташкилотхои давлатӣ",
+  "searchOrganization": "Ҷустуҷӯи ташкилотҳо",
+  "notFoundOrgs": "Ташкилот ёфт нашуд",
+  "orgdocumentscount": "{count} хизматрасони",
+  "@orgdocumentscount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noServices": "Хизматрасони нест",
+  "main": "Асосӣ",
+  "documents": "Ҳуҷҷатҳо",
+  "profile": "Профил",
+  "myApplications": "Аризаҳои ман",
+  "inFillingProcessStep": "Қадами {position} аз {count}",
+  "@inFillingProcessStep": {
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "nazad": "Бозгашт",
+  "podrobnee": "Муфассал",
+  "svernut": "Свернуть",
+  "srokPolucheniyaOnline": "Мӯҳлати гирифтан: Онлайн (фавран)",
+  "srokPolucheniyaDays": "Мӯҳлати гирифтан: {days} рӯз",
+  "@srokPolucheniyaDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }

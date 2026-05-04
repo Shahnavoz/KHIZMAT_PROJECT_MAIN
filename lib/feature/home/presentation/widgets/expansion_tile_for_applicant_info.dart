@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart' hide Step;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
+import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
-import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
-import 'package:khizmat_new/feature/documents/data/models/my_application_detail_info_page.dart';
+import 'package:khizmat_new/feature/documents/data/models/my_application_detail_info_model.dart';
 
-class ExpansionTileForApplicantInfoPage extends StatefulWidget {
+class ExpansionTileForApplicantInfoPage extends ConsumerStatefulWidget {
   const ExpansionTileForApplicantInfoPage({
     super.key,
     required this.size,
@@ -12,6 +13,7 @@ class ExpansionTileForApplicantInfoPage extends StatefulWidget {
     required this.currentLocale,
     required this.docModel,
     required this.index,
+    required this.data
   });
 
   final AdaptiveSizes size;
@@ -19,17 +21,21 @@ class ExpansionTileForApplicantInfoPage extends StatefulWidget {
   final Locale currentLocale;
   final List<Step>? docModel;
   final int index;
+  final Data data;
 
   @override
-  State<ExpansionTileForApplicantInfoPage> createState() =>
+  ConsumerState<ExpansionTileForApplicantInfoPage> createState() =>
       _ExpansionTileForApplicantInfoPageState();
 }
 
 class _ExpansionTileForApplicantInfoPageState
-    extends State<ExpansionTileForApplicantInfoPage> {
+    extends ConsumerState<ExpansionTileForApplicantInfoPage> {
   @override
   Widget build(BuildContext context) {
-    final step = widget.docModel![widget.index];
+    final data=widget.data;
+    final steps=widget.docModel;
+    final index=widget.index;
+    final currentLocale=ref.watch(localeProvider);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: widget.size.otstup15),
       decoration: BoxDecoration(
@@ -56,22 +62,23 @@ class _ExpansionTileForApplicantInfoPageState
             children: [
               Row(
                 children: [
-                  textCWithH2GreyStyle(
-                    step
-                        .groups[widget.index]
-                        .fields[widget.index]
-                        .title!
-                        .getText(widget.currentLocale),
-                  ),
+                  //RANGEERROR
+                  // textCWithH2GreyStyle(
+                    // steps![index]
+                    //     .groups[widget.index]
+                    //     .fields[widget.index]
+                    //     .title!
+                    //     .getText(widget.currentLocale),
+                  // ),  
                 ],
               ),
               // buildCustomRow(
               //   "Статус",
-              //   info!.status!.title!.getText(widget.currentLocale),
+              //   data.status.title.getText(currentLocale )
               // ),
               // buildCustomRow(
-              //   "Наименование лицензиата",
-              //   info.name!, //field?
+              //   steps[index].groups[widget.index].fields[index].key!,
+              //   steps[index].groups[widget.index].fields[index].value!,
               //   fontsize: 15,
               // ),
               // buildCustomRow(

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/themes/themes.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class ButtonsBarTitles extends ConsumerWidget {
   const ButtonsBarTitles({super.key, required this.size});
@@ -61,7 +62,7 @@ class ButtonsBarTitles extends ConsumerWidget {
               color: Colors.white,
             ),
             unselectedLabelStyle: TextStyle(
-              color: appThemeProvider ? Colors.black : Colors.white,
+              color: appThemeProvider ? Colors.black : Colors.black,
               fontWeight: FontWeight.w400,
             ),
             contentPadding: EdgeInsets.symmetric(
@@ -70,10 +71,10 @@ class ButtonsBarTitles extends ConsumerWidget {
             buttonMargin: EdgeInsets.zero,
             decoration: BoxDecoration(
               // color: Color(0xFF00858F),
-              color: primaryGreenColor,
+              color: Colors.black,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
               ),
               // gradient: RadialGradient(
               //   radius: 30.0,
@@ -90,7 +91,7 @@ class ButtonsBarTitles extends ConsumerWidget {
               // borderRadius: BorderRadius.circular(8),
               color: Colors.transparent,
             ),
-            tabs: const [Tab(text: 'Уведомления'), Tab(text: 'Заявления')],
+            tabs:  [ Tab(text: S.of(context).applications),Tab(text: S.of(context).favorites,icon: Icon(Icons.lock,size: 20,),)],
           ),
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khizmat_new/feature/home/data/models/field_value_model.dart';
 import 'package:khizmat_new/feature/home/data/models/shagi_polucheniye_uslugi_model.dart';
+import 'package:khizmat_new/feature/home/data/models/start_document_model.dart';
 
 final formProviderFamily = ChangeNotifierProvider.family<FormProvider, int>(
   (ref, documentId) => FormProvider(),
@@ -30,6 +31,35 @@ class FormProvider extends ChangeNotifier {
   // Установка значения (для switch, radio, dropdown и т.д.)
   void setValue(String key, dynamic value) {
     fieldValues[key] = value;
+    notifyListeners();
+  }
+
+  /// Инициализация формы начальными значениями из документа.
+  ///
+  /// Only seeds values that are NOT already set — this prevents overwriting
+  /// file IDs or other values the user set after the widget was first built
+  /// (e.g. after a file upload triggers a parent rebuild and initState re-runs).
+  void initializeFromDocument(List<Value> documentValues) {
+    for (final val in documentValues) {
+      final key = val.key;
+      if (key == null || key.isEmpty) continue;
+
+      // Skip fields that already have a value set by the user/upload
+      if (fieldValues.containsKey(key) &&
+          fieldValues[key] != null &&
+          fieldValues[key].toString().isNotEmpty) {
+        continue;
+      }
+
+      final value = val.value.toString();
+      fieldValues[key] = value;
+
+      final controller = getTextController(key);
+      if (controller.text.isEmpty) {
+        controller.text = value;
+      }
+    }
+
     notifyListeners();
   }
 

@@ -1,10 +1,77 @@
 {
+  "@@locale": "en",
   "ru": "RU",
   "poluchay_uslugi_ne_vikhodya_iz_doma": "Get services without leaving your home",
   "proizvesti_vkhod": "Log in to the app",
   "cherez_imzo": "To access the mobile app, log in using the IMZO service.",
   "voyti_cherez_imzo": "Log in with IMZO",
   "osnovniye_voprosi": "Main questions",
-  "ne_udayotsa_voyti": "Can’t log in?",
-  "bottom_text": "© 2024-2025 JSC \"Certification Centers, Public Services and Digital Software Development\""
+  "ne_udayotsa_voyti": "Can't log in?",
+  "bottom_text": "© 2024-2025 JSC \"Certification Centers, Public Services and Digital Software Development\"",
+  "allApplications": "Applications",
+  "poisk_uslug": "Search for services",
+  "allCategories": "All categories",
+  "serviceCategories": "Service categories",
+  "noApplication": "No applications",
+  "all": "All",
+  "seenSuccessfully": "Successfully reviewed",
+  "naRasmotrenii": "Under review",
+  "inFillingProcess": "In the process of filling",
+  "applications": "Applications",
+  "InPaymentProcess": "In the process of payment",
+  "rejected": "Rejected",
+  "reviewPeriodExpired": "Review period expired",
+  "applicationWasWithdrawn": "Application was withdrawn",
+  "active": "Active",
+  "notAssigned": "Not signed",
+  "hasExpired": "Expired",
+  "searchDocsAndApplications": "Search documents and applications",
+  "myDocuments": "My Documents",
+  "favorites": "Favorites",
+  "noDocuments": "No documents",
+  "allDocuments": "All documents",
+  "search": "Search",
+  "cancel": "Cancel",
+  "startSearching": "Start searching!",
+  "nothingFound": "Nothing found",
+  "categories": "Categories",
+  "services": "Services",
+  "gosOrganizations": "Government organizations",
+  "searchOrganization": "Search organizations",
+  "notFoundOrgs": "Organizations not found",
+  "orgdocumentscount": "{count} services",
+  "@orgdocumentscount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noServices": "No services",
+  "main": "Main",
+  "documents": "Documents",
+  "profile": "Profile",
+  "inFillingProcessStep": "Step {position} of {count}",
+  "@inFillingProcessStep": {
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filtereddocumentsindexregistrationdate": "Registration Date: {registrationDate}",
+  "@filtereddocumentsindexregistrationdate": {
+    "placeholders": {
+      "registrationDate": {
+        "type": "String"
+      }
+    }
+  },
+  "myApplications": "My applications",
+  "nazad": "Back",
+  "podrobnee": "In detail",
+  "svernut": "Collapse"
 }

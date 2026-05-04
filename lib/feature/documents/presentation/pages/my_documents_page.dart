@@ -5,49 +5,81 @@ import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/authorization/presentation/pages/main_question_page.dart';
-import 'package:khizmat_new/feature/documents/data/models/my_documents_model.dart';
 import 'package:khizmat_new/feature/documents/data/providers/my_application_provider.dart';
 import 'package:khizmat_new/feature/documents/data/providers/my_documents_provider.dart';
+import 'package:khizmat_new/feature/documents/presentation/widgets/my_application_detail_page.dart';
 import 'package:khizmat_new/feature/documents/presentation/widgets/my_document_detail_page.dart';
+import 'package:khizmat_new/feature/home/data/models/all_updated_date_model.dart';
+import 'package:khizmat_new/feature/home/presentation/pages/steps_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class MyDocumentsPage extends ConsumerStatefulWidget {
-  const MyDocumentsPage({super.key});
+  int selectedIndex;
+  List<UpdatedDateDocument> document;
+  MyDocumentsPage({
+    super.key,
+    required this.selectedIndex,
+    required this.document,
+  });
 
   @override
   ConsumerState<MyDocumentsPage> createState() => _MyDocumentsPageState();
 }
 
 class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
-  var controller = TextEditingController();
-  int selectedIndex = 0;
+  final TextEditingController controller = TextEditingController();
+  String searchQuery = '';
+  // int selectedIndex = 0;
   int statusSelectedIndex = 0;
-  List<String> applicationsTabBars = [
-    "Все",
-    "Успешно рассмотрено",
-    "На рассмотрении",
-    "В процессе заполнения",
-    "В процессе оплаты",
-  ];
-  List<String> docsTabBars = ["Все", "Активный", "Не подписанный"];
-  // List<String> tabBars = ["Все", "Активный", "Не подписанный"];
-  List<Map<String, dynamic>> info = [
-    {"count": "5", "text": "Сертификатов"},
-    {"count": "12", "text": "Получено услуг"},
-    {"count": "1", "text": "Истекло"},
-  ];
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(() {
+      setState(() {
+        searchQuery = controller.text.trim().toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = AdaptiveSizes(context);
     final asyncDocs = ref.watch(myDocumentsProvider);
     final asyncApplications = ref.watch(applicationProvider);
     final currentLocale = ref.watch(localeProvider);
+    List<String> applicationsTabBars = [
+      S.of(context).all,
+      S.of(context).seenSuccessfully,
+      S.of(context).naRasmotrenii,
+      S.of(context).inFillingProcess,
+      S.of(context).InPaymentProcess,
+      S.of(context).rejected,
+      S.of(context).reviewPeriodExpired,
+      S.of(context).applicationWasWithdrawn,
+    ];
+    List<String> docsTabBars = [
+      S.of(context).all,
+      S.of(context).active,
+      S.of(context).notAssigned,
+      S.of(context).hasExpired,
+    ];
+    // List<String> tabBars = ["Все", "Активный", "Не подписанный"];
+    List<Map<String, dynamic>> info = [
+      {"count": "5", "text": "Сертификатов"},
+      {"count": "12", "text": "Получено услуг"},
+      {"count": "1", "text": "Истекло"},
+    ];
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppbar(
-        title: "Шахриер Мирзония",
-        leadingWidget: CircleAvatar(),
-      ),
+      appBar: CustomAppbar(title: "Shahnavoz", leadingWidget: CircleAvatar()),
 
       body: SingleChildScrollView(
         child: Container(
@@ -62,9 +94,13 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                 child: Column(
                   children: [
                     MyTextFieldWithPrefix(
-                      hintText: "Поиск вопросов",
+                      hintText: S.of(context).searchDocsAndApplications,
                       controller: controller,
-                      onChanged: (valie) {},
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value.trim().toLowerCase();
+                        });
+                      },
                       prefixIcon: Icon(Icons.search),
                     ),
                     SizedBox(height: size.otstup18),
@@ -75,7 +111,15 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                         2,
                         (index) => Expanded(
                           child: GestureDetector(
-                            onTap: () => setState(() => selectedIndex = index),
+                            onTap: () {
+                              setState(() => widget.selectedIndex = index);
+                              // Refresh data on every tab press so new entries appear.
+                              if (index == 0) {
+                                ref.invalidate(myDocumentsProvider);
+                              } else {
+                                ref.invalidate(applicationProvider);
+                              }
+                            },
                             child: Padding(
                               padding: const EdgeInsets.all(4.0),
                               child: Container(
@@ -84,23 +128,25 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                 ),
                                 decoration: BoxDecoration(
                                   color:
-                                      selectedIndex == index
+                                      widget.selectedIndex == index
                                           ? primaryGreenColor
                                           : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(5),
+                                  borderRadius: BorderRadius.circular(25),
                                   border: Border.all(
                                     color:
-                                        selectedIndex == index
+                                        widget.selectedIndex == index
                                             ? Colors.transparent
                                             : greyTextFBorderColor,
                                   ),
                                 ),
                                 child: Center(
                                   child: textWithH1Style(
-                                    index == 0 ? "Мои документы" : "Заявки",
+                                    index == 0
+                                        ? S.of(context).myDocuments
+                                        : S.of(context).applications,
                                     fontsize: 16,
                                     color:
-                                        selectedIndex == index
+                                        widget.selectedIndex == index
                                             ? Colors.white
                                             : Color(0xFFA9A9A9),
                                   ),
@@ -111,37 +157,36 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: size.otstup10),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Color(0xFFF7F7F7),
-                        border: Border.all(color: greyBorderColor),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: size.otstup10,
-                          vertical: size.otstup15,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: List.generate(
-                            3,
-                            (index) => ContainerInDocPage(
-                              size: size,
-                              index: index,
-                              info: info,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // SizedBox(height: size.otstup10),
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //     color: Color(0xFFF7F7F7),
+                    //     border: Border.all(color: greyBorderColor),
+                    //     borderRadius: BorderRadius.circular(12),
+                    //   ),
+                    //   child: Padding(
+                    //     padding: EdgeInsets.symmetric(
+                    //       horizontal: size.otstup10,
+                    //       vertical: size.otstup15,
+                    //     ),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //       children: List.generate(
+                    //         3,
+                    //         (index) => ContainerInDocPage(
+                    //           size: size,
+                    //           index: index,
+                    //           info: info,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
 
-              SizedBox(height: size.screenHeight * 0.05),
-
+              // SizedBox(height: size.screenHeight * 0.05),
               Container(
                 decoration: BoxDecoration(
                   border: Border(top: BorderSide(color: greyBorderColor)),
@@ -149,20 +194,38 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                   color: Colors.white,
                 ),
                 child:
-                    selectedIndex == 0
+                    widget.selectedIndex == 0
                         ? asyncDocs.when(
                           data: (data) {
                             final document = data.data!.registers;
                             final docdetailData = data;
+                            final filteredDocuments =
+                                document.where((doc) {
+                                  final titleRu =
+                                      doc.document?.ru?.toLowerCase() ?? '';
+                                  final categoryRu =
+                                      doc.category?.title?.ru?.toLowerCase() ??
+                                      '';
+                                  return searchQuery.isEmpty ||
+                                      titleRu.contains(searchQuery) ||
+                                      categoryRu.contains(searchQuery);
+                                }).toList();
+
                             final docsNonAsigned =
-                                document
+                                filteredDocuments
                                     .where(
                                       (e) => e.status?.isNotAsigned == true,
                                     )
                                     .toList();
+
                             final docsAsigned =
-                                document
+                                filteredDocuments
                                     .where((e) => e.status?.isActive == true)
+                                    .toList();
+
+                            final docsExpiredDate =
+                                filteredDocuments
+                                    .where((e) => e.status?.isExpired == true)
                                     .toList();
                             print('/////////////////////////');
 
@@ -186,31 +249,36 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   textWithH1Style(
-                                    "Мои документы",
+                                    S.of(context).myDocuments,
                                     textAlign: TextAlign.start,
                                   ),
                                   SizedBox(height: size.otstup18),
                                   Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: greyTextFBorderColor,
-                                      ),
+                                      // border: Border.all(
+                                      //   color: greyTextFBorderColor,
+                                      // ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
-                                        horizontal: size.otstup10,
+                                        // horizontal: size.otstup10,
                                         vertical: size.otstup5,
                                       ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: List.generate(
-                                          docsTabBars.length,
-                                          (index) {
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          // mainAxisAlignment:
+                                          //     MainAxisAlignment.spaceBetween,
+                                          children: List.generate(docsTabBars.length, (
+                                            index,
+                                          ) {
                                             return Padding(
                                               padding: EdgeInsets.symmetric(
-                                                // horizontal: size.otstup5,
+                                                horizontal:
+                                                    index != 0
+                                                        ? size.otstup10
+                                                        : 0,
                                               ),
                                               child: GestureDetector(
                                                 onTap: () {
@@ -259,23 +327,24 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                 ),
                                               ),
                                             );
-                                          },
+                                          }),
                                         ),
                                       ),
                                     ),
                                   ),
-
                                   SizedBox(height: size.otstup15),
 
-                                  statusSelectedIndex == 0
+                                  filteredDocuments.isEmpty
+                                      ? Center(child: Text("Нет документов"))
+                                      : statusSelectedIndex == 0
                                       ? ListView.separated(
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) {
                                           final category =
-                                              document[index].category;
+                                              filteredDocuments[index].category;
                                           final documents =
-                                              document[index].document;
+                                              filteredDocuments[index].document;
                                           final id = docs[index].id;
                                           return GestureDetector(
                                             onTap: () {
@@ -343,72 +412,72 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                                       size.screenWidth *
                                                                       0.6,
                                                                   child: textWithH1Style(
-                                                                    category
-                                                                        .title!
-                                                                        .ru!,
+                                                                    documents!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
                                                                     fontsize:
                                                                         16,
                                                                     textAlign:
                                                                         TextAlign
                                                                             .start,
+                                                                    maxLines: 2,
                                                                   ),
                                                                 ),
                                                                 SizedBox(
                                                                   width:
                                                                       size.screenWidth *
                                                                       0.6,
-                                                                  child: textWithH2BlackStyle(
-                                                                    documents!
-                                                                        .ru!,
-                                                                    fontSize:
+                                                                  child: textWithH1Style(
+                                                                    category
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
                                                                         16,
                                                                     textAlign:
                                                                         TextAlign
                                                                             .start,
                                                                     color:
                                                                         primaryGreenColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    maxline: 2,
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
                                                           ],
                                                         ),
-                                                        Row(
-                                                          children: [
-                                                            Container(
-                                                              decoration: BoxDecoration(
-                                                                border: Border.all(
-                                                                  color:
-                                                                      greyBorderColor,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      5,
-                                                                    ),
-                                                              ),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets.all(
-                                                                      6.0,
-                                                                    ),
-                                                                child: Center(
-                                                                  child: Icon(
-                                                                    Icons
-                                                                        .arrow_forward_ios,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
                                                       ],
                                                     ),
                                                   ),
-
                                                   Container(
                                                     decoration: BoxDecoration(
                                                       border: Border(
@@ -434,8 +503,22 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                       child: Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
-                                                                .end,
+                                                                .spaceBetween,
                                                         children: [
+                                                          textWithH2BlackStyle(
+                                                            S
+                                                                .of(context)
+                                                                .filtereddocumentsindexregistrationdate(
+                                                                  filteredDocuments[index]
+                                                                          .registrationDate ??
+                                                                      '',
+                                                                ),
+
+                                                            color:
+                                                                greyBorderColor,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
                                                           // textWithH1Style(
                                                           //   "Дата выдачи: ${document[index].registrationDate.name }",
                                                           //   fontsize: 14,
@@ -467,13 +550,15 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                                     size.otstup10,
                                                               ),
                                                               child: textWithH1Style(
-                                                                document[index]
+                                                                filteredDocuments[index]
                                                                     .status!
                                                                     .title!
-                                                                    .ru!,
+                                                                    .getText(
+                                                                      currentLocale,
+                                                                    ),
                                                                 fontsize: 13,
                                                                 color:
-                                                                    document[index]
+                                                                    filteredDocuments[index]
                                                                             .status!
                                                                             .isActive
                                                                         ? Colors
@@ -495,7 +580,7 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                         separatorBuilder:
                                             (context, index) =>
                                                 SizedBox(height: size.otstup10),
-                                        itemCount: document.length,
+                                        itemCount: filteredDocuments.length,
                                       )
                                       : statusSelectedIndex == 1
                                       ? ListView.separated(
@@ -506,128 +591,36 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                               docsAsigned[index].category;
                                           final document1 =
                                               docsAsigned[index].document;
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: greyBorderColor,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: size.otstup15,
-                                                    vertical: size.otstup15,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width:
-                                                                size.imageSize100,
-                                                            child:
-                                                                Image.network(
-                                                                  category1!
-                                                                      .iconId!,
-                                                                ),
+                                          final id = docsAsigned[index].id;
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          MyDocumentDetailPage(
+                                                            docModel:
+                                                                docdetailData,
+                                                            index: index,
+                                                            id: id!,
+                                                            currentLocale:
+                                                                currentLocale,
                                                           ),
-                                                          SizedBox(
-                                                            width:
-                                                                size.otstup15,
-                                                          ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH1Style(
-                                                                  category1
-                                                                      .title!
-                                                                      .ru!,
-                                                                  fontsize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH2BlackStyle(
-                                                                  document1!
-                                                                      .ru!,
-                                                                  fontSize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                  color:
-                                                                      primaryGreenColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                color:
-                                                                    greyBorderColor,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    5,
-                                                                  ),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets.all(
-                                                                    6.0,
-                                                                  ),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .arrow_forward_ios,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
                                                 ),
-
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border(
-                                                      top: BorderSide(
-                                                        color: greyBorderColor,
-                                                      ),
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          5,
-                                                        ),
-                                                    color: Color(0XffF6FFFA),
-                                                  ),
-                                                  child: Padding(
+                                              );
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                           horizontal:
@@ -637,48 +630,177 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                         ),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment.end,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        // textWithH1Style(
-                                                        //   "Дата выдачи: 01.12.25",
-                                                        //   fontsize: 14,
-                                                        //   color:
-                                                        //       greyBorderColor,
-                                                        //   fontW:
-                                                        //       FontWeight.w300,
-                                                        // ),
-                                                        Container(
-                                                          decoration: BoxDecoration(
-                                                            color:
-                                                                primaryButtonColor,
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  5,
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category1!
+                                                                        .iconId!,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    document1!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                  ),
                                                                 ),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  size.otstup30,
-                                                              vertical:
-                                                                  size.otstup10,
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    category1
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            child: textWithH1Style(
-                                                              docsAsigned[index]
-                                                                  .status!
-                                                                  .title!
-                                                                  .ru!,
-                                                              fontsize: 13,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
+                                                          ],
                                                         ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
                                                       ],
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0XffF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          textWithH2BlackStyle(
+                                                            S
+                                                                .of(context)
+                                                                .filtereddocumentsindexregistrationdate(
+                                                                  filteredDocuments[index]
+                                                                          .registrationDate ??
+                                                                      '',
+                                                                ),
+
+                                                            color:
+                                                                greyBorderColor,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              color:
+                                                                  primaryButtonColor,
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                docsAsigned[index]
+                                                                    .status!
+                                                                    .title!
+                                                                    .getText(
+                                                                      currentLocale,
+                                                                    ),
+                                                                fontsize: 13,
+                                                                color:
+                                                                    Colors
+                                                                        .white,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
@@ -687,7 +809,8 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                 SizedBox(height: size.otstup10),
                                         itemCount: docsAsigned.length,
                                       )
-                                      : ListView.separated(
+                                      : statusSelectedIndex == 2
+                                      ? ListView.separated(
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) {
@@ -695,128 +818,36 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                               docsNonAsigned[index].category;
                                           final document2 =
                                               docsNonAsigned[index].document;
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: greyBorderColor,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: size.otstup15,
-                                                    vertical: size.otstup15,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width:
-                                                                size.imageSize100,
-                                                            child:
-                                                                Image.network(
-                                                                  category2!
-                                                                      .iconId!,
-                                                                ),
+                                          final id = docsNonAsigned[index].id;
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          MyDocumentDetailPage(
+                                                            docModel:
+                                                                docdetailData,
+                                                            index: index,
+                                                            id: id!,
+                                                            currentLocale:
+                                                                currentLocale,
                                                           ),
-                                                          SizedBox(
-                                                            width:
-                                                                size.otstup15,
-                                                          ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH1Style(
-                                                                  category2
-                                                                      .title!
-                                                                      .ru!,
-                                                                  fontsize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH2BlackStyle(
-                                                                  document2!
-                                                                      .ru!,
-                                                                  fontSize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                  color:
-                                                                      primaryGreenColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                color:
-                                                                    greyBorderColor,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    5,
-                                                                  ),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets.all(
-                                                                    6.0,
-                                                                  ),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .arrow_forward_ios,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
                                                 ),
-
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border(
-                                                      top: BorderSide(
-                                                        color: greyBorderColor,
-                                                      ),
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          5,
-                                                        ),
-                                                    color: Color(0xFFF6FFFA),
-                                                  ),
-                                                  child: Padding(
+                                              );
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                           horizontal:
@@ -826,47 +857,177 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                         ),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment.end,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        // textWithH1Style(
-                                                        //   "Дата выдачи: 01.12.25",
-                                                        //   fontsize: 14,
-                                                        //   color:
-                                                        //       greyBorderColor,
-                                                        // ),
-                                                        Container(
-                                                          decoration: BoxDecoration(
-                                                            color: Color(
-                                                              0xFFF7EAEA,
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category2!
+                                                                        .iconId!,
+                                                                  ),
                                                             ),
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  5,
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    document2!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                  ),
                                                                 ),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  size.otstup30,
-                                                              vertical:
-                                                                  size.otstup10,
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    category2
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            child: textWithH1Style(
-                                                              docsNonAsigned[index]
-                                                                  .status!
-                                                                  .title!
-                                                                  .ru!,
-                                                              fontsize: 13,
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
-                                                          ),
+                                                          ],
                                                         ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
                                                       ],
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0xFFF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          textWithH2BlackStyle(
+                                                            S
+                                                                .of(context)
+                                                                .filtereddocumentsindexregistrationdate(
+                                                                  filteredDocuments[index]
+                                                                          .registrationDate ??
+                                                                      '',
+                                                                ),
+
+                                                            color:
+                                                                greyBorderColor,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                          Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                  color: Color(
+                                                                    0xFFF7EAEA,
+                                                                  ),
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        5,
+                                                                      ),
+                                                                ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                docsNonAsigned[index]
+                                                                    .status!
+                                                                    .title!
+                                                                    .ru!,
+                                                                fontsize: 13,
+                                                                color:
+                                                                    Colors
+                                                                        .black,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
@@ -874,6 +1035,229 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                             (context, index) =>
                                                 SizedBox(height: size.otstup10),
                                         itemCount: docsNonAsigned.length,
+                                      )
+                                      : ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index1) {
+                                          final category2 =
+                                              docsExpiredDate[index1].category;
+                                          final document2 =
+                                              docsExpiredDate[index1].document;
+                                          final id = docsExpiredDate[index1].id;
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          MyDocumentDetailPage(
+                                                            docModel:
+                                                                docdetailData,
+                                                            index: index1,
+                                                            id: id!,
+                                                            currentLocale:
+                                                                currentLocale,
+                                                          ),
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal:
+                                                              size.otstup15,
+                                                          vertical:
+                                                              size.otstup15,
+                                                        ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category2!
+                                                                        .iconId!,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    document2!
+                                                                        .ru!,
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                  ),
+                                                                ),
+
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    category2
+                                                                        .title!
+                                                                        .ru!,
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0xFFF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          textWithH2BlackStyle(
+                                                            S
+                                                                .of(context)
+                                                                .filtereddocumentsindexregistrationdate(
+                                                                  filteredDocuments[index1]
+                                                                          .registrationDate ??
+                                                                      '',
+                                                                ),
+
+                                                            color:
+                                                                greyBorderColor,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                          Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                  color: Color(
+                                                                    0xFFF7EAEA,
+                                                                  ),
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        5,
+                                                                      ),
+                                                                ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                docsExpiredDate[index1]
+                                                                    .status!
+                                                                    .title!
+                                                                    .ru!,
+                                                                fontsize: 13,
+                                                                color:
+                                                                    Colors
+                                                                        .black,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        separatorBuilder:
+                                            (context, index) =>
+                                                SizedBox(height: size.otstup10),
+                                        itemCount: docsExpiredDate.length,
                                       ),
                                 ],
                               ),
@@ -890,21 +1274,47 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                           data: (data) {
                             final applications = data.data!.applicationList;
 
+                            final filteredApplications =
+                                applications.where((app) {
+                                  final titleRu =
+                                      app.document?.ru?.toLowerCase() ?? '';
+                                  final categoryRu =
+                                      app.category?.title?.ru?.toLowerCase() ??
+                                      '';
+                                  return searchQuery.isEmpty ||
+                                      titleRu.contains(searchQuery) ||
+                                      categoryRu.contains(searchQuery);
+                                }).toList();
                             final applicationsSuccessfullyCompleted =
-                                applications
+                                filteredApplications
                                     .where((e) => e.status!.isCompleted == true)
                                     .toList();
+
                             final applicationsInFillingProcces =
-                                applications
+                                filteredApplications
                                     .where((e) => e.status!.isInProcess)
                                     .toList();
+
                             final applicationsNaRasmotrenii =
-                                applications
+                                filteredApplications
                                     .where((e) => e.status!.isUnderReview)
                                     .toList();
+
                             final applicationsInPaymentProcess =
-                                applications
-                                    .where((e) => e.status!.isPaymentProcess)
+                                filteredApplications
+                                    .where((e) => e.status!.isInPaymentProcess)
+                                    .toList();
+                            final applicationsOtkazanoStatus =
+                                filteredApplications
+                                    .where((e) => e.status!.isDenied)
+                                    .toList();
+                            final applicationsSrokRassIstyok =
+                                filteredApplications
+                                    .where((e) => e.status!.isExpired)
+                                    .toList();
+                            final applicationsOtozvano =
+                                filteredApplications
+                                    .where((e) => e.status!.isCancelled)
                                     .toList();
                             return Padding(
                               padding: EdgeInsets.symmetric(
@@ -915,20 +1325,20 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   textWithH1Style(
-                                    "Мои заявки",
+                                    S.of(context).myApplications,
                                     textAlign: TextAlign.start,
                                   ),
                                   SizedBox(height: size.otstup18),
                                   Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: greyTextFBorderColor,
-                                      ),
+                                      // border: Border.all(
+                                      //   color: greyTextFBorderColor,
+                                      // ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
-                                        horizontal: size.otstup10,
+                                        // horizontal: size.otstup10,
                                         vertical: size.otstup5,
                                       ),
                                       child: SingleChildScrollView(
@@ -941,7 +1351,10 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                             (index) {
                                               return Padding(
                                                 padding: EdgeInsets.symmetric(
-                                                  horizontal: size.otstup10,
+                                                  horizontal:
+                                                      index != 0
+                                                          ? size.otstup10
+                                                          : 0,
                                                 ),
                                                 child: GestureDetector(
                                                   onTap: () {
@@ -1006,133 +1419,60 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                         physics: NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) {
                                           final category =
-                                              applications[index].category;
+                                              filteredApplications[index]
+                                                  .category;
                                           print(category!.title!.ru);
                                           final documents =
-                                              applications[index].document;
+                                              filteredApplications[index]
+                                                  .document;
+                                          final id =
+                                              filteredApplications[index].id!;
                                           print(documents!.ru);
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: greyBorderColor,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: size.otstup15,
-                                                    vertical: size.otstup15,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width:
-                                                                size.imageSize100,
-                                                            child:
-                                                                Image.network(
-                                                                  category
-                                                                      .iconId!,
-                                                                ),
-                                                          ),
-                                                          SizedBox(
-                                                            width:
-                                                                size.otstup15,
-                                                          ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH1Style(
-                                                                  category
-                                                                      .title!
-                                                                      .ru!,
-                                                                  fontsize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH2BlackStyle(
-                                                                  documents.ru!,
-                                                                  fontSize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                  color:
-                                                                      primaryGreenColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  maxline: 2,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                color:
-                                                                    greyBorderColor,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    5,
-                                                                  ),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets.all(
-                                                                    6.0,
-                                                                  ),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .arrow_forward_ios,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border(
-                                                      top: BorderSide(
-                                                        color: greyBorderColor,
-                                                      ),
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          5,
+                                          return GestureDetector(
+                                            onTap: () {
+                                              final app =
+                                                  filteredApplications[index];
+                                              if (app.status!.isInProcess) {
+                                                // React: IN_PROCESS → resume the stepper
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (context) => StepsPage(
+                                                          docId: 0,
+                                                          index: index,
+                                                          resumeApplicationId:
+                                                              app.id ?? 0,
                                                         ),
-                                                    color: Color(0xFFF6FFFA),
                                                   ),
-                                                  child: Padding(
+                                                );
+                                              } else {
+                                                // All other statuses → open detail page
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder:
+                                                        (context) =>
+                                                            MyApplicationInReviewDetailPage(
+                                                              id: id,
+                                                              currentLocale:
+                                                                  currentLocale,
+                                                            ),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                           horizontal:
@@ -1142,87 +1482,208 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                         ),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment.end,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        // textWithH1Style(
-                                                        //   "Дата выдачи: ${document[index].registrationDate.name }",
-                                                        //   fontsize: 14,
-                                                        //   color:
-                                                        //       greyBorderColor,
-                                                        //   fontW:
-                                                        //       FontWeight.w500,
-                                                        // ),
-                                                        Container(
-                                                          decoration: BoxDecoration(
-                                                            color:
-                                                                applications[index]
-                                                                        .status!
-                                                                        .isUnderReview
-                                                                    ? Colors
-                                                                        .blue[100]
-                                                                    : applications[index]
-                                                                        .status!
-                                                                        .isCompleted
-                                                                    ? Colors
-                                                                        .green[100]
-                                                                    : applications[index]
-                                                                        .status!
-                                                                        .isInProcess
-                                                                    ? Colors
-                                                                        .orange[100]
-                                                                    : Colors
-                                                                        .orange[100],
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  5,
-                                                                ),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  size.otstup30,
-                                                              vertical:
-                                                                  size.otstup10,
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category
+                                                                        .iconId!,
+                                                                  ),
                                                             ),
-                                                            child: textWithH1Style(
-                                                              applications[index]
-                                                                  .status!
-                                                                  .title!
-                                                                  .ru!,
-                                                              fontsize: 13,
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH2BlackStyle(
+                                                                    documents
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontSize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    maxline: 2,
+                                                                  ),
+                                                                ),
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    category
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0xFFF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          // textWithH1Style(
+                                                          //   "Дата выдачи: ${document[index].registrationDate.name }",
+                                                          //   fontsize: 14,
+                                                          //   color:
+                                                          //       greyBorderColor,
+                                                          //   fontW:
+                                                          //       FontWeight.w500,
+                                                          // ),
+                                                          Container(
+                                                            decoration: BoxDecoration(
                                                               color:
                                                                   applications[index]
                                                                           .status!
                                                                           .isUnderReview
                                                                       ? Colors
-                                                                          .blue
+                                                                          .blue[100]
                                                                       : applications[index]
                                                                           .status!
                                                                           .isCompleted
                                                                       ? Colors
-                                                                          .green
+                                                                          .green[100]
                                                                       : applications[index]
                                                                           .status!
                                                                           .isInProcess
                                                                       ? Colors
-                                                                          .orange
+                                                                          .orange[100]
                                                                       : Colors
-                                                                          .orange,
+                                                                          .orange[100],
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                "${filteredApplications[index].status!.title!.getText(currentLocale)} ${filteredApplications[index].status!.isInProcess == true ? ": Шаг ${filteredApplications[index].step!.position} из ${filteredApplications[index].step!.count}" : ""} ",
+                                                                fontsize: 13,
+                                                                color:
+                                                                    filteredApplications[index]
+                                                                            .status!
+                                                                            .isUnderReview
+                                                                        ? Colors
+                                                                            .blue
+                                                                        : applications[index]
+                                                                            .status!
+                                                                            .isCompleted
+                                                                        ? Colors
+                                                                            .green
+                                                                        : applications[index]
+                                                                            .status!
+                                                                            .isInProcess
+                                                                        ? Colors
+                                                                            .orange
+                                                                        : Colors
+                                                                            .orange,
+                                                              ),
                                                             ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
                                         separatorBuilder:
                                             (context, index) =>
                                                 SizedBox(height: size.otstup10),
-                                        itemCount: applications.length,
+                                        itemCount: filteredApplications.length,
                                       )
                                       : statusSelectedIndex == 1
                                       ? ListView.separated(
@@ -1235,120 +1696,37 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                           final document1 =
                                               applicationsSuccessfullyCompleted[index]
                                                   .document;
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: greyBorderColor,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: size.otstup15,
-                                                    vertical: size.otstup15,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width:
-                                                                size.imageSize100,
-                                                            child:
-                                                                Image.network(
-                                                                  category1!
-                                                                      .iconId!,
-                                                                ),
+                                          final id =
+                                              applicationsSuccessfullyCompleted[index]
+                                                  .id;
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          MyApplicationInReviewDetailPage(
+                                                            docModel: data,
+                                                            index: index,
+                                                            id: id!,
+                                                            currentLocale:
+                                                                currentLocale,
                                                           ),
-                                                          SizedBox(
-                                                            width:
-                                                                size.otstup15,
-                                                          ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              textWithH1Style(
-                                                                category1
-                                                                    .title!
-                                                                    .ru!,
-                                                                fontsize: 16,
-                                                              ),
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH2BlackStyle(
-                                                                  document1!
-                                                                      .ru!,
-                                                                  fontSize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                  color:
-                                                                      primaryGreenColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                color:
-                                                                    greyBorderColor,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    5,
-                                                                  ),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets.all(
-                                                                    6.0,
-                                                                  ),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .arrow_forward_ios,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
                                                 ),
-
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border(
-                                                      top: BorderSide(
-                                                        color: greyBorderColor,
-                                                      ),
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          5,
-                                                        ),
-                                                    color: Color(0XffF6FFFA),
-                                                  ),
-                                                  child: Padding(
+                                              );
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                           horizontal:
@@ -1358,49 +1736,176 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                         ),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment.end,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        // textWithH1Style(
-                                                        //   "Дата выдачи: 01.12.25",
-                                                        //   fontsize: 14,
-                                                        //   color:
-                                                        //       greyBorderColor,
-                                                        //   fontW:
-                                                        //       FontWeight.w300,
-                                                        // ),
-                                                        Container(
-                                                          decoration: BoxDecoration(
-                                                            color:
-                                                                Colors
-                                                                    .green[100],
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  5,
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category1!
+                                                                        .iconId!,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH2BlackStyle(
+                                                                    document1!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontSize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
                                                                 ),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  size.otstup30,
-                                                              vertical:
-                                                                  size.otstup10,
+
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    category1
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            child: textWithH1Style(
-                                                              applicationsSuccessfullyCompleted[index]
-                                                                  .status!
-                                                                  .title!
-                                                                  .ru!,
-                                                              fontsize: 13,
-                                                              color:
-                                                                  Colors.green,
-                                                            ),
-                                                          ),
+                                                          ],
                                                         ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
                                                       ],
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0XffF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          // textWithH1Style(
+                                                          //   "Дата выдачи: 01.12.25",
+                                                          //   fontsize: 14,
+                                                          //   color:
+                                                          //       greyBorderColor,
+                                                          //   fontW:
+                                                          //       FontWeight.w300,
+                                                          // ),
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors
+                                                                      .green[100],
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                applicationsSuccessfullyCompleted[index]
+                                                                    .status!
+                                                                    .title!
+                                                                    .getText(
+                                                                      currentLocale,
+                                                                    ),
+                                                                fontsize: 13,
+                                                                color:
+                                                                    Colors
+                                                                        .green,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
@@ -1422,128 +1927,37 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                           final document2 =
                                               applicationsNaRasmotrenii[index]
                                                   .document;
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: greyBorderColor,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: size.otstup15,
-                                                    vertical: size.otstup15,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width:
-                                                                size.imageSize100,
-                                                            child:
-                                                                Image.network(
-                                                                  category2!
-                                                                      .iconId!,
-                                                                ),
+                                          final id =
+                                              applicationsNaRasmotrenii[index]
+                                                  .id;
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          MyApplicationInReviewDetailPage(
+                                                            docModel: data,
+                                                            index: index,
+                                                            id: id!,
+                                                            currentLocale:
+                                                                currentLocale,
                                                           ),
-                                                          SizedBox(
-                                                            width:
-                                                                size.otstup15,
-                                                          ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH1Style(
-                                                                  category2
-                                                                      .title!
-                                                                      .ru!,
-                                                                  fontsize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH2BlackStyle(
-                                                                  document2!
-                                                                      .ru!,
-                                                                  fontSize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                  color:
-                                                                      primaryGreenColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                color:
-                                                                    greyBorderColor,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    5,
-                                                                  ),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets.all(
-                                                                    6.0,
-                                                                  ),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .arrow_forward_ios,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
                                                 ),
-
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border(
-                                                      top: BorderSide(
-                                                        color: greyBorderColor,
-                                                      ),
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          5,
-                                                        ),
-                                                    color: Color(0xFFF6FFFA),
-                                                  ),
-                                                  child: Padding(
+                                              );
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                           horizontal:
@@ -1553,47 +1967,172 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                         ),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment.end,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        // textWithH1Style(
-                                                        //   "Дата выдачи: 01.12.25",
-                                                        //   fontsize: 14,
-                                                        //   color:
-                                                        //       greyBorderColor,
-                                                        // ),
-                                                        Container(
-                                                          decoration: BoxDecoration(
-                                                            color:
-                                                                Colors
-                                                                    .blue[100],
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  5,
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category2!
+                                                                        .iconId!,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH2BlackStyle(
+                                                                    document2!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontSize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
                                                                 ),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  size.otstup30,
-                                                              vertical:
-                                                                  size.otstup10,
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    category2
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            child: textWithH1Style(
-                                                              applicationsNaRasmotrenii[index]
-                                                                  .status!
-                                                                  .title!
-                                                                  .ru!,
-                                                              fontsize: 13,
-                                                              color:
-                                                                  Colors.blue,
-                                                            ),
-                                                          ),
+                                                          ],
                                                         ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
                                                       ],
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0xFFF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          // textWithH1Style(
+                                                          //   "Дата выдачи: 01.12.25",
+                                                          //   fontsize: 14,
+                                                          //   color:
+                                                          //       greyBorderColor,
+                                                          // ),
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors
+                                                                      .blue[100],
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                applicationsNaRasmotrenii[index]
+                                                                    .status!
+                                                                    .title!
+                                                                    .getText(
+                                                                      currentLocale,
+                                                                    ),
+                                                                fontsize: 13,
+                                                                color:
+                                                                    Colors.blue,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
@@ -1614,128 +2153,44 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                           final document2 =
                                               applicationsInFillingProcces[index]
                                                   .document;
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: greyBorderColor,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: size.otstup15,
-                                                    vertical: size.otstup15,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width:
-                                                                size.imageSize100,
-                                                            child:
-                                                                Image.network(
-                                                                  category2!
-                                                                      .iconId!,
-                                                                ),
-                                                          ),
-                                                          SizedBox(
-                                                            width:
-                                                                size.otstup15,
-                                                          ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH1Style(
-                                                                  category2
-                                                                      .title!
-                                                                      .ru!,
-                                                                  fontsize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH2BlackStyle(
-                                                                  document2!
-                                                                      .ru!,
-                                                                  fontSize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                  color:
-                                                                      primaryGreenColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                color:
-                                                                    greyBorderColor,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    5,
-                                                                  ),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets.all(
-                                                                    6.0,
-                                                                  ),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .arrow_forward_ios,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
 
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border(
-                                                      top: BorderSide(
-                                                        color: greyBorderColor,
+                                          print("Index ${index}");
+
+                                          // React: statusKey === IN_PROCESS && cabinet_type === FRONT_OFFICE
+                                          //   → history.push(`/application/${id}`)
+                                          //   → useProcess({ resumeOnload: true, applicationId })
+                                          return GestureDetector(
+                                            onTap: () {
+                                              final appId =
+                                                  applicationsInFillingProcces[index]
+                                                      .id ??
+                                                  0;
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) => StepsPage(
+                                                        docId:
+                                                            0, // not used when resuming
+                                                        index: index,
+                                                        resumeApplicationId:
+                                                            appId,
                                                       ),
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          5,
-                                                        ),
-                                                    color: Color(0xFFF6FFFA),
-                                                  ),
-                                                  child: Padding(
+                                                ),
+                                              );
+                                            },
+
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                           horizontal:
@@ -1745,47 +2200,162 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                         ),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment.end,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        // textWithH1Style(
-                                                        //   "Дата выдачи: 01.12.25",
-                                                        //   fontsize: 14,
-                                                        //   color:
-                                                        //       greyBorderColor,
-                                                        // ),
-                                                        Container(
-                                                          decoration: BoxDecoration(
-                                                            color:
-                                                                Colors
-                                                                    .orange[100],
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  5,
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category2!
+                                                                        .iconId!,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH2BlackStyle(
+                                                                    document2!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontSize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
                                                                 ),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  size.otstup30,
-                                                              vertical:
-                                                                  size.otstup10,
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    category2
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            child: textWithH1Style(
-                                                              applicationsInFillingProcces[index]
-                                                                  .status!
-                                                                  .title!
-                                                                  .ru!,
-                                                              fontsize: 13,
-                                                              color:
-                                                                  Colors.orange,
-                                                            ),
-                                                          ),
+                                                          ],
                                                         ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
                                                       ],
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0xFFF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors
+                                                                      .orange[100],
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                "${applicationsInFillingProcces[index].status!.title!.getText(currentLocale)} ${applicationsInFillingProcces[index].status!.isInProcess == true ? S.of(context).inFillingProcessStep(applicationsInFillingProcces[index].step!.position ?? 0, applicationsInFillingProcces[index].step!.count ?? 0) : ""} ",
+                                                                fontsize: 13,
+                                                                color:
+                                                                    Colors
+                                                                        .orange,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
@@ -1795,7 +2365,8 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                         itemCount:
                                             applicationsInFillingProcces.length,
                                       )
-                                      : ListView.separated(
+                                      : statusSelectedIndex == 4
+                                      ? ListView.separated(
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) {
@@ -1805,128 +2376,37 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                           final document2 =
                                               applicationsInPaymentProcess[index]
                                                   .document;
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: greyBorderColor,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: size.otstup15,
-                                                    vertical: size.otstup15,
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width:
-                                                                size.imageSize100,
-                                                            child:
-                                                                Image.network(
-                                                                  category2!
-                                                                      .iconId!,
-                                                                ),
+                                          final id =
+                                              applicationsInPaymentProcess[index]
+                                                  .id;
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          MyApplicationInReviewDetailPage(
+                                                            docModel: data,
+                                                            index: index,
+                                                            id: id!,
+                                                            currentLocale:
+                                                                currentLocale,
                                                           ),
-                                                          SizedBox(
-                                                            width:
-                                                                size.otstup15,
-                                                          ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH1Style(
-                                                                  category2
-                                                                      .title!
-                                                                      .ru!,
-                                                                  fontsize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width:
-                                                                    size.screenWidth *
-                                                                    0.6,
-                                                                child: textWithH2BlackStyle(
-                                                                  document2!
-                                                                      .ru!,
-                                                                  fontSize: 16,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .start,
-                                                                  color:
-                                                                      primaryGreenColor,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            decoration: BoxDecoration(
-                                                              border: Border.all(
-                                                                color:
-                                                                    greyBorderColor,
-                                                              ),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    5,
-                                                                  ),
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets.all(
-                                                                    6.0,
-                                                                  ),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .arrow_forward_ios,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
                                                 ),
-
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    border: Border(
-                                                      top: BorderSide(
-                                                        color: greyBorderColor,
-                                                      ),
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          5,
-                                                        ),
-                                                    color: Color(0xFFF6FFFA),
-                                                  ),
-                                                  child: Padding(
+                                              );
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                           horizontal:
@@ -1936,47 +2416,173 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                         ),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment.end,
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
                                                       children: [
-                                                        // textWithH1Style(
-                                                        //   "Дата выдачи: 01.12.25",
-                                                        //   fontsize: 14,
-                                                        //   color:
-                                                        //       greyBorderColor,
-                                                        // ),
-                                                        Container(
-                                                          decoration: BoxDecoration(
-                                                            color:
-                                                                Colors
-                                                                    .orange[100],
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  5,
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category2!
+                                                                        .iconId!,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH2BlackStyle(
+                                                                    document2!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontSize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
                                                                 ),
-                                                          ),
-                                                          child: Padding(
-                                                            padding: EdgeInsets.symmetric(
-                                                              horizontal:
-                                                                  size.otstup30,
-                                                              vertical:
-                                                                  size.otstup10,
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    category2
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
-                                                            child: textWithH1Style(
-                                                              applicationsInPaymentProcess[index]
-                                                                  .status!
-                                                                  .title!
-                                                                  .ru!,
-                                                              fontsize: 13,
-                                                              color:
-                                                                  Colors.orange,
-                                                            ),
-                                                          ),
+                                                          ],
                                                         ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
                                                       ],
                                                     ),
                                                   ),
-                                                ),
-                                              ],
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0xFFF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          // textWithH1Style(
+                                                          //   "Дата выдачи: 01.12.25",
+                                                          //   fontsize: 14,
+                                                          //   color:
+                                                          //       greyBorderColor,
+                                                          // ),
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors
+                                                                      .orange[100],
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                applicationsInPaymentProcess[index]
+                                                                    .status!
+                                                                    .title!
+                                                                    .getText(
+                                                                      currentLocale,
+                                                                    ),
+                                                                fontsize: 13,
+                                                                color:
+                                                                    Colors
+                                                                        .orange,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
@@ -1985,6 +2591,687 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                 SizedBox(height: size.otstup10),
                                         itemCount:
                                             applicationsInPaymentProcess.length,
+                                      )
+                                      : statusSelectedIndex == 5
+                                      ? ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          final category2 =
+                                              applicationsOtkazanoStatus[index]
+                                                  .category;
+                                          final document2 =
+                                              applicationsOtkazanoStatus[index]
+                                                  .document;
+                                          final id =
+                                              applicationsOtkazanoStatus[index]
+                                                  .id;
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          MyApplicationInReviewDetailPage(
+                                                            docModel: data,
+                                                            index: index,
+                                                            id: id!,
+                                                            currentLocale:
+                                                                currentLocale,
+                                                          ),
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal:
+                                                              size.otstup15,
+                                                          vertical:
+                                                              size.otstup15,
+                                                        ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category2!
+                                                                        .iconId!,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH2BlackStyle(
+                                                                    document2!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontSize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                ),
+
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    category2
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0xFFF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          // textWithH1Style(
+                                                          //   "Дата выдачи: 01.12.25",
+                                                          //   fontsize: 14,
+                                                          //   color:
+                                                          //       greyBorderColor,
+                                                          // ),
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors
+                                                                      .orange[100],
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                applicationsOtkazanoStatus[index]
+                                                                    .status!
+                                                                    .title!
+                                                                    .getText(
+                                                                      currentLocale,
+                                                                    ),
+                                                                fontsize: 13,
+                                                                color:
+                                                                    Colors
+                                                                        .orange,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        separatorBuilder:
+                                            (context, index) =>
+                                                SizedBox(height: size.otstup10),
+                                        itemCount:
+                                            applicationsOtkazanoStatus.length,
+                                      )
+                                      : statusSelectedIndex == 6
+                                      ? ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          final category2 =
+                                              applicationsSrokRassIstyok[index]
+                                                  .category;
+                                          final document2 =
+                                              applicationsSrokRassIstyok[index]
+                                                  .document;
+                                          final id =
+                                              applicationsSrokRassIstyok[index]
+                                                  .id;
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          MyApplicationInReviewDetailPage(
+                                                            docModel: data,
+                                                            index: index,
+                                                            id: id!,
+                                                            currentLocale:
+                                                                currentLocale,
+                                                          ),
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal:
+                                                              size.otstup15,
+                                                          vertical:
+                                                              size.otstup15,
+                                                        ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category2!
+                                                                        .iconId!,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH2BlackStyle(
+                                                                    document2!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontSize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                ),
+
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    category2
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0xFFF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          // textWithH1Style(
+                                                          //   "Дата выдачи: 01.12.25",
+                                                          //   fontsize: 14,
+                                                          //   color:
+                                                          //       greyBorderColor,
+                                                          // ),
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors
+                                                                      .orange[100],
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                applicationsSrokRassIstyok[index]
+                                                                    .status!
+                                                                    .title!
+                                                                    .getText(
+                                                                      currentLocale,
+                                                                    ),
+                                                                fontsize: 13,
+                                                                color:
+                                                                    Colors
+                                                                        .orange,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        separatorBuilder:
+                                            (context, index) =>
+                                                SizedBox(height: size.otstup10),
+                                        itemCount:
+                                            applicationsSrokRassIstyok.length,
+                                      )
+                                      : ListView.separated(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          final category2 =
+                                              applicationsOtozvano[index]
+                                                  .category;
+                                          final document2 =
+                                              applicationsOtozvano[index]
+                                                  .document;
+                                          final id =
+                                              applicationsOtozvano[index].id;
+                                          return GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (context) =>
+                                                          MyApplicationInReviewDetailPage(
+                                                            docModel: data,
+                                                            index: index,
+                                                            id: id!,
+                                                            currentLocale:
+                                                                currentLocale,
+                                                          ),
+                                                ),
+                                              );
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: greyBorderColor,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal:
+                                                              size.otstup15,
+                                                          vertical:
+                                                              size.otstup15,
+                                                        ),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width:
+                                                                  size.imageSize100,
+                                                              child:
+                                                                  Image.network(
+                                                                    category2!
+                                                                        .iconId!,
+                                                                  ),
+                                                            ),
+                                                            SizedBox(
+                                                              width:
+                                                                  size.otstup15,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH2BlackStyle(
+                                                                    document2!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontSize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                    color:
+                                                                        primaryGreenColor,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                                ),
+
+                                                                SizedBox(
+                                                                  width:
+                                                                      size.screenWidth *
+                                                                      0.6,
+                                                                  child: textWithH1Style(
+                                                                    category2
+                                                                        .title!
+                                                                        .getText(
+                                                                          currentLocale,
+                                                                        ),
+                                                                    fontsize:
+                                                                        16,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .start,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        // Row(
+                                                        //   children: [
+                                                        //     Container(
+                                                        //       decoration: BoxDecoration(
+                                                        //         border: Border.all(
+                                                        //           color:
+                                                        //               greyBorderColor,
+                                                        //         ),
+                                                        //         borderRadius:
+                                                        //             BorderRadius.circular(
+                                                        //               5,
+                                                        //             ),
+                                                        //       ),
+                                                        //       child: Padding(
+                                                        //         padding:
+                                                        //             const EdgeInsets.all(
+                                                        //               6.0,
+                                                        //             ),
+                                                        //         child: Center(
+                                                        //           child: Icon(
+                                                        //             Icons
+                                                        //                 .arrow_forward_ios,
+                                                        //           ),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ),
+                                                        //   ],
+                                                        // ),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        top: BorderSide(
+                                                          color:
+                                                              greyBorderColor,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            5,
+                                                          ),
+                                                      color: Color(0xFFF6FFFA),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                            horizontal:
+                                                                size.otstup15,
+                                                            vertical:
+                                                                size.otstup15,
+                                                          ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          // textWithH1Style(
+                                                          //   "Дата выдачи: 01.12.25",
+                                                          //   fontsize: 14,
+                                                          //   color:
+                                                          //       greyBorderColor,
+                                                          // ),
+                                                          Container(
+                                                            decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors
+                                                                      .orange[100],
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    5,
+                                                                  ),
+                                                            ),
+                                                            child: Padding(
+                                                              padding: EdgeInsets.symmetric(
+                                                                horizontal:
+                                                                    size.otstup30,
+                                                                vertical:
+                                                                    size.otstup10,
+                                                              ),
+                                                              child: textWithH1Style(
+                                                                applicationsOtozvano[index]
+                                                                    .status!
+                                                                    .title!
+                                                                    .getText(
+                                                                      currentLocale,
+                                                                    ),
+                                                                fontsize: 13,
+                                                                color:
+                                                                    Colors
+                                                                        .orange,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        separatorBuilder:
+                                            (context, index) =>
+                                                SizedBox(height: size.otstup10),
+                                        itemCount: applicationsOtozvano.length,
                                       ),
                                 ],
                               ),

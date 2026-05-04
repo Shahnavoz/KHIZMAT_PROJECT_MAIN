@@ -16,7 +16,7 @@ class SwitchWidget extends StatefulWidget {
     required this.isOn,
     required this.onToggle,
     this.validator,
-    this.content
+    this.content,
   });
 
   @override
@@ -26,7 +26,6 @@ class SwitchWidget extends StatefulWidget {
 class _SwitchWidgetState extends State<SwitchWidget> {
   @override
   Widget build(BuildContext context) {
-    final size = AdaptiveSizes(context);
     return FormField<bool>(
       validator: widget.validator,
       initialValue: widget.isOn,
@@ -36,64 +35,70 @@ class _SwitchWidgetState extends State<SwitchWidget> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(vertical: widget.size.otstup10),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: widget.size.otstup10,
-                    vertical: widget.size.otstup15,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  final newVal = !(field.value ?? widget.isOn);
+                  field.didChange(newVal);
+                  widget.onToggle(newVal);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '* ',
-                            style: TextStyle(color: primaryButtonColor, fontSize: 16),
-                          ),
-                          SizedBox(width: 10),
-                          SizedBox(
-                            width: widget.size.screenWidth * 0.55,
-                            child: Text(
-                              widget.content ?? "",
-                              // 'Подтверждаю ответственность за сохранность пароля ключа сертификата электронной подписи',
-                              style: TextStyle(fontSize: 14),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: widget.size.otstup10,
+                      vertical: widget.size.otstup15,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '* ',
+                              style: TextStyle(color: primaryButtonColor, fontSize: 16),
                             ),
+                            SizedBox(width: 10),
+                            SizedBox(
+                              width: widget.size.screenWidth * 0.55,
+                              child: Text(
+                                widget.content!,
+                                style: TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        ),
+                        FlutterSwitch(
+                          width: 60,
+                          height: 30,
+                          value: field.value ?? widget.isOn,
+                          activeSwitchBorder: Border.all(
+                            color: primaryButtonColor,
+                            width: 2,
                           ),
-                        ],
-                      ),
-                      FlutterSwitch(
-                        width: 60,
-                        height: 30 ,
-                        value: field.value ?? widget.isOn,
-                        activeSwitchBorder: Border.all(
-                          color: primaryButtonColor,
-                          width: 2,
+                          activeColor: Colors.transparent,
+                          inactiveColor: Colors.transparent,
+                          inactiveToggleColor: Colors.grey,
+                          inactiveSwitchBorder: Border.all(
+                            color: Colors.grey,
+                            width: 2,
+                          ),
+                          activeToggleColor: primaryButtonColor,
+                          onToggle: (val) {
+                            field.didChange(val);
+                            widget.onToggle(val);
+                          },
                         ),
-                        activeColor: Colors.transparent,
-                        inactiveColor: Colors.transparent,
-                        inactiveToggleColor: Colors.grey,
-                        inactiveSwitchBorder: Border.all(
-                          color: Colors.grey,
-                          width: 2,
-                        ),
-                        activeToggleColor: primaryButtonColor,
-                        onToggle: (val) {
-                          field.didChange(val); 
-                          widget.onToggle(val);
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-
             if (field.hasError)
               Padding(
                 padding: EdgeInsets.only(left: 8),

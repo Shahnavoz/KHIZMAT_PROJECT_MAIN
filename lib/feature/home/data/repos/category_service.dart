@@ -23,7 +23,7 @@ class CategoryService {
       print('➡️ Используем токен: <$token>');
       var response = await http.get(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/reference/documents/all?updated_date=0',
+          'https://api.ekhizmat.tj/v1/reference/documents/all?updated_date=0',
         ),
 
         headers: <String, String>{
@@ -57,7 +57,7 @@ class CategoryService {
       print('➡️ Используем токен: <$token>');
       var response = await http.get(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/reference/documents/all?updated_date=0',
+          'https://api.ekhizmat.tj/v1/reference/documents/all?updated_date=0',
         ),
 
         headers: <String, String>{

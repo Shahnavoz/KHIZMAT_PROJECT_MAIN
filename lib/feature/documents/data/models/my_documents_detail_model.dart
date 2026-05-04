@@ -65,7 +65,7 @@ class Data {
   String? uuid;
   bool? usageFee;
   List<dynamic>? steps;
-  List<dynamic>? payments;
+  List<Payment>? payments;
   PkiSignatures? pkiSignatures;
   List<Attachment>? attachments;
   List<dynamic>? fees;
@@ -168,7 +168,10 @@ class Data {
         uuid: json["uuid"] as String?,
         usageFee: json["usage_fee"] as bool?,
         steps: json["steps"] is List ? List<dynamic>.from(json["steps"] as List) : [],
-        payments: json["payments"] is List ? List<dynamic>.from(json["payments"] as List) : [],
+        payments: (json["payments"] as List<dynamic>?)
+                ?.map((x) => x is Map<String, dynamic> ? Payment.fromJson(x) : null)
+                .whereType<Payment>()
+                .toList() ?? [],
         pkiSignatures: json["pkiSignatures"] != null 
             ? PkiSignatures.fromJson(json["pkiSignatures"] as Map<String, dynamic>) 
             : null,
@@ -227,7 +230,7 @@ class Data {
         if (uuid != null) "uuid": uuid,
         if (usageFee != null) "usage_fee": usageFee,
         "steps": steps ?? [],
-        "payments": payments ?? [],
+        "payments": payments?.map((e) => e.toJson()).toList() ?? [],
         if (pkiSignatures != null) "pkiSignatures": pkiSignatures!.toJson(),
         "attachments": attachments?.map((e) => e.toJson()).toList() ?? [],
         "fees": fees ?? [],
@@ -696,5 +699,36 @@ class DataStatus {
         if (status != null) "status": status,
         if (background != null) "background": background,
         if (title != null) "title": title!.toJson(),
+      };
+}
+
+class Payment {
+  int id;
+  String? serial;
+  String? amount;
+  String? paid_at;
+  String? status;
+
+  Payment({
+    required this.id,
+    this.serial,
+    this.amount,
+    this.paid_at,
+    this.status,
+  });
+
+  factory Payment.fromJson(Map<String, dynamic> json) => Payment(
+        id: json["id"] as int,
+        serial: json["serial"] as String?,
+        amount: json["amount"]?.toString(),
+        paid_at: json["paid_at"] as String?,
+        status: json["status"] as String?,
+      );
+
+  Map<String, dynamic> toJson() => {
+        if (serial != null) "serial": serial,
+        if (amount != null) "amount": amount,
+        if (paid_at != null) "paid_at": paid_at,
+        if (status != null) "status": status,
       };
 }

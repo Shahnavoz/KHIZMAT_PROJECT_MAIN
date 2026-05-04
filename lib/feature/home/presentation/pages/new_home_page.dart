@@ -3,21 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
+import 'package:khizmat_new/deeplink/user_profile.dart';
 import 'package:khizmat_new/consts/shimmers/home_page_shimmer.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/consts/themes/themes.dart';
 import 'package:khizmat_new/feature/authorization/presentation/pages/main_question_page.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/my__button.dart';
+import 'package:khizmat_new/feature/documents/presentation/pages/my_documents_page.dart';
 import 'package:khizmat_new/feature/home/data/providers/all_updated_date_provider.dart';
-import 'package:khizmat_new/feature/home/presentation/pages/Notification_page.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/card_test_page.dart';
-import 'package:khizmat_new/feature/home/presentation/pages/scan_qr_page.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/search_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/buttons_bar_titles.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/horizontal_scrollable_widget.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/main_category_services_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/tab_bar_uvedomleniya_page.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 final queryProvider = StateProvider<String>((ref) => "");
 
@@ -130,14 +131,14 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
             body: Stack(
               clipBehavior: Clip.none,
               children: [
-                Container(
-                  child: Image.asset(
-                    appThemeProvider
-                        ? "assets/images/image 22.png"
-                        : "assets/images/DARK MAIN.png",
-                    fit: BoxFit.fitHeight,
-                  ),
-                ),
+                // Container(
+                //   child: Image.asset(
+                //     appThemeProvider
+                //         ? "assets/images/image 22.png"
+                //         : "assets/images/DARK MAIN.png",
+                //     fit: BoxFit.fitHeight,
+                //   ),
+                // ),
                 CustomScrollView(
                   controller: _scrollController,
                   slivers: [
@@ -153,20 +154,19 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                       title: Padding(
                         padding: const EdgeInsets.only(left: 0),
                         child: Container(
-                          padding: EdgeInsets.all(7),
+                          // padding: EdgeInsets.all(7),
                           decoration:
                               !isAppBarCollapsed
                                   ? BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Color(0xFFFFFFFF),
-                                        Color(0xFFFFFFFF),
-                                        const Color.fromARGB(0, 249, 247, 247),
-                                      ],
-                                      stops: [0.0, 0.7, 1.0],
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                    ),
+                                    // gradient: LinearGradient(
+                                    //   colors: [
+                                    //     Color.fromARGB(255, 230, 217, 217),
+                                    //     Color.fromARGB(255, 221, 211, 211),
+                                    //   ],
+                                    //   stops: [0.0, 0.7],
+                                    //   begin: Alignment.centerLeft,
+                                    //   end: Alignment.centerRight,
+                                    // ),
                                     borderRadius: BorderRadius.circular(150),
                                   )
                                   : BoxDecoration(),
@@ -176,8 +176,9 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                               CircleAvatar(backgroundColor: Colors.grey[300]),
                               SizedBox(width: 15),
                               Text(
-                                "Shahnavoz,салом",
-                                style: TextStyle(
+                                '${ref.watch(userProfileProvider)?.firstname ?? ''},'
+                                ' салом',
+                                style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
@@ -187,47 +188,47 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                           ),
                         ),
                       ),
-                      actions: [
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => NotificationPage(),
-                                  ),
-                                );
-                              },
-                              icon: Icon(Icons.notifications),
-                            ),
-                            // IconButton(
-                            //   onPressed: () {
-                            //     ref.read(themeProvider.notifier).state =
-                            //         !ref.read(themeProvider.notifier).state;
-                            //   },
-                            //   icon: Icon(
-                            //     appThemeProvider
-                            //         ? Icons.dark_mode_outlined
-                            //         : Icons.light_mode,
-                            //     color: Colors.white,
-                            //   ),
-                            // ),
-                            IconButton(
-                              onPressed: () async {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ScanQrPage(),
-                                  ),
-                                );
-                              },
-                              icon: Icon(Icons.qr_code),
-                            ),
-                            SizedBox(width: size.otstup10),
-                          ],
-                        ),
-                      ],
+                      // actions: [
+                      //   Row(
+                      //     children: [
+                      //       IconButton(
+                      //         onPressed: () {
+                      //           Navigator.push(
+                      //             context,
+                      //             MaterialPageRoute(
+                      //               builder: (context) => NotificationPage(),
+                      //             ),
+                      //           );
+                      //         },
+                      //         icon: Icon(Icons.notifications,color: Colors.black,),
+                      //       ),
+                      //       IconButton(
+                      //         onPressed: () {
+                      //           ref.read(themeProvider.notifier).state =
+                      //               !ref.read(themeProvider.notifier).state;
+                      //         },
+                      //         icon: Icon(
+                      //           appThemeProvider
+                      //               ? Icons.dark_mode_outlined
+                      //               : Icons.light_mode,
+                      //           color: Colors.white,
+                      //         ),
+                      //       ),
+                      //       IconButton(
+                      //         onPressed: () async {
+                      //           Navigator.push(
+                      //             context,
+                      //             MaterialPageRoute(
+                      //               builder: (context) => ScanQrPage(),
+                      //             ),
+                      //           );
+                      //         },
+                      //         icon: Icon(Icons.qr_code,color: Colors.black,),
+                      //       ),
+                      //       SizedBox(width: size.otstup10),
+                      //     ],
+                      //   ),
+                      // ],
                       flexibleSpace: FlexibleSpaceBar(
                         collapseMode: CollapseMode.parallax,
                         background: Stack(
@@ -245,7 +246,7 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                 ),
                                 child: Column(
                                   children: [
-                                    SizedBox(height: 20),
+                                    SizedBox(height: 32),
                                     HorizontalScrollableWidget(
                                       borderColor: greyBorderColor,
                                       categories: categories,
@@ -256,7 +257,10 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                       nonActiveColor: Colors.white,
                                       activeTextColor: Colors.black,
                                       nonActiveTextColor: Colors.black,
+                                      documents: documents,
                                     ),
+
+                                    // SizedBox(height: size.otstup20),
                                     MyTextFieldWithPrefix(
                                       onTap: () {
                                         Navigator.push(
@@ -271,10 +275,10 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                           ),
                                         );
                                       },
-                                      width: size.screenWidth * 0.92,
+                                      width: size.screenWidth * 0.9,
                                       borderColor: greyTextFBorderColor,
                                       controller: searchController1,
-                                      hintText: "Поиск вопросов",
+                                      hintText: S.of(context).poisk_uslug,
                                       backGroundColor: Colors.white,
                                       onChanged: (value) {
                                         ref.read(queryProvider.notifier).state =
@@ -300,7 +304,7 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                   Container(
                                     margin: EdgeInsets.symmetric(
                                       horizontal: size.screenWidth * 0.045,
-                                      vertical: size.otstup20,
+                                      // vertical: size.otstup20,
                                     ),
                                     child: Column(
                                       mainAxisAlignment:
@@ -318,21 +322,30 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                           child: Container(
                                             height: size.screenHeight * 0.29,
                                             decoration: BoxDecoration(
-                                              gradient: const RadialGradient(
-                                                radius: 1.3,
-                                                center: Alignment.bottomRight,
-                                                colors: [
-                                                  Color.fromARGB(
-                                                    255,
-                                                    244,
-                                                    255,
-                                                    254,
-                                                  ),
-                                                  Color(0xFFFFFFFF),
-                                                  Color(0xFFFFFFFF),
-                                                ],
-                                                stops: [0.6, 0.8, 1.0],
+                                              border: Border.all(
+                                                color: greyTextFBorderColor,
                                               ),
+                                              color: const Color.fromARGB(
+                                                255,
+                                                250,
+                                                250,
+                                                250,
+                                              ),
+                                              // gradient: const RadialGradient(
+                                              //   radius: 1.3,
+                                              //   center: Alignment.bottomRight,
+                                              //   colors: [
+                                              //     Color.fromARGB(
+                                              //       255,
+                                              //       244,
+                                              //       255,
+                                              //       254,
+                                              //     ),
+                                              //     Color(0xFFFFFFFF),
+                                              //     Color(0xFFFFFFFF),
+                                              //   ],
+                                              //   stops: [0.6, 0.8, 1.0],
+                                              // ),
                                               borderRadius:
                                                   const BorderRadius.only(
                                                     bottomLeft: Radius.circular(
@@ -345,16 +358,12 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                             child: TabBarView(
                                               children: [
                                                 // Вкладка "Уведомления"
-                                                TabBarUvedomleniyaPage(
-                                                  size: size,
-                                                  categories: categories,
-                                                  documents: documents,
-                                                ),
+
                                                 // Вкладка "Заявления"
                                                 Padding(
                                                   padding: EdgeInsets.symmetric(
                                                     horizontal: size.otstup10,
-                                                    vertical: size.otstup10,
+                                                    vertical: size.otstup20,
                                                   ),
                                                   child: Column(
                                                     children: [
@@ -367,6 +376,9 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                                                   documents,
                                                             ),
                                                       ),
+                                                      SizedBox(
+                                                        height: size.otstup35,
+                                                      ),
                                                       Center(
                                                         child: My_Button(
                                                           width:
@@ -375,20 +387,48 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                                           size: size,
                                                           borderRadius: 10,
                                                           backgroundColor:
-                                                              primaryButtonColor,
+                                                              Colors.white,
                                                           borderColor:
-                                                              primaryButtonColor,
-                                                          onPressed: () {},
-                                                          child: const Text(
-                                                            "Все заявки",
+                                                              greyTextFBorderColor,
+                                                          onPressed: () {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (
+                                                                      context,
+                                                                    ) => MyDocumentsPage(
+                                                                      selectedIndex:
+                                                                          1,
+                                                                      document:
+                                                                          documents,
+                                                                    ),
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            S
+                                                                .of(context)
+                                                                .allApplications,
                                                             style: TextStyle(
                                                               color:
-                                                                  Colors.white,
+                                                                  Colors.black,
                                                             ),
                                                           ),
                                                         ),
                                                       ),
                                                     ],
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 8.0,
+                                                        vertical: 10,
+                                                      ),
+                                                  child: TabBarUvedomleniyaPage(
+                                                    categories: categories,
+                                                    documents: documents,
                                                   ),
                                                 ),
                                               ],
@@ -408,8 +448,10 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                       color: Colors.white,
                                     ),
                                     child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        SizedBox(height: size.otstup30),
+                                        // SizedBox(height: size.otstup10),
 
                                         // MyDocumentsWidget(size: size, docColors: docColors),
                                         // SizedBox(height: size.otstup20),
@@ -436,21 +478,33 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                                         vertical: size.otstup20,
                                       ),
                                       child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           //SEARCH
                                           MainCategoryServicesPage(
-                                            height: size.otstup30,
+                                            height: size.otstup15,
                                             itemCount: 5,
                                             size: size,
                                             categories: categories,
                                             documents: documents,
-                                            leftWidget: textWithH1Style(
-                                              "Категории услуг",
+                                            leftWidget: SizedBox(
+                                              width: size.screenWidth * 0.4,
+                                              child: textWithH1Style(
+                                                textAlign: TextAlign.start,
+                                                S.of(context).serviceCategories,
+                                              ),
                                             ),
-                                            rightWidget: Text(
-                                              'Все категории',
-                                              style: h2TitleNotSoBold,
-                                            ),
+                                            rightWidget:
+                                                currentLocale ==
+                                                        Locale('fr', 'FR')
+                                                    ? Icon(Icons.list)
+                                                    : Text(
+                                                      S
+                                                          .of(context)
+                                                          .allCategories,
+                                                      style: h2TitleNotSoBold,
+                                                    ),
                                           ),
                                           // SizedBox(height: size.otstup20),
                                           // MainPagePopularServices(
@@ -647,7 +701,7 @@ class MyDocumentsWidget extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.only(left: size.otstup20, bottom: size.otstup20),
-          child: textWithH1Style("Мои документы"),
+          child: textWithH1Style(S.of(context).myDocuments),
         ),
         Container(
           margin: EdgeInsets.symmetric(horizontal: size.otstup20),

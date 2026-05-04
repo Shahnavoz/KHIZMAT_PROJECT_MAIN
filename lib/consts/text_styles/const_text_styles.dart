@@ -151,6 +151,7 @@ Widget textWithH2BlackStyle(
   FontWeight fontWeight = FontWeight.bold,
   Color color = Colors.black,
   int maxline = 2,
+ 
 }) {
   return Text(
     text,
@@ -158,6 +159,7 @@ Widget textWithH2BlackStyle(
       fontSize: fontSize,
       fontWeight: fontWeight,
       color: color,
+      height: 1.2,
     ),
     textAlign: textAlign,
     maxLines: maxline,
@@ -178,11 +180,11 @@ Widget buttonWhiteTextStyle(String text) {
 
 Widget sameStyleDifColor(String text, {Color color = const Color(0xFF4E4E4E)}) {
   return Text(
-    maxLines: 2,
+    maxLines: 1,
     overflow: TextOverflow.ellipsis,
     text,
     style: GoogleFonts.robotoFlex(
-      fontSize: 15,
+      fontSize: 14,
       fontWeight: FontWeight.w500,
       color: color,
     ),

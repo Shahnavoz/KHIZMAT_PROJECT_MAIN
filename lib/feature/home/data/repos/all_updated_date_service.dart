@@ -9,7 +9,7 @@ class AllUpdatedDateService {
     try {
       var token = await storage.read(key: "token");
       var baseUrl =
-          "https://apikhizmat.ehukumat.tj/v1/reference/documents/all?updated_date=0";
+          "https://api.ekhizmat.tj/v1/reference/documents/all?updated_date=0";
       var response = await http.get(
         Uri.parse(baseUrl),
         headers: <String, String>{

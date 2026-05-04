@@ -1,4 +1,5 @@
 {
+  "@@locale": "ru",
   "ru": "RU",
   "poluchay_uslugi_ne_vikhodya_iz_doma": "Получай услуги не выходя из дома",
   "proizvesti_vkhod": "Произвести вход в приложение",
@@ -6,5 +7,80 @@
   "voyti_cherez_imzo": "Войти с помощью ИМЗО",
   "osnovniye_voprosi": "Основные вопросы",
   "ne_udayotsa_voyti": "Не удается войти?",
-  "bottom_text": "© 2024-2025 ОАО'Удостоверяющие центры, государственные услуги и разработка цифровых программ'"
+  "bottom_text": "© 2024-2025 ОАО'Удостоверяющие центры, государственные услуги и разработка цифровых программ'",
+  "allApplications": "Все заявки",
+  "poisk_uslug": "Поиск услуг",
+  "allCategories": "Все категории",
+  "serviceCategories": "Категории услуг",
+  "noApplication": "Нет заявлений",
+  "all": "Все",
+  "seenSuccessfully": "Успешно рассмотрено",
+  "naRasmotrenii": "На рассмотрении",
+  "inFillingProcess": "В процессе заполнения",
+  "applications": "Заявки",
+  "InPaymentProcess": "В процессе оплаты",
+  "rejected": "Отказано",
+  "reviewPeriodExpired": "Срок рассмотрения истек",
+  "applicationWasWithdrawn": "Заявление отозвана",
+  "active": "Активный",
+  "notAssigned": "Не подписанный",
+  "hasExpired": "Срок действия истек",
+  "searchDocsAndApplications": "Поиск документов и заявок",
+  "myDocuments": "Мои документы",
+  "filtereddocumentsindexregistrationdate": "Дата выдачи: {registrationDate}",
+  "@filtereddocumentsindexregistrationdate": {
+    "placeholders": {
+      "registrationDate": {
+        "type": "String"
+      }
+    }
+  },
+  "favorites": "Избранное",
+  "noDocuments": "Нет документов",
+  "allDocuments": "Все документы",
+  "search": "Поиск",
+  "cancel": "Отменить",
+  "startSearching": "Начните поиск!",
+  "nothingFound": "Ничего не найдено",
+  "categories": "Категории",
+  "services": "Услуги",
+  "gosOrganizations": "Государственные организации",
+  "searchOrganization": "Поиск организаций",
+  "notFoundOrgs": "Организации не найдены",
+  "orgdocumentscount": "{count} услуг",
+  "@orgdocumentscount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noServices": "Нет услуг",
+  "main": "Главная",
+  "documents": "Документы",
+  "profile": "Профиль",
+  "myApplications": "Мои заявки",
+  "inFillingProcessStep": "Шаг {position} из {count}",
+  "@inFillingProcessStep": {
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "nazad": "Назад",
+  "podrobnee": "Подробнее",
+  "svernut": "Свернуть",
+  "srokPolucheniyaOnline": "Срок получения: Онлайн (мгновенно)",
+  "srokPolucheniyaDays": "Срок получения: {days} дней",
+  "@srokPolucheniyaDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -87,6 +87,9 @@ enum StatusKey {
   completed('COMPLETED'),//Успешно рассмотрено
   inPayment('IN_PAYMENT'),//В процессе оплаты
   review('REVIEW'),//На рассмотрении
+  expired('EXPIRED'),//Срок рассмотрения истек
+  denied('DENIED'),//Отказано
+  cancelled('CANCELLED'),//Отозвано
   unknown('UNKNOWN');
 
   final String apiValue;
@@ -136,13 +139,17 @@ class ApplicationStatus {
 
   bool get isInProcess => key == StatusKey.inProcess;
   bool get isUnderReview => key == StatusKey.review;
-  bool get isPaymentProcess => key == StatusKey.inPayment;
+  bool get isInPaymentProcess => key == StatusKey.inPayment;
   bool get isCompleted => key == StatusKey.completed;
+  bool get isExpired => key == StatusKey.expired;
+  bool get isDenied => key == StatusKey.denied;
+  bool get isCancelled => key == StatusKey.cancelled;
 }
 
 class ApplicationItem {
   final int? id;
   final int? subId;
+  final int? documentId;
   final MultiLang? document;
   final Category? category;
   final String? documentType;
@@ -165,6 +172,7 @@ class ApplicationItem {
   ApplicationItem({
     this.id,
     this.subId,
+    this.documentId,
     this.document,
     this.category,
     this.documentType,
@@ -190,6 +198,7 @@ class ApplicationItem {
     return ApplicationItem(
       id: json['id'] as int?,
       subId: json['sub_id'] as int?,
+      documentId: json['document_id'] as int?,
       document: MultiLang.fromJson(json['document']),
       category: Category.fromJson(json['category']),
       documentType: json['document_type'] as String?,

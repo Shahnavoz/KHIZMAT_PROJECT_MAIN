@@ -6,14 +6,11 @@ import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/consts/methods/common_methods.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
-import 'package:khizmat_new/feature/authorization/presentation/widgets/my__button.dart';
 import 'package:khizmat_new/feature/home/data/models/usluga_detail_info.dart';
 import 'package:khizmat_new/feature/home/data/models/usluga_requirement.dart';
 import 'package:khizmat_new/feature/home/data/models/usluga_specialization.dart';
 import 'package:khizmat_new/feature/home/data/providers/all_updated_date_provider.dart';
-import 'package:khizmat_new/feature/home/presentation/pages/separating_spec.dart';
-import 'package:khizmat_new/feature/home/presentation/pages/steps_page.dart';
-import 'package:khizmat_new/feature/home/presentation/widgets/detail_info_row_widget.dart';
+import 'package:khizmat_new/feature/home/presentation/widgets/my_button_polucheniye_uslugi.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/my_expansion_tile_for_detail_info.dart';
 
 class UslugaInfoPage extends ConsumerStatefulWidget {
@@ -50,6 +47,7 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
     final currentLocale = ref.watch(localeProvider);
     final infoDoc = widget.uslugaInfo.data.document;
     final allInfo = widget.uslugaInfo.data;
+    // final startDocProvider = ref.watch(shagiProvider(infoDoc.id));
 
     final combinedDataUslugi = ref.watch(
       specializationProvider(widget.categoryId),
@@ -129,7 +127,7 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
         }
 
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Color(0xFFF9F9F9),
           appBar: AppBar(
             elevation: 0,
             backgroundColor: Colors.white,
@@ -176,42 +174,74 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                     ],
                   ),
                   SizedBox(height: size.otstup20),
-                  My_Button(
-                    borderRadius: 50,
-                    width: double.infinity,
-                    size: size,
-                    backgroundColor: primaryButtonColor,
-                    borderColor: primaryButtonColor,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => StepsPage(
-                                docId: widget.uslugaInfo.data.document.id,
-                                index: widget.index,
-                              ),
-                        ),
-                      );
-                    },
-                    child: textWithH1Style(
-                      "Получить услугу",
-                      color: Colors.white,
-                      fontsize: 15,
-                    ),
+
+                  MyButtonPolucheniyeUslugi(
+                    docId: infoDoc.id,
+                    index: widget.index,
                   ),
+                  // My_Button(
+                  //   borderRadius: 50,
+                  //   width: double.infinity,
+                  //   size: size,
+                  //   backgroundColor: primaryButtonColor,
+                  //   borderColor: primaryButtonColor,
+                  //   onPressed: () {
+                  //     // startDocProvider.when(
+                  //     //   data: (data) {
+                  //     //     final message = data.application.message;
+                  //     //     if (data.application.data != null) {
+                  //     //       Navigator.push(
+                  //     //         context,
+                  //     //         MaterialPageRoute(
+                  //     //           builder:
+                  //     //               (context) => StepsPage(
+                  //     //                 docId: widget.uslugaInfo.data.document.id,
+                  //     //                 index: widget.index,
+                  //     //               ),
+                  //     //         ),
+                  //     //       );
+                  //     //     } else {
+                  //     //       ScaffoldMessenger.of(
+                  //     //         context,
+                  //     //       ).showSnackBar(SnackBar(content: Text(message)));
+                  //     //     }
+                  //     //   },
+                  //     //   error: (error, st) => Text(error.toString()),
+                  //     //   loading:
+                  //     //       () => Center(child: CircularProgressIndicator()),
+                  //     // );
+                  //     // PROVERKA dlya FIZLITSO OR YURLITSO
+
+                  //     // Navigator.push(
+                  //     //   context,
+                  //     //   MaterialPageRoute(
+                  //     //     builder:
+                  //     //         (context) => StepsPage(
+                  //     //           docId: widget.uslugaInfo.data.document.id,
+                  //     //           index: widget.index,
+                  //     //         ),
+                  //     //   ),
+                  //     // );
+                  //   },
+                  //   child: textWithH1Style(
+                  //     "Получить услугу",
+                  //     color: Colors.white,
+                  //     fontsize: 15,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
           ),
           body: Stack(
             children: [
-              Image.asset(
-                "assets/images/WHITE MAINcut.png",
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
+              // Image.asset(
+              //   "assets/images/BACK.png",
+              //   // "assets/images/WHITE MAINcut.png",
+              //   fit: BoxFit.cover,
+              //   width: double.infinity,
+              //   height: double.infinity,
+              // ),
               Container(color: Colors.white.withOpacity(0.7)),
               SingleChildScrollView(
                 child: Column(
@@ -220,16 +250,44 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: size.otstup20,
-                        vertical: size.otstup10,
+                        // vertical: size.otstup25,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          textWithH1Style(
-                            infoDoc.title.getText(currentLocale),
-                            textAlign: TextAlign.start,
+                          Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  // border: Border.all(
+                                  //   color: Colors.white,
+                                  //   width: 2,
+                                  // ),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Image.network(
+                                    infoDoc.icon ??
+                                        "https://via.placeholder.com/150",
+                                    width: size.imageSize50,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: size.otstup15),
+                              SizedBox(
+                                width: size.screenWidth * 0.7,
+                                child: textWithH1Style(
+                                  infoDoc.title.getText(currentLocale),
+                                  textAlign: TextAlign.start,
+                                  maxLines: 2,
+                                  fontsize: 16,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: size.otstup35),
+                          SizedBox(height: size.otstup15),
                           Container(
                             decoration: BoxDecoration(
                               border: Border.all(color: greyTextFBorderColor),
@@ -244,58 +302,61 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: Color(0xFF90C0BD),
-                                            width: 2,
-                                          ),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(6.0),
-                                          child: Image.asset(
-                                            "assets/icons/image 15.png",
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          border: Border.all(),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: size.otstup15,
-                                            vertical: size.otstup10,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              textWithH1Style(
-                                                "Срок оказания услуги: ",
-                                                fontsize: 15,
-                                              ),
-                                              textWithH1Style(
-                                                "${allInfo.reviewTime} дней",
-                                                fontsize: 15,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                  // Row(
+                                  //   mainAxisAlignment:
+                                  //       MainAxisAlignment.spaceBetween,
+                                  //   children: [
+                                  //     Container(
+                                  //       decoration: BoxDecoration(
+                                  //         border: Border.all(
+                                  //           color: Color(0xFF90C0BD),
+                                  //           width: 2,
+                                  //         ),
+                                  //         shape: BoxShape.circle,
+                                  //       ),
+                                  //       child: Padding(
+                                  //         padding: const EdgeInsets.all(6.0),
+                                  //         child: Image.asset(
+                                  //           "assets/icons/image 15.png",
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //     Container(
+                                  //       decoration: BoxDecoration(
+                                  //         border: Border.all(),
+                                  //         borderRadius: BorderRadius.circular(
+                                  //           12,
+                                  //         ),
+                                  //       ),
+                                  //       child: Padding(
+                                  //         padding: EdgeInsets.symmetric(
+                                  //           horizontal: size.otstup15,
+                                  //           vertical: size.otstup10,
+                                  //         ),
+                                  //         child: Row(
+                                  //           children: [
+                                  //             textWithH1Style(
+                                  //               "Срок оказания услуги: ",
+                                  //               fontsize: 15,
+                                  //             ),
+                                  //             textWithH1Style(
+                                  //               "${allInfo.reviewTime} дней",
+                                  //               fontsize: 15,
+                                  //             ),
+                                  //           ],
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
+                                  textH2GreyTitle(
+                                    "Уполномоченный орган",
+                                    fontSize: 16,
                                   ),
-                                  textH2GreyTitle("Уполномоченный орган"),
-                                  SizedBox(height: size.otstup5),
+                                  // SizedBox(height: size.otstup5),
                                   textWithH1Style(
                                     allInfo.organization.getText(currentLocale),
-                                    fontsize: 15,
+                                    fontsize: 16,
                                     fontW: FontWeight.w500,
                                     textAlign: TextAlign.start,
                                   ),
@@ -317,29 +378,86 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                       ),
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                          horizontal: size.otstup15,
+                          horizontal: size.otstup18,
                           vertical: size.otstup15,
                         ),
                         child: Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 MyTypeContainer(
                                   size: size,
                                   typeName: infoDoc.typeTitle.getText(
                                     currentLocale,
                                   ),
+                                  icon: infoDoc.icon ?? "",
                                   typeText: "Тип документа",
-                                ),
+                                ),SizedBox(height: size.otstup20,),
                                 MyTypeContainer(
                                   size: size,
                                   typeText: "Срок действия",
                                   typeName: "${allInfo.expiryDate} (год)",
+                                  icon: infoDoc.icon ?? "",
                                 ),
                               ],
                             ),
                             SizedBox(height: 20),
+                            Padding(
+                              padding:  EdgeInsets.symmetric(horizontal:0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: greyTextFBorderColor),
+                                  borderRadius: BorderRadius.circular(32),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: size.otstup10,
+                                    vertical: size.otstup10,
+                                  ),
+                                  child: Row(
+                              
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                         color: primaryButtonColor,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(3.0),
+                                          child: Icon(
+                                            Icons.info_outline,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: size.otstup10),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                              
+                                        children: [
+                                          SizedBox(
+                                            width: size.screenWidth * 0.7,
+                                            child: textWithH1Style(
+                                              "Срок рассмотрения и предоставления услуги: ",
+                                              fontsize: 15,
+                                              fontW: FontWeight.w400,
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                          textWithH1Style(
+                                            "${allInfo.reviewTime} дней",
+                                            fontsize: 15,
+                                            fontW: FontWeight.w500,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: size.otstup20),
                             Column(children: tiles),
                           ],
                         ),
@@ -368,8 +486,6 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
     );
   }
 }
-
-
 
 class RequirementTile extends ConsumerStatefulWidget {
   const RequirementTile({
@@ -616,35 +732,51 @@ class MyTypeContainer extends StatelessWidget {
     required this.size,
     required this.typeText,
     required this.typeName,
+    required this.icon,
   });
 
   final AdaptiveSizes size;
   final String typeText;
   final String typeName;
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: greyTextFBorderColor),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(50),
       ),
       child: Padding(
-        padding: EdgeInsets.only(
-          left: size.otstup15,
-          right: size.otstup65,
-          top: size.otstup18,
-          bottom: size.otstup20,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: EdgeInsets.symmetric(horizontal: size.otstup15, vertical: size.otstup10),
+        child: Row(
           children: [
-            textWithH2BlackStyle(typeText, fontSize: 15),
-            SizedBox(height: size.otstup5),
-            textWithH2BlackStyle(
-              typeName,
-              fontSize: 16,
-              color: primaryButtonColor,
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: primaryButtonColor,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(3.0),
+                child: Icon(Icons.info_outline, color: Colors.white, size: 24),
+              ),
+            ),
+            SizedBox(width: size.otstup10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                textWithH2BlackStyle(
+                  typeText,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+                // SizedBox(height: size.otstup5),
+                textWithH2BlackStyle(
+                  typeName,
+                  fontSize: 14,
+                  // fontWeight: FontWeight.bold,
+                ),
+              ],
             ),
           ],
         ),

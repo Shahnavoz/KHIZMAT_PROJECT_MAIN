@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
-import 'package:khizmat_new/consts/shimmers/applications_shimmer.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
+import 'package:khizmat_new/feature/documents/presentation/widgets/my_application_detail_page.dart';
 import 'package:khizmat_new/feature/home/data/models/all_updated_date_model.dart';
 import 'package:khizmat_new/feature/home/data/providers/category_provider.dart';
 
@@ -28,7 +28,7 @@ class _CardTestPageState extends ConsumerState<CardPageForUvedomleni> {
   void initState() {
     super.initState();
     // Инициализируем индексы на основе категорий
-    indices = List.generate(5, (index) => index);
+    indices = List.generate(4, (index) => index);
   }
 
   void moveTopToBottom() {
@@ -108,7 +108,7 @@ class _CardTestPageState extends ConsumerState<CardPageForUvedomleni> {
                 return cardWidget;
               }).toList(),
         ),
-      ), 
+      ),
       //   },
       //   error: (error, st) => Center(child: Text("$error")),
       //   loading: () => Center(child: ApplicationsShimmer()),

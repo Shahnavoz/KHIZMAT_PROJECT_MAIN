@@ -90,99 +90,116 @@ class _ButtonModalBottomSheetState extends State<ButtonModalBottomSheet> {
 
                 SizedBox(height: widget.size.screenHeight * 0.02),
 
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: boxRadialGradient,
-                    border: Border.all(color: greyBorderColor),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: size.verticalPadding20,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        textWithH2BlackStyle(
-                          "Связаться с специалистом поддержки",
-                        ),
-                        SizedBox(height: size.otstup15),
-                        ButtonOrContainerWithTwoParts(
-                          size: widget.size,
-                          partOneWidget: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "7788",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                SizedBox(width: 20),
-                              ],
-                            ),
-                          ),
-                          partTwoWidget: GestureDetector(
-                            onTap: () {
-                              makePhoneCall("870904004");
-                            },
-                            child: Text(
-                              "Позвонить оператору",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          backGroundColor: Colors.white,
-                          oneSideBorderColor: greyBorderColor,
-                          horizontalPadPartOne: 0,
-                        ),
-                        SizedBox(height: widget.size.screenHeight * 0.012),
-                        ButtonOrContainerWithTwoParts(
-                          size: widget.size,
-                          partOneWidget: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.telegram,
-                                  size: widget.size.cancelIconSize30,
-                                ),
-                                SizedBox(width: 20),
-                              ],
-                            ),
-                          ),
-                          partTwoWidget: GestureDetector(
-                            onTap: () {
-                              openTelegram("@shahnavoz1");
-                            },
-                            child: Text(
-                              "Написать в телеграм",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          backGroundColor: Colors.white,
-                          oneSideBorderColor: greyBorderColor,
-                          horizontalPadPartOne: 0,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                SupportCard(size: size, widget: widget),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SupportCard extends StatelessWidget {
+  const SupportCard({
+    super.key,
+    required this.size,
+    required this.widget,
+  });
+
+  final AdaptiveSizes size;
+  final ButtonModalBottomSheet widget;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: boxRadialGradient,
+        border: Border.all(color: greyBorderColor),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: size.verticalPadding20,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            textWithH2BlackStyle(
+              "Связаться с специалистом поддержки",
+            ),
+            SizedBox(height: size.otstup15),
+            ButtonOrContainerWithTwoParts(
+              size: widget.size,
+              partOneWidget: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "7788",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                  ],
+                ),
+              ),
+              partTwoWidget: GestureDetector(
+                onTap: () {
+                  makePhoneCall("870904004");
+                },
+                child: Text(
+                  "Позвонить оператору",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              backGroundColor: Colors.white,
+              oneSideBorderColor: greyBorderColor,
+              horizontalPadPartOne: 0,
+            ),
+            SizedBox(height: widget.size.screenHeight * 0.012),
+            ButtonOrContainerWithTwoParts(
+              size: widget.size,
+              partOneWidget: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.telegram,
+                      size: widget.size.cancelIconSize30,
+                    ),
+                    SizedBox(width: 20),
+                  ],
+                ),
+              ),
+              partTwoWidget: GestureDetector(
+                onTap: () {
+                  openTelegram("@shahnavoz1");
+                },
+                child: Text(
+                  "Написать в телеграм",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              backGroundColor: Colors.white,
+              oneSideBorderColor: greyBorderColor,
+              horizontalPadPartOne: 0,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:khizmat_new/feature/home/data/models/drop_down_options_model.dart';
 import 'package:khizmat_new/feature/home/data/models/field_value_model.dart';
+import 'package:khizmat_new/feature/home/data/models/resume_model.dart';
 import 'package:khizmat_new/feature/home/data/models/shagi_polucheniye_uslugi_model.dart';
 import 'package:khizmat_new/feature/home/data/models/start_document_model.dart';
 import 'package:khizmat_new/feature/home/data/models/step_requirement_model.dart';
@@ -13,7 +14,7 @@ import 'package:khizmat_new/feature/home/data/models/uploaded_file_info.dart';
 class ShagiPolucheniyeUslugiService {
   var storage = FlutterSecureStorage();
 
-  Future<ShagiPolucheniyeUslugiModel> getStepsWithInfo(
+  Future<ShagiPolucheniyeUslugiModel> getStepsProcessInfo(
     int documentId,
     int applicationId,
   ) async {
@@ -32,12 +33,11 @@ class ShagiPolucheniyeUslugiService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = shagiPolucheniyeUslugiModelFromJson(response.body);
+        print("RESPONSE BODY: $data");
         return data;
       }
       if (response.statusCode == 403) {
-        throw Text(
-          "Недостаточно информации для запуска процесса. Не поддерживается для физических лиц",
-        );
+        throw Text("222");
       } else {
         throw Exception();
       }
@@ -46,7 +46,10 @@ class ShagiPolucheniyeUslugiService {
     }
   }
 
-  Future<StartDocumentModel> startPostForm(int documentId) async {
+  Future<StartDocumentModel> startPostForm(
+    int documentId,
+    Locale currentlocale,
+  ) async {
     try {
       final token = await storage.read(key: 'token');
       final response = await http.post(
@@ -65,14 +68,64 @@ class ShagiPolucheniyeUslugiService {
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = response.body;
-        return startDocumentModelFromJson(data);
+        return startDocumentModelFromJson(response.body);
+      }
+
+      // Для всех ошибок — пытаемся взять сообщение из тела
+      String message = 'Ошибка сервера: ${response.statusCode}';
+
+      try {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final titleRu = json['message']?['title']?['$currentlocale'] as String?;
+        final titleTj = json['message']?['title']?['tj'] as String?;
+        if (titleRu != null && titleRu.trim().isNotEmpty) {
+          message = titleRu.trim();
+        } else if (titleTj != null && titleTj.trim().isNotEmpty) {
+          final statusMsg = json['status_message'] as String?;
+          if (statusMsg != null && statusMsg.trim().isNotEmpty) {
+            message = titleTj!;
+          }
+        } else {
+          final statusMsg = json['status_message'] as String?;
+          if (statusMsg != null && statusMsg.trim().isNotEmpty) {
+            message = titleRu!;
+          }
+        }
+      } catch (e) {
+        print('Error in startPostForm: ${e.toString()}');
+        // Пробрасываем дальше — пусть UI ловит и показывает
+        rethrow;
+      }
+
+      throw Exception(message.toString());
+    } catch (e) {
+      print('Error in startPostForm: $e');
+      rethrow;
+    }
+  }
+
+  Future<ResumeModel> updatingWithResume(int applicationId) async {
+    try {
+      var token = await storage.read(key: 'token');
+      var response = await http.post(
+        Uri.parse(
+          "https://api.ekhizmat.tj/v2/process/resume?application_id=$applicationId",
+        ),
+        headers: <String, String>{
+          'Content-Type': "Application/json;Charset=utf-8",
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return resumeModelFromJson(response.body);
       } else {
-        throw Exception('Server error: ${response.statusCode}');
+        throw Exception();
       }
     } catch (e) {
-      print('Error in postForm: $e');
-      throw Exception(e);
+      print(e.toString());
+      throw Exception();
     }
   }
 
@@ -125,6 +178,21 @@ class ShagiPolucheniyeUslugiService {
       print(e);
       throw Exception(e);
     }
+  }
+
+  Future<DropDownOptionsModel?> getDropDownInfoSafe(
+    int applicationId,
+    Locale lang,
+    String actionKey, {
+    String? inn,
+  }) async {
+    // 🚫 если этот action требует INN — не вызываем
+    if (actionKey == "PLACE_SUBMISSION_TAX" && (inn == null || inn.isEmpty)) {
+      print("SKIP $actionKey because INN is null");
+      return null;
+    }
+
+    return await getDropDownInfo(applicationId, lang, actionKey);
   }
 
   //GET DROP DOWN INFO
@@ -202,7 +270,7 @@ class ShagiPolucheniyeUslugiService {
 
   //POST FORM STEPS
 
-  Future<void> updateFormBySteps(
+  Future<void> updateFormByStepsNext(
     int stepId,
     int applicationId,
     List<FieldValueModel> fieldValues,
@@ -230,10 +298,11 @@ class ShagiPolucheniyeUslugiService {
       if (response.statusCode == 200) {
         print("status: ${response.statusCode}");
         print("status: ${response.body}");
-        // print("body: ${response.body}");
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Форма отправлено успешно.")),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Форма отправлено успешно.")),
+          );
+        }
       } else {
         print('Something went wrong ${response.statusCode}');
         print("body: ${response.body}");
@@ -243,12 +312,99 @@ class ShagiPolucheniyeUslugiService {
     }
   }
 
-  Future<UploadedFileModel?> uploadFile(int application_id) async {
+  /*
+    Future<void> updateFormByStepsNext(
+    WidgetRef ref,
+    int stepId,
+    int applicationId,
+    List<FieldValueModel> fieldValues,
+    BuildContext context,
+    int documentId,
+  ) async {
+    try {
+      var token = await storage.read(key: 'token');
+
+      final body = jsonEncode(
+        fieldValues.map((value) => value.toJson()).toList(),
+      );
+
+      var response = await http.post(
+        Uri.parse(
+          'https://apikhizmat.ehukumat.tj/v2/process/update?application_id=$applicationId&step_id=$stepId',
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=utf-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        print("status: ${response.statusCode}");
+        print("status: ${response.body}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Форма отправлено успешно.")),
+        );
+        ref.invalidate(shagiProvider(documentId));
+      } else {
+        print('Something went wrong ${response.statusCode}');
+        print("body: ${response.body}");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }*/
+
+  Future<void> updateFormByStepsLast(
+    int currentStepId,
+    int lastStepId,
+    int applicationId,
+    List<FieldValueModel> fieldValues,
+    BuildContext context,
+  ) async {
+    try {
+      var token = await storage.read(key: 'token');
+
+      final body = jsonEncode(
+        fieldValues.map((value) => value.toJson()).toList(),
+      );
+
+      var response = await http.post(
+        Uri.parse(
+          'https://api.ekhizmat.tj/v2/process/update?application_id=$applicationId&step_id=$currentStepId&change_step_id=$lastStepId',
+        ),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=utf-8',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        print("status: ${response.statusCode}");
+        print("status: ${response.body}");
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Форма отправлено успешно.")),
+          );
+        }
+      } else {
+        print('Something went wrong ${response.statusCode}');
+        print("body: ${response.body}");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<UploadedFileModel?> uploadFile(int applicationId) async {
     try {
       var token = await storage.read(key: 'token');
       var response = await http.post(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/file/application/upload?application_id=$application_id',
+          'https://apikhizmat.ehukumat.tj/v1/file/application/upload?application_id=$applicationId',
         ),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=utf-8',
@@ -270,6 +426,7 @@ class ShagiPolucheniyeUslugiService {
       return null;
     }
   }
+
   Future<UploadedFileInfo?> getUploadedFileInfo(int application_id) async {
     try {
       var token = await storage.read(key: 'token');

@@ -3,6 +3,7 @@
 //     final startDocumentModel = startDocumentModelFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:ui';
 
 StartDocumentModel startDocumentModelFromJson(String str) =>
     StartDocumentModel.fromJson(json.decode(str));
@@ -14,13 +15,13 @@ class StartDocumentModel {
   int statusCode;
   String statusMessage;
   Data data;
-  dynamic message;
+  Message? message;
 
   StartDocumentModel({
     required this.statusCode,
     required this.statusMessage,
     required this.data,
-    required this.message,
+    this.message,
   });
 
   factory StartDocumentModel.fromJson(Map<String, dynamic> json) =>
@@ -28,14 +29,17 @@ class StartDocumentModel {
         statusCode: json["status_code"],
         statusMessage: json["status_message"],
         data: Data.fromJson(json["data"]),
-        message: json["message"],
+        message:
+            json['message'] != null
+                ? Message.fromJson(json['message'] as Map<String, dynamic>)
+                : null,
       );
 
   Map<String, dynamic> toJson() => {
     "status_code": statusCode,
     "status_message": statusMessage,
     "data": data.toJson(),
-    "message": message,
+    "message": message?.toJson(),
   };
 }
 
@@ -93,4 +97,43 @@ class Value {
       Value(key: json["key"], value: json["value"]);
 
   Map<String, dynamic> toJson() => {"key": key, "value": value};
+}
+
+class Message {
+  Title title;
+  String type;
+
+  Message({required this.title, required this.type});
+
+  factory Message.fromJson(Map<String, dynamic> json) =>
+      Message(title: Title.fromJson(json["title"]), type: json["type"]);
+
+  Map<String, dynamic> toJson() => {"title": title.toJson(), "type": type};
+}
+
+class Title {
+  String tj;
+  String ru;
+  String en;
+
+  Title({required this.tj, required this.ru, required this.en});
+
+  factory Title.fromJson(Map<String, dynamic> json) =>
+      Title(tj: json["tj"], ru: json["ru"], en: json["en"]);
+
+  Map<String, dynamic> toJson() => {"tj": tj, "ru": ru, "en": en};
+
+  String getText(Locale locale) {
+    switch (locale.languageCode) {
+      case "ru":
+        return ru ?? en ?? tj ?? "";
+      case "en":
+        return en ?? ru ?? tj ?? "";
+      case "tj":
+      case "fr":
+        return tj ?? ru ?? en ?? "";
+      default:
+        return ru ?? en ?? tj ?? "";
+    }
+  }
 }

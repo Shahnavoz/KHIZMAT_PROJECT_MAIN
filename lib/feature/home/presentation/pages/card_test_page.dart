@@ -6,10 +6,13 @@ import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/consts/shimmers/applications_shimmer.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
+import 'package:khizmat_new/feature/documents/data/models/my_applications_model.dart';
+import 'package:khizmat_new/feature/documents/data/providers/my_application_provider.dart';
+import 'package:khizmat_new/feature/documents/presentation/widgets/my_application_detail_page.dart';
 import 'package:khizmat_new/feature/home/data/models/all_updated_date_model.dart';
-import 'package:khizmat_new/feature/home/data/models/podcategories_model.dart';
-import 'package:khizmat_new/feature/home/data/providers/category_provider.dart';
+import 'package:khizmat_new/feature/home/presentation/pages/steps_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/container_as_button.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class CardTestPageForApplications extends ConsumerStatefulWidget {
   final List<CategoryElement> categories;
@@ -20,24 +23,29 @@ class CardTestPageForApplications extends ConsumerStatefulWidget {
     required this.categories,
     required this.documents,
   });
+
   @override
   _CardTestPageState createState() => _CardTestPageState();
 }
 
 class _CardTestPageState extends ConsumerState<CardTestPageForApplications> {
-  late List<int> indices; // List индексов для категорий
-   
+  List<int> _indices = [];
+  int _loadedLength = -1;
+  int _dismissKey = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    indices = List.generate(3, (index) => index);
+  void _initIndices(int length) {
+    if (length != _loadedLength) {
+      _loadedLength = length;
+      _indices = List.generate(length, (i) => i);
+    }
   }
 
-  void moveTopToBottom() {
+  void _moveTopToBottom() {
     setState(() {
-      final top = indices.removeLast(); 
-      indices.insert(0, top); 
+      _dismissKey++;
+      if (_indices.length < 2) return;
+      final top = _indices.removeLast();
+      _indices.insert(0, top);
     });
   }
 
@@ -45,156 +53,169 @@ class _CardTestPageState extends ConsumerState<CardTestPageForApplications> {
   Widget build(BuildContext context) {
     final size = AdaptiveSizes(context);
     final currentLocale = ref.watch(localeProvider);
-    final asyncCategoryData = ref.watch(combinedCategoriesProvider);
+    final asyncApplications = ref.watch(applicationProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: 
-      // asyncCategoryData.when(
-      //   data: (model) {
-      //     return 
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 0),
-            child: Stack(
-              alignment: Alignment.topCenter,
-              children:
-                  indices.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final categoryIndex = entry.value; // Индекс категории
-                    final category =
-                        widget.categories[categoryIndex]; // Данные категории
+    return asyncApplications.when(
+      data: (model) {
+        final apps = (model.data?.applicationList ?? []).take(3).toList();
+        _initIndices(apps.length);
 
-                    final documentIndex = entry.value;
-                    final document = widget.documents[documentIndex];
-                    final subCategoryIndex = entry.value;
-                    // final subcategories =
-                    //     model.subcategoriesByCategory[widget
-                    //         .categories[index]
-                    //         .id] ??
-                    //     [];
-                    // final subCategory = subcategories[0];
-
-                    final isTop = index == indices.length - 1;
-                    final scale = 1 - (indices.length - 1 - index) * 0.00;
-                    final verticalOffset = (indices.length - 1 - index) * 10.0;
-
-                    final cardWidget = Transform.translate(
-                      offset: Offset(0, verticalOffset),
-                      child: Transform.scale(
-                        scale: scale,
-                        child: buildCard(
-                          document,
-                          category,
-                          size,
-                          isTop,
-                          categoryIndex,
-                          currentLocale,
-                          // subCategory,
-                        ),
-                      ),
-                    );
-
-                    if (isTop) {
-                      return Dismissible(
-                        movementDuration: Duration(milliseconds: 10),
-
-                        resizeDuration: Duration(milliseconds: 2),
-                        dragStartBehavior: DragStartBehavior.down,
-                        key: ValueKey(categoryIndex),
-                        direction: DismissDirection.vertical,
-                        onDismissed: (_) {
-                          moveTopToBottom();
-                        },
-                        child: cardWidget,
-                      );
-                    }
-                    return cardWidget;
-                  }).toList(),
+        if (apps.isEmpty) {
+          return Center(
+            child: Text(
+              S.of(context).noApplication,
+              style: TextStyle(color: Colors.grey[500], fontSize: 14),
             ),
+          );
+        }
+
+        if (_indices.isEmpty || _indices.any((i) => i >= apps.length)) {
+          return const SizedBox.shrink();
+        }
+
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            alignment: Alignment.topCenter,
+            children: _indices.asMap().entries.map((entry) {
+              final stackIndex = entry.key;
+              final appIndex = entry.value;
+              final app = apps[appIndex];
+              final isTop = stackIndex == _indices.length - 1;
+              final verticalOffset = (_indices.length - 1 - stackIndex) * 10.0;
+
+              final cardWidget = Transform.translate(
+                offset: Offset(0, verticalOffset),
+                child: _buildCard(app, size, currentLocale),
+              );
+
+              if (isTop) {
+                return Dismissible(
+                  movementDuration: const Duration(milliseconds: 10),
+                  resizeDuration: const Duration(milliseconds: 2),
+                  dragStartBehavior: DragStartBehavior.down,
+                  key: ValueKey('top_$_dismissKey'),
+                  direction: DismissDirection.vertical,
+                  onDismissed: (_) => _moveTopToBottom(),
+                  child: cardWidget,
+                );
+              }
+              return cardWidget;
+            }).toList(),
           ),
-        // },
-        // error: (error, st) => Center(child: Text("$error")),
-        // loading: () => Center(child: ApplicationsShimmer()),
-      // ),
+        );
+      },
+      error: (_, __) => const SizedBox.shrink(),
+      loading: () => const Center(child: ApplicationsShimmer()),
     );
   }
 
-  Widget buildCard(
-    UpdatedDateDocument document,
-    CategoryElement category,
-    AdaptiveSizes size,
-    bool isTop,
-    int index,
-    Locale currentLocale,
-    // SubcategoryByDocumentIdModel subCategory,
-  ) {
+  Widget _buildCard(ApplicationItem app, AdaptiveSizes size, Locale locale) {
+    final categoryTitle = app.category?.title?.getText(locale) ?? '';
+    final docTitle = app.document?.getText(locale) ?? '';
+    final statusText = app.status?.title?.getText(locale) ?? '';
+    final dateStr = app.registrationDate?.split('T').first ?? '';
+    final isCompleted = app.status?.isCompleted == true;
+
     return SizedBox(
       height: 140,
-      child: Card(
-        color: Colors.white,
-        shadowColor: Colors.black26,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: greyTextFBorderColor),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: size.otstup15,
-            vertical: size.otstup15,
+      child: GestureDetector(
+        onTap: () {
+          if (app.id == null) return;
+          if (app.status?.isInProcess == true) {
+            // Resume the form from the step where the user stopped.
+            // docId is passed but not used by the resume flow (server drives state).
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => StepsPage(
+                  docId: app.documentId ?? 0,
+                  index: 0,
+                  resumeApplicationId: app.id,
+                ),
+              ),
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MyApplicationInReviewDetailPage(
+                  id: app.id!,
+                  currentLocale: locale,
+                ),
+              ),
+            );
+          }
+        },
+        child: Card(
+          color: Colors.white,
+          shadowColor: Colors.black26,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(color: greyTextFBorderColor),
+            borderRadius: BorderRadius.circular(16),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ContainerAsButton(
-                    size: size,
-                    // text: document.category.title.getText(currentLocale),
-                    text: category.title.getText(currentLocale),
-                    backGroundColor: const Color(0xFFEBFFF3),
-                    textColor: primaryGreenColor,
-                  ),
-                  textCWithH2GreyStyle(
-                    // "№121223",
-                    category.id.toString(),
-                    fontweight: FontWeight.bold,
-                    color: lightBlackTextColor,
-                  ),
-                ],
-              ),
-              SizedBox(height: size.otstup10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  textWithH1Style(
-                    textAlign: TextAlign.start,
-                    // subCategory.data.document.title.getText(currentLocale),
-                    category.description.getText(currentLocale),
-                    // "Уплата налога на транспортные средства (легковые автомобили)",
-                    fontsize: 16,
-                  ),
-                  SizedBox(height: size.otstup10),
-                  Row(
-                    children: [
-                      sameStyleDifColor("29.09.24", color: greyDateColor),
-                      SizedBox(width: size.otstup10),
-                      Container(width: 1, height: 13, color: Colors.grey),
-                      SizedBox(width: size.otstup10),
-                      sameStyleDifColor("14:00", color: greyDateColor),
-                      SizedBox(width: size.otstup15),
-                      sameStyleDifColor(
-                        // "Успешно подписан",
-                        category.status.toString() == "1"
-                            ? "Успешно подписан"
-                            : "В рассмотрении",
-                        color: const Color(0xFF26AC71),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: size.otstup15,
+              vertical: size.otstup10,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: ContainerAsButton(
+                        size: size,
+                        text: categoryTitle,
+                        backGroundColor: const Color(0xFFEBFFF3),
+                        textColor: primaryGreenColor,
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
+                    ),
+                    if (app.registrationNumber != null)
+                      textCWithH2GreyStyle(
+                        '№${app.registrationNumber}',
+                        fontweight: FontWeight.bold,
+                        color: lightBlackTextColor,
+                      ),
+                  ],
+                ),
+                SizedBox(height: size.otstup10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    textWithH1Style(
+                      textAlign: TextAlign.start,
+                      docTitle,
+                      fontsize: 14,
+                    ),
+                    SizedBox(height: size.otstup10),
+                    Row(
+                      children: [
+                        if (dateStr.isNotEmpty)
+                          sameStyleDifColor(dateStr, color: greyDateColor),
+                        if (dateStr.isNotEmpty && statusText.isNotEmpty) ...[
+                          SizedBox(width: size.otstup5),
+                          Container(width: 1, height: 13, color: Colors.grey),
+                          SizedBox(width: size.otstup10),
+                        ],
+                        if (statusText.isNotEmpty)
+                          SizedBox(
+                            width: size.screenWidth * 0.4,
+                            child: sameStyleDifColor(
+                              statusText,
+                              color: isCompleted
+                                  ? const Color(0xFF26AC71)
+                                  : const Color(0xFFE79800),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

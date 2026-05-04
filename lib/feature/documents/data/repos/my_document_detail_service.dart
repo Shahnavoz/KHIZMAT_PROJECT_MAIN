@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -75,7 +76,28 @@ class MyDocumentDetailService {
   //   }
   // }
 
-  String getCertificateUrl(int appId, Locale currentLocale) {
-    return 'https://dockhizmat.ehukumat.tj/certificate/$appId/pdf?language=${currentLocale.languageCode}';
+  Future<Uint8List> getCertificateUrl(int appId, Locale currentLocale) async {
+    var token = await storage.read(key: 'token');
+    var response = await http.get(
+      Uri.parse(
+        'https://dockhizmat.ehukumat.tj/certificate/$appId/pdf?language=${currentLocale.languageCode}',
+      ),
+      headers: <String, String>{
+        'Content-Type': 'Application/json;Charset=utf-8',
+        'Accept': 'application/pdf',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
+      return response.bodyBytes;
+    } else {
+      throw Exception(
+          'Не удалось загрузить документ (${response.statusCode})');
+    }
   }
+
+  // String getCertificateUrl(int appId, Locale currentLocale) {
+  //   return 'https://dockhizmat.ehukumat.tj/certificate/$appId/pdf?language=${currentLocale.languageCode}';
+  // }
 }

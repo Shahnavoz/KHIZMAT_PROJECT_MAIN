@@ -6,7 +6,6 @@ import 'package:khizmat_new/consts/methods/common_methods.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/feature/home/data/models/step_requirement_model.dart';
 import 'package:khizmat_new/feature/home/data/providers/controllers_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class RequirementStep extends ConsumerStatefulWidget {
   final List<Requirement> stepRequirement;
@@ -25,7 +24,7 @@ class _RequirementStepState extends ConsumerState<RequirementStep> {
   @override
   Widget build(BuildContext context) {
     final size = AdaptiveSizes(context);
-    final formProvider = ref.watch(formProviderFamily(widget.documentId));
+
     return Column(
       children: [
         Container(
@@ -49,57 +48,130 @@ class _RequirementStepState extends ConsumerState<RequirementStep> {
             ),
           ),
         ),
-        ...widget.stepRequirement.map((stepR) {
-          return Column(
-            children: [
-              SizedBox(height: size.otstup15),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Color(0xFFf7f7f7),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: size.otstup15,
-                    vertical: size.otstup10,
-                  ),
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        activeColor: primaryButtonColor,
-                        value: formProvider.getValue(stepR.id.toString()) ?? false,
-                        onChanged: (newValue) {
-                          formProvider.setValue(stepR.id.toString(), newValue);
-                        },
-                      ),
-                      SizedBox(
-                        width: size.screenWidth * 0.7,
-                        child: Html(
-                          data: stepR.content.ru,
-                          onLinkTap: (url, _, _) {
-                            if (url != null) {
-                              openUrl(url);
-                            }
-                          },
-                          style: {
-                            "p": Style(fontSize: FontSize(16)),
-                            "strong": Style(fontWeight: FontWeight.bold),
-                            "a": Style(
-                              color: Colors.blue,
-                              textDecoration: TextDecoration.none,
+
+        Consumer(
+          builder: (context, ref, child) {
+            final formProvider = ref.watch(
+              formProviderFamily(widget.documentId),
+            );
+
+            return Column(
+              children:
+                  widget.stepRequirement.map((stepR) {
+                    final key = stepR.id.toString();
+                    final isChecked = formProvider.getValue(key) ?? false;
+
+                    return Column(
+                      children: [
+                        SizedBox(height: size.otstup15),
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => formProvider.setValue(key, !isChecked),
+                          child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xFFf7f7f7),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: size.otstup15,
+                              vertical: size.otstup10,
                             ),
-                          },
+                            child: Row(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+                                Checkbox(
+                                  activeColor: primaryButtonColor,
+                                  value: isChecked,
+                                  onChanged: (newValue) {
+                                    if (newValue != null) {
+                                      formProvider.setValue(key, newValue);
+                                    }
+                                  },
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Html(
+                                    data: stepR.content.ru,
+                                    onLinkTap: (url, _, __) {
+                                      if (url != null) openUrl(url);
+                                    },
+                                    style: {
+                                      "p": Style(fontSize: FontSize(16)),
+                                      "strong": Style(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      "a": Style(
+                                        color: Colors.blue,
+                                        textDecoration: TextDecoration.none,
+                                      ),
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: size.otstup15),
-            ],
-          );
-        }),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+            );
+          },
+        ),
+        // ...widget.stepRequirement.map((stepR) {
+        //   return Column(
+        //     children: [
+        //       SizedBox(height: size.otstup15),
+        //       Container(
+        //         width: double.infinity,
+        //         decoration: BoxDecoration(
+        //           borderRadius: BorderRadius.circular(10),
+        //           color: Color(0xFFf7f7f7),
+        //         ),
+        //         child: Padding(
+        //           padding: EdgeInsets.symmetric(
+        //             horizontal: size.otstup15,
+        //             vertical: size.otstup10,
+        //           ),
+        //           child: Row(
+        //             children: [
+        //               Checkbox(
+        //                 activeColor: primaryButtonColor,
+        //                 value: formProvider.getValue(stepR.id.toString()) ?? false,
+        //                 onChanged: (newValue) {
+        //                   formProvider.setValue(stepR.id.toString(), newValue);
+        //                 },
+        //               ),
+        //               SizedBox(
+        //                 width: size.screenWidth * 0.7,
+        //                 child: Html(
+        //                   data: stepR.content.ru,
+        //                   onLinkTap: (url, _, _) {
+        //                     if (url != null) {
+        //                       openUrl(url);
+        //                     }
+        //                   },
+        //                   style: {
+        //                     "p": Style(fontSize: FontSize(16)),
+        //                     "strong": Style(fontWeight: FontWeight.bold),
+        //                     "a": Style(
+        //                       color: Colors.blue,
+        //                       textDecoration: TextDecoration.none,
+        //                     ),
+        //                   },
+        //                 ),
+        //               ),
+        //             ],
+        //           ),
+        //         ),
+        //       ),
+        //       SizedBox(height: size.otstup15),
+        //     ],
+        //   );
+        // }),
       ],
     );
   }

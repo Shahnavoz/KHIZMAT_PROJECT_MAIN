@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
+import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/authorization/presentation/pages/main_question_page.dart';
 import 'package:khizmat_new/feature/home/data/models/all_updated_date_model.dart';
 import 'package:khizmat_new/feature/home/data/providers/all_updated_date_provider.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/Category_detail_page.dart';
+import 'package:khizmat_new/feature/home/presentation/pages/usluga_info_page.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchPage extends ConsumerStatefulWidget {
@@ -29,64 +32,30 @@ class SearchPage extends ConsumerStatefulWidget {
 class _SearchPageState extends ConsumerState<SearchPage> {
   final TextEditingController controller = TextEditingController();
 
-  List<CategoryElement> filteredCategories = [];
-  List<UpdatedDateDocument> filteredDocuments = [];
-
-  //Istoriya zaprosov
   List<String> searchHistory = [];
-
   String searchQuery = '';
 
-  //Maximum ;elementov v istorii
   static const int maxHistoryLength = 10;
 
   @override
   void initState() {
     super.initState();
-    filteredCategories = widget.categories;
-    filteredDocuments = widget.documents;
-
-    controller.addListener(_performSearch);
-
+    controller.addListener(_onTextChanged);
     _loadSearchHistory();
   }
 
   @override
   void dispose() {
-    controller.removeListener(_performSearch);
+    controller.removeListener(_onTextChanged);
     controller.dispose();
     super.dispose();
   }
 
-  void _performSearch() {
+  void _onTextChanged() {
     final query = controller.text.trim().toLowerCase();
-
-    setState(() {
-      searchQuery = query;
-
-      if (query.isEmpty) {
-        filteredCategories = widget.categories;
-        filteredDocuments = widget.documents;
-      } else {
-        filteredCategories =
-            widget.categories.where((category) {
-              final categoryName =
-                  (category.title.getText(widget.currentLocale) ?? '')
-                      .toLowerCase();
-              return categoryName.contains(query);
-            }).toList();
-
-        filteredDocuments =
-            widget.documents.where((doc) {
-              final docTitle =
-                  (doc.title.getText(widget.currentLocale) ??
-                          doc.title.getText(widget.currentLocale) ??
-                          '')
-                      .toLowerCase();
-              return docTitle.contains(query);
-            }).toList();
-      }
-    });
+    if (query != searchQuery) {
+      setState(() => searchQuery = query);
+    }
   }
 
   //zagruzka istorii is sharedPreferences
@@ -145,20 +114,37 @@ class _SearchPageState extends ConsumerState<SearchPage> {
     });
   }
 
-  // Выбор запроса из истории
   void _selectHistoryQuery(String query) {
     controller.text = query;
     controller.selection = TextSelection.fromPosition(
       TextPosition(offset: query.length),
     );
-    _performSearch();
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentLocale = ref.watch(localeProvider);
     final size = AdaptiveSizes(context);
     final bool isSearching = searchQuery.isNotEmpty;
     final bool showHistory = searchQuery.isEmpty && searchHistory.isNotEmpty;
+
+    final filteredDocuments = isSearching
+        ? widget.documents.where((doc) {
+            final t = doc.title;
+            return (t.ru ?? '').toLowerCase().contains(searchQuery) ||
+                   (t.en ?? '').toLowerCase().contains(searchQuery) ||
+                   (t.tj ?? '').toLowerCase().contains(searchQuery);
+          }).toList()
+        : widget.documents;
+
+    final filteredCategories = isSearching
+        ? widget.categories.where((cat) {
+            final t = cat.title;
+            return (t.ru ?? '').toLowerCase().contains(searchQuery) ||
+                   (t.en ?? '').toLowerCase().contains(searchQuery) ||
+                   (t.tj ?? '').toLowerCase().contains(searchQuery);
+          }).toList()
+        : widget.categories;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -176,21 +162,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   Expanded(
                     child: MyTextFieldWithPrefix(
                       backGroundColor: Colors.white,
-                      hintText: "Поиск",
+                      hintText: S.of(context).search,
                       controller: controller,
                       onChanged: (value) {},
-                      // onFieldSubmitted: (value) {
-                      //   if (value.trim().isNotEmpty) {
-                      //     _addToSearchHistory(value.trim());
-                      //   }
-                      // },
                       suffixIcon: IconButton(
                         onPressed: () {
                           setState(() {
                             controller.clear();
                           });
                         },
-                        //  _clearHistory,
                         icon: Icon(Icons.cancel, color: greyTextFBorderColor),
                       ),
                     ),
@@ -198,19 +178,18 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   SizedBox(width: size.otstup10),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: textWithH1Style("Отменить", fontsize: 15),
+                    child: textWithH1Style(S.of(context).cancel, fontsize: 15),
                   ),
                 ],
               ),
-
               SizedBox(height: size.otstup10),
               Expanded(
-                child:
-                    isSearching
-                        ? _buildSearchResults(size, widget.currentLocale)
-                        : showHistory
-                        ? _buildHistoryView(size)
-                        : _buildInitialState(),
+                child: isSearching
+                    ? _buildSearchResults(
+                        size, currentLocale, filteredDocuments, filteredCategories)
+                    : showHistory
+                    ? _buildHistoryView(size)
+                    : _buildInitialState(),
               ),
             ],
           ),
@@ -280,20 +259,25 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   Widget _buildInitialState() {
     return Center(
       child: Text(
-        "Start searching!",
+        S.of(context).startSearching,
         style: TextStyle(fontSize: 16, color: Colors.grey[600]),
       ),
     );
   }
 
-  Widget _buildSearchResults(AdaptiveSizes size, Locale currentLocale) {
+  Widget _buildSearchResults(
+    AdaptiveSizes size,
+    Locale currentLocale,
+    List<UpdatedDateDocument> filteredDocuments,
+    List<CategoryElement> filteredCategories,
+  ) {
     final hasResults =
         filteredCategories.isNotEmpty || filteredDocuments.isNotEmpty;
 
     if (!hasResults) {
       return Center(
         child: Text(
-          "Ничего не найдено",
+          S.of(context).nothingFound,
           style: TextStyle(fontSize: 16, color: Colors.grey[600]),
         ),
       );
@@ -316,7 +300,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
             return Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 8),
               child: Text(
-                "Услуги",
+                S.of(context).services,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -329,8 +313,6 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           if (index < filteredDocuments.length + currentIndex) {
             final int documentIndex = index - currentIndex;
             final doc = filteredDocuments[documentIndex];
-            final category = widget.categories;
-            final category1 = doc.category;
 
             return Column(
               children: [
@@ -344,65 +326,74 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        doc.title.getText(widget.currentLocale) ??
-                            'Без названия',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          height: 1.1,
+                      GestureDetector(
+                        onTap: () async {
+                          final queryText = doc.title.getText(currentLocale);
+                          if (queryText.isNotEmpty) _addToSearchHistory(queryText);
+                          final nav = Navigator.of(context);
+                          try {
+                            final model = await ref.read(
+                              combinedUslugaDataProvider(doc.categoryId).future,
+                            );
+                            final infoList = model.uslugaDetailInfo[doc.categoryId] ?? [];
+                            final idx = infoList.indexWhere(
+                              (u) => u.data.document.id == doc.id,
+                            );
+                            if (idx != -1 && mounted) {
+                              nav.push(
+                                MaterialPageRoute(
+                                  builder: (_) => UslugaInfoPage(
+                                    uslugaInfo: infoList[idx],
+                                    specializations: [],
+                                    requirements: [],
+                                    index: idx,
+                                    categoryId: doc.categoryId,
+                                    doc: infoList[idx].data.document,
+                                  ),
+                                ),
+                              );
+                            }
+                          } catch (_) {}
+                        },
+                        child: Text(
+                          doc.title.getText(currentLocale),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            height: 1.1,
+                          ),
                         ),
                       ),
                       Row(
                         children: [
                           GestureDetector(
                             onTap: () {
-                              if (category1.title.getText(currentLocale) ==
-                                  category[index].title.getText(
-                                    currentLocale,
-                                  )) {}
+                              CategoryElement? matchedCategory;
+                              try {
+                                matchedCategory = widget.categories.firstWhere(
+                                  (c) => c.id == doc.categoryId,
+                                );
+                              } catch (_) {}
+                              if (matchedCategory == null) return;
+                              final queryText = matchedCategory.title.getText(currentLocale);
+                              if (queryText.isNotEmpty) _addToSearchHistory(queryText);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder:
-                                      (context) => CategoryDetailPage(
-                                        categories: widget.categories,
-                                        category: category[index],
-                                        docId: widget.documents[index].id,
-                                        documents: widget.documents,
-                                      ),
+                                  builder: (_) => CategoryDetailPage(
+                                    categories: widget.categories,
+                                    category: matchedCategory!,
+                                    docId: doc.id,
+                                    documents: widget.documents,
+                                  ),
                                 ),
                               );
                             },
-                            // onTap: () {
-                            //   final queryText =
-                            //       category.title.getText(currentLocale) ?? '';
-                            //   if (queryText.isNotEmpty) {
-                            //     _addToSearchHistory(queryText);
-                            //   }
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder:
-                            //         (context) => CategoryDetailPage(
-                            //           categories: widget.categories,
-                            //           category: category,
-                            //           docId: widget.documents[index].id,
-                            //           documents: widget.documents,
-                            //         ),
-                            //   ),
-                            // );
-                            // },
                             child: SizedBox(
                               width: size.screenWidth * 0.68,
                               child: textH2GreyTitle(
                                 fontSize: 18,
-                                category1 == category
-                                    ? category[index].title.getText(
-                                      widget.currentLocale,
-                                    )
-                                    : category1.title.getText(currentLocale) ??
-                                        '',
+                                doc.category.title.getText(currentLocale),
                               ),
                             ),
                           ),
@@ -433,7 +424,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           return Padding(
             padding: const EdgeInsets.only(top: 8, bottom: 8),
             child: Text(
-              "Категории",
+              S.of(context).categories,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
           );
@@ -447,7 +438,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
             return GestureDetector(
               onTap: () {
-                final queryText = category.title.getText(currentLocale) ?? '';
+                final queryText = category.title.getText(currentLocale);
                 if (queryText.isNotEmpty) {
                   _addToSearchHistory(queryText);
                 }
@@ -475,8 +466,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                       ),
                     ),
                     child: textWithH1Style(
-                      category.title.getText(widget.currentLocale) ??
-                          'Без названия',
+                      category.title.getText(currentLocale),
                       fontsize: 16,
                       textAlign: TextAlign.start,
                     ),

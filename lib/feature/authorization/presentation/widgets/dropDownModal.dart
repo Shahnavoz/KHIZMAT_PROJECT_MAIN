@@ -54,7 +54,13 @@ class _DropdownmodalState extends ConsumerState<Dropdownmodal> {
                 final language = languages[index];
                 final locale = locales[index];
 
-                return ButtonOrContainerWithTwoParts(
+                return GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    ref.read(localeProvider.notifier).setLocale(locale);
+                    Navigator.pop(context);
+                  },
+                  child: ButtonOrContainerWithTwoParts(
                   size: size,
                   horizontalPadPartOne: 8,
                   backGroundColor: Colors.white,
@@ -94,6 +100,7 @@ class _DropdownmodalState extends ConsumerState<Dropdownmodal> {
                       ),
                     ],
                   ),
+                ),
                 );
               },
               separatorBuilder:

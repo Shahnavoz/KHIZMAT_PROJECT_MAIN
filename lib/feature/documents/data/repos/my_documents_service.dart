@@ -10,7 +10,7 @@ class MyDocumentsService {
       final token = await storage.read(key: 'token');
       final response = await http.get(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/register/list?page=4&size=10&sort=id,desc',
+          'https://api.ekhizmat.tj/v1/register/list?page=0&size=1000&sort=id,desc',
         ),
 
         headers: <String, String>{

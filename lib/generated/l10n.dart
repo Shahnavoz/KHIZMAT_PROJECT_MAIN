@@ -18,8 +18,10 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(_current != null,
-        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+    assert(
+      _current != null,
+      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
+    );
     return _current!;
   }
 
@@ -41,8 +43,10 @@ class S {
 
   static S of(BuildContext context) {
     final instance = S.maybeOf(context);
-    assert(instance != null,
-        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
@@ -52,12 +56,7 @@ class S {
 
   /// `RU`
   String get ru {
-    return Intl.message(
-      'RU',
-      name: 'ru',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('RU', name: 'ru', desc: '', args: []);
   }
 
   /// `Get services without leaving your home`
@@ -110,10 +109,10 @@ class S {
     );
   }
 
-  /// `Can’t log in?`
+  /// `Can't log in?`
   String get ne_udayotsa_voyti {
     return Intl.message(
-      'Can’t log in?',
+      'Can\'t log in?',
       name: 'ne_udayotsa_voyti',
       desc: '',
       args: [],
@@ -128,6 +127,336 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Applications`
+  String get allApplications {
+    return Intl.message(
+      'Applications',
+      name: 'allApplications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search for services`
+  String get poisk_uslug {
+    return Intl.message(
+      'Search for services',
+      name: 'poisk_uslug',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All categories`
+  String get allCategories {
+    return Intl.message(
+      'All categories',
+      name: 'allCategories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service categories`
+  String get serviceCategories {
+    return Intl.message(
+      'Service categories',
+      name: 'serviceCategories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No applications`
+  String get noApplication {
+    return Intl.message(
+      'No applications',
+      name: 'noApplication',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get all {
+    return Intl.message('All', name: 'all', desc: '', args: []);
+  }
+
+  /// `Successfully reviewed`
+  String get seenSuccessfully {
+    return Intl.message(
+      'Successfully reviewed',
+      name: 'seenSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Under review`
+  String get naRasmotrenii {
+    return Intl.message(
+      'Under review',
+      name: 'naRasmotrenii',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In the process of filling`
+  String get inFillingProcess {
+    return Intl.message(
+      'In the process of filling',
+      name: 'inFillingProcess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Applications`
+  String get applications {
+    return Intl.message(
+      'Applications',
+      name: 'applications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In the process of payment`
+  String get InPaymentProcess {
+    return Intl.message(
+      'In the process of payment',
+      name: 'InPaymentProcess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rejected`
+  String get rejected {
+    return Intl.message('Rejected', name: 'rejected', desc: '', args: []);
+  }
+
+  /// `Review period expired`
+  String get reviewPeriodExpired {
+    return Intl.message(
+      'Review period expired',
+      name: 'reviewPeriodExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Application was withdrawn`
+  String get applicationWasWithdrawn {
+    return Intl.message(
+      'Application was withdrawn',
+      name: 'applicationWasWithdrawn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active`
+  String get active {
+    return Intl.message('Active', name: 'active', desc: '', args: []);
+  }
+
+  /// `Not signed`
+  String get notAssigned {
+    return Intl.message('Not signed', name: 'notAssigned', desc: '', args: []);
+  }
+
+  /// `Expired`
+  String get hasExpired {
+    return Intl.message('Expired', name: 'hasExpired', desc: '', args: []);
+  }
+
+  /// `Search documents and applications`
+  String get searchDocsAndApplications {
+    return Intl.message(
+      'Search documents and applications',
+      name: 'searchDocsAndApplications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Documents`
+  String get myDocuments {
+    return Intl.message(
+      'My Documents',
+      name: 'myDocuments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Favorites`
+  String get favorites {
+    return Intl.message('Favorites', name: 'favorites', desc: '', args: []);
+  }
+
+  /// `No documents`
+  String get noDocuments {
+    return Intl.message(
+      'No documents',
+      name: 'noDocuments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All documents`
+  String get allDocuments {
+    return Intl.message(
+      'All documents',
+      name: 'allDocuments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search`
+  String get search {
+    return Intl.message('Search', name: 'search', desc: '', args: []);
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
+  }
+
+  /// `Start searching!`
+  String get startSearching {
+    return Intl.message(
+      'Start searching!',
+      name: 'startSearching',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Nothing found`
+  String get nothingFound {
+    return Intl.message(
+      'Nothing found',
+      name: 'nothingFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Categories`
+  String get categories {
+    return Intl.message('Categories', name: 'categories', desc: '', args: []);
+  }
+
+  /// `Services`
+  String get services {
+    return Intl.message('Services', name: 'services', desc: '', args: []);
+  }
+
+  /// `Government organizations`
+  String get gosOrganizations {
+    return Intl.message(
+      'Government organizations',
+      name: 'gosOrganizations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search organizations`
+  String get searchOrganization {
+    return Intl.message(
+      'Search organizations',
+      name: 'searchOrganization',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Organizations not found`
+  String get notFoundOrgs {
+    return Intl.message(
+      'Organizations not found',
+      name: 'notFoundOrgs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} services`
+  String orgdocumentscount(int count) {
+    return Intl.message(
+      '$count services',
+      name: 'orgdocumentscount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `No services`
+  String get noServices {
+    return Intl.message('No services', name: 'noServices', desc: '', args: []);
+  }
+
+  /// `Main`
+  String get main {
+    return Intl.message('Main', name: 'main', desc: '', args: []);
+  }
+
+  /// `Documents`
+  String get documents {
+    return Intl.message('Documents', name: 'documents', desc: '', args: []);
+  }
+
+  /// `Profile`
+  String get profile {
+    return Intl.message('Profile', name: 'profile', desc: '', args: []);
+  }
+
+  /// `Step {position} of {count}`
+  String inFillingProcessStep(int position, int count) {
+    return Intl.message(
+      'Step $position of $count',
+      name: 'inFillingProcessStep',
+      desc: '',
+      args: [position, count],
+    );
+  }
+
+  /// `Registration Date: {registrationDate}`
+  String filtereddocumentsindexregistrationdate(String registrationDate) {
+    return Intl.message(
+      'Registration Date: $registrationDate',
+      name: 'filtereddocumentsindexregistrationdate',
+      desc: '',
+      args: [registrationDate],
+    );
+  }
+
+  /// `My applications`
+  String get myApplications {
+    return Intl.message(
+      'My applications',
+      name: 'myApplications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `In detail`
+  String get podrobnee {
+    return Intl.message('In detail', name: 'podrobnee', desc: '', args: []);
+  }
+
+  /// `Collapse`
+  String get svernut {
+    return Intl.message('Collapse', name: 'svernut', desc: '', args: []);
   }
 }
 

@@ -11,6 +11,7 @@ import 'package:khizmat_new/feature/home/data/models/usluga_detail_info.dart';
 import 'package:khizmat_new/feature/home/data/providers/all_updated_date_provider.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/usluga_info_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/horizontal_scrollable_widget_for_detail_page.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class CategoryDetailPage extends ConsumerStatefulWidget {
   final List<CategoryElement> categories;
@@ -170,8 +171,8 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                       },
                                       child: textWithH1Style(
                                         showAll != true
-                                            ? "Подробнее"
-                                            : "Свернуть",
+                                            ? S.of(context).podrobnee
+                                            : S.of(context).svernut,
                                         fontsize: 16,
                                         color: primaryButtonColor,
                                       ),
@@ -213,18 +214,18 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                           ),
                         ],
                       ),
-                      SizedBox(height: size.otstup25),
-                      HorizontalScrollableWidgetForDetailPage(
-                        category: widget.category,
-                        size: size,
-                        currentLocale: currentLocale,
-                        selectedIndex: selectedIndex,
-                        oneActiveColor: Colors.black,
-                        nonActiveColor: Colors.grey[200],
-                        activeTextColor: Colors.white,
-                        nonActiveTextColor: Colors.black,
-                        categories: displayDocuments,
-                      ),
+                      // SizedBox(height: size.otstup25),
+                      // HorizontalScrollableWidgetForDetailPage(
+                      //   category: widget.category,
+                      //   size: size,
+                      //   currentLocale: currentLocale,
+                      //   selectedIndex: selectedIndex,
+                      //   oneActiveColor: Colors.black,
+                      //   nonActiveColor: Colors.grey[200],
+                      //   activeTextColor: Colors.white,
+                      //   nonActiveTextColor: Colors.black,
+                      //   categories: displayDocuments,
+                      // ),
                     ],
                   ),
                 ),
@@ -395,8 +396,23 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                           //   maxLines: 3,
                                           // ),
                                           SizedBox(height: size.otstup5),
-                                          textWithH1Style(textAlign: TextAlign.start,
-                                            "Срок получения: ${uslugaDetailInfo[index].data.expiryDate == 0 ? "Онлайн (мгновенно)" : uslugaDetailInfo[index].data.expiryDate} ${uslugaDetailInfo[index].data.expiryDate != 0 ? "дней" : " "}",
+                                          textWithH1Style(
+                                            textAlign: TextAlign.start,
+                                            uslugaDetailInfo[index]
+                                                        .data
+                                                        .expiryDate ==
+                                                    0
+                                                ? S
+                                                    .of(context)
+                                                    .srokPolucheniyaOnline
+                                                : S
+                                                    .of(context)
+                                                    .srokPolucheniyaDays(
+                                                      uslugaDetailInfo[index]
+                                                              .data
+                                                              .expiryDate ??
+                                                          0,
+                                                    ),
                                             fontsize: 16,
                                             color: primaryGreenColor,
                                           ),

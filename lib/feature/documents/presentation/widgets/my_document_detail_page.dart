@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
@@ -7,6 +10,7 @@ import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/documents/data/models/my_documents_model.dart';
 import 'package:khizmat_new/feature/documents/data/providers/document_detail_info_provider.dart';
 import 'package:khizmat_new/feature/documents/data/repos/my_document_detail_service.dart';
+import 'package:khizmat_new/feature/documents/presentation/widgets/document_opener.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/expansion_tile_forTaken_documents.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/expansion_tile_for_applications.dart';
@@ -39,11 +43,16 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
   String? _pdfError;
   int _currentPage = 1;
   int _totalPages = 0;
+  // Not final — allows the retry button to recreate the future.
+  late Future<Uint8List> _pdfFuture;
 
   @override
   void initState() {
     super.initState();
     _pdfController = PdfViewerController();
+    // Create the future once — FutureBuilder must not recreate it on rebuild.
+    _pdfFuture = MyDocumentDetailService()
+        .getCertificateUrl(widget.id, widget.currentLocale);
   }
   // String? _filePath;
   // bool _isLoading = true;
@@ -74,6 +83,8 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
   //   });
   // }
 
+  Uint8List? _pdfBytes;
+
   @override
   Widget build(BuildContext context) {
     final size = AdaptiveSizes(context);
@@ -82,13 +93,9 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
     final index = widget.index;
     final appId = widget.id;
 
-    final url = MyDocumentDetailService().getCertificateUrl(
-      appId,
-      currentLocale,
-    );
-
     final testUrl =
         'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+    print(testUrl);
 
     final asyncDocDetailInfo = ref.watch(documentDetailInfoProvider(appId));
     return Scaffold(
@@ -108,102 +115,113 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                 children: [
                   //Document title
                   textWithH1Style(
-                    info!.registers[index].document!.ru!,
+                    detailInfo!.document!.ru!,
+                    // info!.registers[index].document!.ru!,
                     textAlign: TextAlign.start,
                   ),
-                  // SizedBox(height: size.otstup15),
-                  // _isPdfLoading
-                  //     ? Center(child: CircularProgressIndicator())
-                  //     : SizedBox(
-                  //       height: 250,
-                  //       child: Center(
-                  //         child: PdfViewer.uri(
-                  //           Uri.parse(testUrl),
-                  //           params: PdfViewerParams(
-                  //             errorBannerBuilder: (
-                  //               context,
-                  //               error,
-                  //               stackTrace,
-                  //               documentRef,
-                  //             ) {
-                  //               return Center(
-                  //                 child: Column(
-                  //                   children: [
-                  //                     Icon(
-                  //                       Icons.error_outline,
-                  //                       color: Colors.redAccent,
-                  //                     ),
-                  //                     SizedBox(height: 16),
-                  //                     Text(
-                  //                       'Не удалось загрузить PDF',
-                  //                       style: Theme.of(
-                  //                         context,
-                  //                       ).textTheme.titleLarge?.copyWith(
-                  //                         color: Colors.red,
-                  //                         fontWeight: FontWeight.bold,
-                  //                       ),
-                  //                     ),
+                  SizedBox(height: size.otstup15),
+                  Container(
+                    height: size.screenHeight * 0.45,
+                    child: FutureBuilder<Uint8List>(
+                      future: _pdfFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                  //                     const SizedBox(height: 8),
-                  //                     Padding(
-                  //                       padding: const EdgeInsets.symmetric(
-                  //                         horizontal: 32,
-                  //                       ),
-                  //                       child: Text(
-                  //                         error.toString(),
-                  //                         textAlign: TextAlign.center,
-                  //                         style: const TextStyle(
-                  //                           color: Colors.grey,
-                  //                         ),
-                  //                       ),
-                  //                     ),
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 40,
+                                ),
+                                const SizedBox(height: 12),
+                                const Text(
+                                  'Не удалось загрузить документ',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  snapshot.error.toString(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.grey[700]),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton.icon(
+                                  icon: const Icon(Icons.refresh),
+                                  label: const Text('Повторить'),
+                                  onPressed: () => setState(() {
+                                    _pdfFuture = MyDocumentDetailService()
+                                        .getCertificateUrl(
+                                            widget.id, widget.currentLocale);
+                                  }),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
 
-                  //                     const SizedBox(height: 24),
-                  //                     ElevatedButton.icon(
-                  //                       icon: const Icon(Icons.refresh),
-                  //                       label: const Text('Повторить'),
-                  //                       onPressed: () => setState(() {}),
-                  //                     ),
-                  //                   ],
-                  //                 ),
-                  //               );
-                  //             },
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
+                        final bytes = snapshot.data;
+                        if (bytes == null || bytes.isEmpty) {
+                          return const Center(child: Text("Документ пустой"));
+                        }
+
+                        // Store bytes for the save button without triggering
+                        // an extra rebuild — assign directly since we are
+                        // already inside the builder (no setState needed here).
+                        _pdfBytes = bytes;
+
+                        return DocumentOpenerWithBytes(pdfBytes: bytes);
+                      },
+                    ),
+                  ),
                   SizedBox(height: size.otstup35),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: darkPrimaryGreenColor,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.remove_red_eye_outlined,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: size.otstup15,
-                        ),
+                      GestureDetector(
+                        onTap: () async {
+                          if (_pdfBytes != null && _pdfBytes!.isNotEmpty) {
+                            final fileName =
+                                "certificate_${widget.id}_${DateTime.now().millisecondsSinceEpoch}.pdf";
+                            await savePdfToDownloads(
+                              _pdfBytes!,
+                              fileName,
+                              context,
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Документ ещё не загружен или пустой",
+                                ),
+                              ),
+                            );
+                          }
+                        },
                         child: Container(
                           decoration: BoxDecoration(
                             color: darkPrimaryGreenColor,
-                            borderRadius: BorderRadius.circular(size.otstup35),
+                            borderRadius: BorderRadius.circular(
+                              size.otstup35,
+                            ),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.downloading_rounded,
                                   color: Colors.white,
                                 ),
@@ -219,111 +237,137 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                           ),
                         ),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: darkPrimaryGreenColor,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(Icons.send, color: Colors.white),
+                      SizedBox(width: size.otstup15),
+                      GestureDetector(
+                        onTap: () async {
+                          if (_pdfBytes != null && _pdfBytes!.isNotEmpty) {
+                            final fileName =
+                                "certificate_${widget.id}.pdf";
+                            await SharePlus.instance.share(
+                              ShareParams(
+                                files: [
+                                  XFile.fromData(
+                                    _pdfBytes!,
+                                    name: fileName,
+                                    mimeType: 'application/pdf',
+                                  )
+                                ],
+                                subject: fileName,
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Документ ещё не загружен или пустой",
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: darkPrimaryGreenColor,
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(Icons.send, color: Colors.white),
+                          ),
                         ),
                       ),
                     ],
                   ),
 
                   SizedBox(height: size.otstup20),
-                  Row(
+                  Column(
                     children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            // border: Border.all(color: greyTextFBorderColor),
-                            borderRadius: BorderRadius.circular(size.otstup35),
-                            color: Colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Row(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: darkPrimaryGreenColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Icon(
-                                      Icons.calendar_month_outlined,
-                                      color: Colors.white,
-                                    ),
+                      Container(
+                        decoration: BoxDecoration(
+                          // border: Border.all(color: greyTextFBorderColor),
+                          borderRadius: BorderRadius.circular(size.otstup35),
+                          color: Colors.white,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: darkPrimaryGreenColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Icon(
+                                    Icons.calendar_month_outlined,
+                                    color: Colors.white,
                                   ),
                                 ),
-                                SizedBox(width: size.otstup5),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    textWithH1Style(
-                                      "Тип документа",
-                                      fontW: FontWeight.normal,
-                                      fontsize: 15,
+                              ),
+                              SizedBox(width: size.otstup15),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  textWithH1Style(
+                                    "Тип документа",
+                                    fontW: FontWeight.normal,
+                                    fontsize: 15,
+                                  ),
+                                  textWithH1Style(
+                                    detailInfo!.typeTitle!.getText(
+                                      currentLocale,
                                     ),
-                                    textWithH1Style(
-                                      detailInfo!.typeTitle!.getText(
-                                        currentLocale,
-                                      ),
-                                      fontsize: 16,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                    fontsize: 16,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      SizedBox(width: size.otstup15),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            // border: Border.all(color: greyTextFBorderColor),
-                            borderRadius: BorderRadius.circular(size.otstup35),
-                            color: Colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Row(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: darkPrimaryGreenColor,
-                                  ),
+                      SizedBox(height: size.otstup15),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(size.otstup35),
+                          color: Colors.white,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: darkPrimaryGreenColor,
+                                ),
 
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: Icon(
-                                      Icons.file_copy_outlined,
-                                      color: Colors.white,
-                                    ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Icon(
+                                    Icons.file_copy_outlined,
+                                    color: Colors.white,
                                   ),
                                 ),
-                                SizedBox(width: size.otstup15),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    textWithH1Style(
-                                      "Статус",
-                                      fontsize: 15,
-                                      fontW: FontWeight.normal,
+                              ),
+                              SizedBox(width: size.otstup15),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  textWithH1Style(
+                                    "Статус",
+                                    fontsize: 15,
+                                    fontW: FontWeight.normal,
+                                  ),
+                                  textWithH1Style(
+                                    detailInfo.status!.title!.getText(
+                                      currentLocale,
                                     ),
-                                    textWithH1Style(
-                                      detailInfo.status!.status!,
-                                      fontsize: 16,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                    fontsize: 16,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -413,7 +457,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                     ),
                                     textWithH1Style(
                                       detailInfo.registrationDate!,
-                                      fontsize: 19,
+                                      fontsize: 16,
                                     ),
                                   ],
                                 ),

@@ -11,7 +11,7 @@ class MyApplicationService {
 
       var response = await http.get(
         Uri.parse(
-          "https://apikhizmat.ehukumat.tj/v1/application/list?page=0&size=10",
+          "https://api.ekhizmat.tj/v1/application/list?page=0&size=1000",
         ),
         headers: <String, String>{
           "Content-Type": "Application/json",

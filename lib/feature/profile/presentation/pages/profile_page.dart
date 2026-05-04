@@ -3,26 +3,39 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
+import 'package:khizmat_new/feature/authorization/presentation/pages/support_modal.dart';
+import 'package:khizmat_new/feature/authorization/presentation/widgets/button_modal_bottom_sheet.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/dropDownModal.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/footer_company_text.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/my__button.dart';
+import 'package:khizmat_new/feature/documents/presentation/pages/my_documents_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/container_as_button.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:khizmat_new/deeplink/user_profile.dart';
+import 'package:khizmat_new/deeplink/auth_provider.dart';
 import 'package:khizmat_new/feature/profile/data/repos/profile_service.dart';
+import 'package:khizmat_new/feature/profile/presentation/pages/private_policy.dart';
+import 'package:khizmat_new/feature/profile/presentation/widgets/open_map_page.dart';
+import 'package:map_launcher/map_launcher.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  final String name = "Шахриер";
-  final String LastName = "Мирзония";
+class _ProfilePageState extends ConsumerState<ProfilePage> {
   final profileService = ProfileService();
+
   @override
   Widget build(BuildContext context) {
     final size = AdaptiveSizes(context);
+    final user = ref.watch(userProfileProvider);
+    final displayName = user?.displayName.isNotEmpty == true
+        ? user!.displayName
+        : '—';
+    final displayPhone = user?.displayPhone ?? '';
     return Scaffold(
       // appBar: AppBar(
       //   // backgroundColor: Colors.transparent
@@ -63,11 +76,11 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              gradient: RadialGradient(
-                colors: [Color(0xFF5EB681), Color(0xFFEBEBEB)],
-                stops: [1.0, 1.0],
-                center: Alignment.topRight,
-              ),
+              // gradient: RadialGradient(
+              //   colors: [Color(0xFF5EB681), Color(0xFFEBEBEB)],
+              //   stops: [1.0, 1.0],
+              //   center: Alignment.topRight,
+              // ),
             ),
             // child: Image.asset(
             //   "assets/images/image 17.png",
@@ -104,14 +117,14 @@ class _ProfilePageState extends State<ProfilePage> {
                             // border: Border.all(color: Colors.white, width: 1),
                             borderRadius: BorderRadius.circular(15),
                             color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                offset: Offset(1, -5),
-                                spreadRadius: 5,
-                                blurRadius: 15,
-                                color: Colors.grey[100]!,
-                              ),
-                            ],
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     offset: Offset(1, -5),
+                            //     spreadRadius: 5,
+                            //     blurRadius: 15,
+                            //     color: Colors.grey[100]!,
+                            //   ),
+                            // ],
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
@@ -122,41 +135,41 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 Row(
                                   children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          width: 2,
-                                          color: primaryGreenColor,
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                        // shape: BoxShape.circle,
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Container(
-                                          width: 50,
-                                          height: 60,
-                                          decoration: BoxDecoration(
-                                            // border: Border.all(),
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            // color: Colors.grey[200],
-                                          ),
+                                    // Container(
+                                    //   decoration: BoxDecoration(
+                                    //     border: Border.all(
+                                    //       width: 2,
+                                    //       color: primaryGreenColor,
+                                    //     ),
+                                    //     borderRadius: BorderRadius.circular(12),
+                                    //     // shape: BoxShape.circle,
+                                    //   ),
+                                    //   child: Padding(
+                                    //     padding: const EdgeInsets.all(2.0),
+                                    //     child: Container(
+                                    //       width: 50,
+                                    //       height: 60,
+                                    //       decoration: BoxDecoration(
+                                    //         // border: Border.all(),
+                                    //         borderRadius: BorderRadius.circular(
+                                    //           12,
+                                    //         ),
+                                    //         // color: Colors.grey[200],
+                                    //       ),
 
-                                          child: Center(
-                                            child: Text(
-                                              "${name[0].toUpperCase()}${LastName[0].toUpperCase()}",
-                                              style: TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: size.otstup10),
+                                    //       child: Center(
+                                    //         child: Text(
+                                    //           "${name[0].toUpperCase()}${LastName[0].toUpperCase()}",
+                                    //           style: TextStyle(
+                                    //             fontSize: 22,
+                                    //             fontWeight: FontWeight.bold,
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    // SizedBox(width: size.otstup10),
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -164,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         SizedBox(
                                           width: size.screenWidth * 0.6,
                                           child: scrollTextWithH1Style(
-                                            "${name} ${LastName}",
+                                            displayName,
                                           ),
                                         ),
                                         // SizedBox(
@@ -174,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         //   ),
                                         // ),
                                         SizedBox(height: size.otstup5),
-                                        textWithH2BlackStyle("+992934752002"),
+                                        textWithH2BlackStyle(displayPhone),
                                         SizedBox(height: size.otstup5),
                                         ContainerAsButton(
                                           width: size.screenWidth * 0.55,
@@ -224,6 +237,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   Column(
                     children: [
+                      
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -236,7 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: size.otstup20,
-                            vertical: size.otstup15,
+                            vertical: size.otstup25,
                           ),
                           child: Column(
                             children: [
@@ -249,26 +263,26 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   SizedBox(height: size.otstup5),
 
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 5,
-                                    ),
-                                    child: ProfileSettingContainer(
-                                      size: size,
-                                      text: "Настройка профиля",
-                                      color: primaryGreenColor,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 5,
-                                    ),
-                                    child: ProfileSettingContainer(
-                                      size: size,
-                                      text: "Настройка уведомлений",
-                                      color: primaryGreenColor,
-                                    ),
-                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.symmetric(
+                                  //     vertical: 5,
+                                  //   ),
+                                  //   child: ProfileSettingContainer(
+                                  //     size: size,
+                                  //     text: "Настройка профиля",
+                                  //     color: primaryGreenColor,
+                                  //   ),
+                                  // ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.symmetric(
+                                  //     vertical: 5,
+                                  //   ),
+                                  //   child: ProfileSettingContainer(
+                                  //     size: size,
+                                  //     text: "Настройка уведомлений",
+                                  //     color: primaryGreenColor,
+                                  //   ),
+                                  // ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 5,
@@ -323,30 +337,87 @@ class _ProfilePageState extends State<ProfilePage> {
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 5,
                                     ),
-                                    child: ProfileSettingContainer(
-                                      size: size,
-                                      text: "Где мы находимся ?",
-                                      color: primaryGreenColor,
+                                    child: GestureDetector(
+                                      onTap:
+                                          () => showMapSelectionBottomSheet(
+                                            context,
+                                          ),
+                                      child: ProfileSettingContainer(
+                                        size: size,
+                                        text: "Где мы находимся ?",
+                                        color: primaryGreenColor,
+                                      ),
                                     ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 5,
                                     ),
-                                    child: ProfileSettingContainer(
-                                      size: size,
-                                      text: "Поддержка",
-                                      color: primaryGreenColor,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        showModalBottomSheet(
+                                          backgroundColor: Colors.white,
+                                          context: context,
+                                          builder: (context) {
+                                            return SupportCard(
+                                              size: size,
+                                              widget: ButtonModalBottomSheet(
+                                                size: size,
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: ProfileSettingContainer(
+                                        size: size,
+                                        text: "Поддержка",
+                                        color: primaryGreenColor,
+                                      ),
                                     ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 5,
                                     ),
-                                    child: ProfileSettingContainer(
-                                      size: size,
-                                      text: "Документы",
-                                      color: primaryGreenColor,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => MyDocumentsPage(
+                                                  selectedIndex: 0,
+                                                  document: [],
+                                                ),
+                                          ),
+                                        );
+                                      },
+                                      child: ProfileSettingContainer(
+                                        size: size,
+                                        text: "Документы",
+                                        color: primaryGreenColor,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 5,
+                                    ),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const PrivatePolicyPage(),
+                                          ),
+                                        );
+                                      },
+                                      child: ProfileSettingContainer(
+                                        size: size,
+                                        text: "Политика конфиденциальности",
+                                        color: primaryGreenColor,
+                                      ),
                                     ),
                                   ),
 
@@ -371,7 +442,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   //     );
                                   //   },
                                   // ),
-                                  SizedBox(height: size.otstup15),
+                                  SizedBox(height: size.otstup70),
 
                                   Padding(
                                     padding: EdgeInsets.symmetric(
@@ -386,10 +457,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           backgroundColor: Colors.white,
                                           borderColor: greyTextFBorderColor,
                                           onPressed: () {
-                                            setState(() {
-                                              // profileService.logOut();
-                                              Navigator.pop(context);
-                                            });
+                                            ref.read(authProvider.notifier).logout();
                                           },
                                           child: textWithH1Style(
                                             "Выход с приложения",
@@ -397,7 +465,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             color: primaryGreenColor,
                                           ),
                                         ),
-                                        SizedBox(height: size.otstup5),
+                                        SizedBox(height: size.otstup35),
                                         FooterCompanyText(),
                                       ],
                                     ),
@@ -446,14 +514,14 @@ class ProfileSettingContainer extends StatelessWidget {
           children: [
             Row(
               children: [
-                Padding(
-                  padding: EdgeInsets.only(left: size.otstup10),
-                  child: SvgPicture.asset(
-                    "assets/icons/profileIcon.svg",
-                    color: color,
-                    width: size.imageSize60,
-                  ),
-                ),
+                // Padding(
+                //   padding: EdgeInsets.only(left: size.otstup10),
+                //   child: SvgPicture.asset(
+                //     "assets/icons/profileIcon.svg",
+                //     color: color,
+                //     width: size.imageSize60,
+                //   ),
+                // ),
                 SizedBox(width: size.otstup18),
                 textWithH1Style(text, fontsize: 16),
               ],
@@ -470,6 +538,126 @@ class ProfileSettingContainer extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+var targetLocation = Coords(38.573542, 68.80071);
+const targetTitle = "Наш адрес";
+const targetDescription = "ЦОН";
+
+Future<void> showMapSelectionBottomSheet(BuildContext context) async {
+  try {
+    final availableMaps = await MapLauncher.installedMaps;
+
+    if (availableMaps.isEmpty) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("На устройстве нет установленных карт")),
+      );
+      return;
+    }
+
+    if (availableMaps.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "На устройстве не установлено ни одной карты.\nУстановите Google Maps, Яндекс.Карты или 2GIS.",
+          ),
+          duration: Duration(seconds: 5),
+        ),
+      );
+      return;
+    }
+
+    if (!context.mounted) return;
+
+    // Показываем красивый bottom sheet
+    showModalBottomSheet(
+      context: context,
+      // isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.55,
+          minChildSize: 0.2,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Заголовок и полоса
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      "Выберите карту",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      controller: scrollController,
+                      itemCount: availableMaps.length,
+                      itemBuilder: (context, index) {
+                        final map = availableMaps[index];
+                        return ListTile(
+                          leading:
+                              map.icon != null
+                                  ? SvgPicture.asset(
+                                    map.icon, // это String — путь к .svg
+                                    height: 36,
+                                    width: 36,
+                                    placeholderBuilder:
+                                        (context) =>
+                                            const Icon(Icons.map, size: 36),
+                                  )
+                                  : const Icon(Icons.map, size: 36),
+                          title: Text(
+                            map.mapName,
+                            style: const TextStyle(fontSize: 17),
+                          ),
+                          onTap: () async {
+                            Navigator.pop(context);
+                            await map.showMarker(
+                              coords: targetLocation,
+                              title: targetTitle,
+                              description: targetDescription,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  } catch (e) {
+    debugPrint("Ошибка при работе с картами: $e");
   }
 }
 

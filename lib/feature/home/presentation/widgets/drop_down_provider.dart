@@ -180,10 +180,11 @@ class ActionSelect extends ConsumerWidget {
           ref.read(actionLoadingProvider(name).notifier).state = false;
         }).catchError((error) {
           ref.read(actionLoadingProvider(name).notifier).state = false;
-          // Можно добавить показ ошибки пользователю
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ошибка обновления: $error')),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Ошибка обновления: $error')),
+            );
+          }
         });
       },
     );

@@ -1,17 +1,21 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/feature/home/data/models/shagi_polucheniye_uslugi_model.dart';
+import 'package:khizmat_new/feature/home/data/models/start_document_model.dart';
 import 'package:khizmat_new/feature/home/data/models/step_requirement_model.dart';
 import 'package:khizmat_new/feature/home/data/repos/shagi_polucheniye_uslugi_service.dart';
 
 class StepsInfoAndRequirement {
   int applicationId;
+  StartDocumentModel application;
   List<ShagiPolucheniyeUslugiModel> stepsInfo;
   StepRequirementModel stepRequirement;
   Map<String, List<ChoiceOption>> dropDownOptions;
 
   StepsInfoAndRequirement({
     required this.applicationId,
+    required this.application,
     required this.stepsInfo,
     required this.stepRequirement,
     required this.dropDownOptions,
@@ -27,11 +31,17 @@ final shagiProvider = FutureProvider.family<StepsInfoAndRequirement, int>((
   final currentLocale = ref.watch(localeProvider);
 
   // 1. Запускаем форму
-  final application = await repo1.startPostForm(documentId);
+  final application = await repo1.startPostForm(documentId,currentLocale);
+  
   final applicationId = application.data.applicationId;
 
+  final resume = await repo1.updatingWithResume(applicationId);
+
   // 2. Zagrughaem ШАГИ ТОЛЬКО ДЛЯ ЭТОГО documentId
-  final stepResponse = await repo1.getStepsWithInfo(documentId, applicationId);
+  final stepResponse = await repo1.getStepsProcessInfo(
+    documentId,
+    applicationId,
+  );
 
   // 3. Zagrughaem требования
   final stepRequirement = await repo1.getStepRequirement(documentId);
@@ -56,9 +66,14 @@ final shagiProvider = FutureProvider.family<StepsInfoAndRequirement, int>((
     print("********************");
   }
 
-  // 5. Параллельно zagrughaem все DropDown
-  final dropDownFutures = actionKeys.map((actionKey) {
-    return repo1.getDropDownInfo(applicationId, currentLocale, actionKey);
+  // 5. Параллельно zagrughaem все DropDown (each failure is isolated)
+  final dropDownFutures = actionKeys.map((actionKey) async {
+    try {
+      return await repo1.getDropDownInfo(applicationId, currentLocale, actionKey);
+    } catch (e) {
+      print('[shagiProvider] dropdown failed for $actionKey: $e');
+      return null;
+    }
   });
 
   final dropDownResponses = await Future.wait(dropDownFutures);
@@ -66,16 +81,15 @@ final shagiProvider = FutureProvider.family<StepsInfoAndRequirement, int>((
   // 6. Собираем в Map
   final dropDownOptionsMap = <String, List<ChoiceOption>>{};
   for (final resp in dropDownResponses) {
+    if (resp == null) continue;
     for (final event in resp.data.fieldEvents) {
       dropDownOptionsMap[event.actionId] = event.choiceOptions;
-      print("/////////ACTIONID/////////////");
-      print(event.actionId);
-      print("//////////////////////");
     }
   }
 
   return StepsInfoAndRequirement(
     applicationId: applicationId,
+    application: application,
     stepsInfo: [stepResponse],
     stepRequirement: stepRequirement,
     dropDownOptions: dropDownOptionsMap,

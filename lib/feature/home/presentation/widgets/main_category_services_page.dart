@@ -75,7 +75,7 @@ class MainCategoryServicesPage extends ConsumerWidget {
             padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: itemCount ?? 5,
+            itemCount: itemCount ?? 8,
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
@@ -103,8 +103,8 @@ class MainCategoryServicesPage extends ConsumerWidget {
                               shape: BoxShape.circle,
                               color:
                                   index % 2 == 0
-                                      ? primaryGreenColor
-                                      : secondaryGreenColor,
+                                      ? const Color.fromARGB(255, 0, 0, 0)
+                                      : const Color.fromARGB(255, 62, 62, 62),
                             ),
 
                             child: Image.network(
@@ -120,8 +120,8 @@ class MainCategoryServicesPage extends ConsumerWidget {
                               shape: BoxShape.circle,
                               color:
                                   index % 2 == 0
-                                      ? primaryGreenColor
-                                      : secondaryGreenColor,
+                                      ? const Color.fromARGB(255, 0, 0, 0)
+                                      : const Color.fromARGB(255, 62, 62, 62),
                             ),
                             child: Image.asset(
                               "assets/icons/Union (2).png",

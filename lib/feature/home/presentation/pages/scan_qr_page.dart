@@ -189,6 +189,7 @@ class _ScanQrPageState extends State<ScanQrPage> {
   } else {
     // Показать пользователю, что ссылка не открывается
     print('Не удалось открыть ссылку: $url');
+    Navigator.pop(context);
   }
 }
 
@@ -302,16 +303,16 @@ class _ScanQrPageState extends State<ScanQrPage> {
             // Затемнение вокруг центральной области
             ColorFiltered(
               colorFilter: ColorFilter.mode(
-                Colors.black.withOpacity(0.6),
-                BlendMode.srcOut,
+                Colors.black.withOpacity(0.2),
+                BlendMode.color,
               ),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
                   Container(
                     decoration: const BoxDecoration(
-                      color: Colors.black,
-                      backgroundBlendMode: BlendMode.dstOut,
+                      color: Colors.transparent,
+                      // backgroundBlendMode: BlendMode.dstOut,
                     ),
                   ),
                   Align(
@@ -320,7 +321,7 @@ class _ScanQrPageState extends State<ScanQrPage> {
                       width: 330,
                       height: 300,
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: Colors.transparent,
                         // borderRadius: BorderRadius.circular(12),
                       ),
                     ),

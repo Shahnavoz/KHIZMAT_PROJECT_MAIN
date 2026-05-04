@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,9 @@ import 'package:khizmat_new/feature/authorization/presentation/widgets/footer_co
 import 'package:khizmat_new/feature/authorization/presentation/widgets/my__button.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/my_animated_dot_indicator.dart';
 import 'package:khizmat_new/feature/bottomNavBar/presentation/pages/bottom_nav_page.dart';
+import 'package:khizmat_new/feature/home/presentation/pages/authorization_page.dart';
 import 'package:khizmat_new/generated/l10n.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainEnterPage extends ConsumerStatefulWidget {
   const MainEnterPage({super.key});
@@ -53,16 +56,16 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
             json['data']['token']['access_token'] != null) {
           final token = json['data']['token']['access_token'];
           await storage.write(key: 'token', value: token);
-          print('Login successful! Token: $token');
+          // print('Login successful! Token: $token');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => BottomNavPage()),
             // MaterialPageRoute(builder: (context) => TestHomePage()),
           );
         }
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Success:')));
+        // ScaffoldMessenger.of(
+        //   context,
+        // ).showSnackBar(SnackBar(content: Text('Success:')));
       } else {
         ScaffoldMessenger.of(
           context,
@@ -89,6 +92,30 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
         backgroundColor: Colors.blue,
       ),
     );
+  }
+
+  Future<void> _login(BuildContext context) async {
+    try {
+      // Шаг 1: получаем URL с токеном
+      final authService = AuthService();
+      final authUrl = await authService.getAuthUrl();
+
+      // Шаг 2: открываем WebView
+      final code = await Navigator.push<String>(
+        context,
+        MaterialPageRoute(builder: (_) => AuthWebView(authUrl: authUrl)),
+      );
+
+      // Шаг 3: получили код авторизации
+      if (code != null) {
+        debugPrint('Код авторизации получен: $code');
+        // TODO: обменять code на access_token
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Ошибка: $e')));
+    }
   }
 
   @override
@@ -263,6 +290,8 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
                                 partTwoWidget: Expanded(
                                   child: GestureDetector(
                                     onTap: () {
+                                      // _login(context);
+
                                       showDialog(
                                         context: context,
                                         builder: (context) {
@@ -299,9 +328,7 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
                                                         ],
                                                       ),
                                                       MyTextFieldWithPrefix(
-                                                        onChanged: (p0) {
-                                                          
-                                                        },
+                                                        onChanged: (p0) {},
                                                         validator: (value) {
                                                           if (value == null ||
                                                               value.isEmpty)
@@ -329,9 +356,7 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
                                                         height: size.otstup15,
                                                       ),
                                                       MyTextFieldWithPrefix(
-                                                        onChanged: (p0) {
-                                                          
-                                                        },
+                                                        onChanged: (p0) {},
                                                         validator: (value) {
                                                           if (value == null ||
                                                               value.isEmpty) {
@@ -434,6 +459,28 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
                                   ),
                                 ),
                               ),
+                              SizedBox(height: size.otstup20),
+                              My_Button(
+                                onPressed: () {
+                                  openIMZOAPP(context);
+                                },
+                                size: size,
+                                backgroundColor: greyButtonbackColor,
+                                borderColor: greyBorderColor,
+                                width: double.infinity,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 15,
+                                  ),
+                                  child: Text(
+                                    " Открыть тестовое приложение",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -472,5 +519,51 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
         ),
       ),
     );
+  }
+}
+
+// void openTestApp() async {
+//   final uri = Uri.parse("mytestapp://");
+
+//   if (await canLaunchUrl(uri)) {
+//     await launchUrl(uri);
+//   }
+// }
+
+String generateRandomString(int len) {
+  const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random rnd = Random();
+  
+  return String.fromCharCodes(Iterable.generate(
+      len, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
+}
+
+Future<void> openIMZOAPP(BuildContext context) async {
+  // redirect_uri must match the deeplink this app listens for: khizmatapp://sso
+  final Uri uri = Uri(
+    scheme: 'myid',
+    host: 'authorize',
+    queryParameters: {
+      'client_id': 'imzo',
+      'redirect_uri': 'khizmatapp://sso',
+      'response_type': 'code',
+      'scope': 'profile',
+      'state': generateRandomString(10) ,
+    },
+  );
+
+  try {
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Приложение ИМЗО не установлено')),
+      );
+    }
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
   }
 }

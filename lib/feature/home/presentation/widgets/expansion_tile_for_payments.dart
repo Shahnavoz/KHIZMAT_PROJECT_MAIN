@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
-import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/documents/data/models/my_documents_detail_model.dart';
 
 class ExpansionTileForPayments extends StatefulWidget {
@@ -11,27 +10,66 @@ class ExpansionTileForPayments extends StatefulWidget {
     required this.title,
     required this.currentLocale,
     required this.index,
-    required this.payments
+    required this.payments,
   });
 
   final AdaptiveSizes size;
   final String title;
   final Locale currentLocale;
   final int index;
-  final List<dynamic> payments;
+  final List<Payment> payments;
 
   @override
   State<ExpansionTileForPayments> createState() =>
       _ExpansionTileForPaymentsState();
 }
 
-class _ExpansionTileForPaymentsState
-    extends State<ExpansionTileForPayments> {
+class _ExpansionTileForPaymentsState extends State<ExpansionTileForPayments> {
+  Color _statusColor(String? status) {
+    switch (status) {
+      case 'PAID':
+        return const Color(0xFF4CAF50);
+      case 'OPEN':
+        return const Color(0xFFFFA726);
+      case 'EXPIRED':
+      case 'CANCELED':
+        return const Color(0xFFEF5350);
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Color _statusBgColor(String? status) {
+    switch (status) {
+      case 'PAID':
+        return const Color(0xFFE8F5E9);
+      case 'OPEN':
+        return const Color(0xFFFFF3E0);
+      case 'EXPIRED':
+      case 'CANCELED':
+        return const Color(0xFFFFEBEE);
+      default:
+        return const Color(0xFFF5F5F5);
+    }
+  }
+
+  String _statusLabel(String? status) {
+    switch (status) {
+      case 'PAID':
+        return 'Оплачен';
+      case 'OPEN':
+        return 'Открыт';
+      case 'EXPIRED':
+        return 'Просрочен';
+      case 'CANCELED':
+        return 'Отменён';
+      default:
+        return status ?? '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final info = widget.docModel!.data;
-    final size = AdaptiveSizes(context);
-    ;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: widget.size.otstup15),
       decoration: BoxDecoration(
@@ -39,65 +77,122 @@ class _ExpansionTileForPaymentsState
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
       ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(),
-        child: Theme(
-          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-          child: ExpansionTile(
-            childrenPadding: EdgeInsets.zero,
-            iconColor: primaryButtonColor,
-            collapsedIconColor: primaryButtonColor,
-            tilePadding: EdgeInsets.zero,
-            title: Padding(
-              padding: EdgeInsets.only(left: 1),
-              child: Text(
-                widget.title,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          childrenPadding: EdgeInsets.zero,
+          iconColor: primaryButtonColor,
+          collapsedIconColor: primaryButtonColor,
+          tilePadding: EdgeInsets.zero,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 1),
+            child: Text(
+              widget.title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
-            children: [
-              Column(
+          ),
+          children: [
+            const SizedBox(height: 4),
+            // ── Table ─────────────────────────────────────────────────────
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Table(
+                border: TableBorder.all(
+                  color: greyTextFBorderColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                columnWidths: const {
+                  0: FlexColumnWidth(1.4), // Статус
+                  1: FlexColumnWidth(1.5), // Номер инвойса
+                  2: FlexColumnWidth(1.6), // Сумма платежа
+                  3: FlexColumnWidth(1.4), // Дата оплаты
+                },
                 children: [
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: widget.payments.length,
-                    itemBuilder: (context, index) {
-                      final document=widget.payments[index];
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: size.otstup10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            textWithH1Style(
-                              document.name!,
-                              fontsize: 16,
+                  // ── Header row ──────────────────────────────────────────
+                  TableRow(
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF5F5F5),
+                    ),
+                    children: [
+                      _headerCell('Статус'),
+                      _headerCell('Номер инвойса'),
+                      _headerCell('Сумма платежа'),
+                      _headerCell('Дата оплаты'),
+                    ],
+                  ),
+                  // ── Data rows ───────────────────────────────────────────
+                  ...widget.payments.map(
+                    (payment) => TableRow(
+                      decoration: const BoxDecoration(color: Colors.white),
+                      children: [
+                        // Status badge
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 8),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: _statusBgColor(payment.status),
+                              border: Border.all(
+                                  color: _statusColor(payment.status),
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                            Container(
-                              decoration: BoxDecoration(
-                                // border: Border.all(),
-                                borderRadius: BorderRadius.circular(12),
-                                color: primaryGreenColor,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: textWithH1Style(
-                                  "Сохранить",
-                                  fontsize: 14,
-                                  color: Colors.white,
-                                ),
+                            child: Text(
+                              _statusLabel(payment.status),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: _statusColor(payment.status),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      );
-                    },
+                        // Invoice number
+                        _dataCell(payment.serial ?? '—'),
+                        // Amount + currency
+                        _dataCell(
+                          payment.amount != null
+                              ? '${payment.amount} сомони'
+                              : '—',
+                        ),
+                        // Date
+                        _dataCell(payment.paid_at ?? '—'),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 12),
+          ],
         ),
       ),
     );
   }
+
+  Widget _headerCell(String text) => Padding(
+        padding:
+            const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+            color: Color(0xFF757575),
+          ),
+        ),
+      );
+
+  Widget _dataCell(String text) => Padding(
+        padding:
+            const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 10),
+        ),
+      );
 }

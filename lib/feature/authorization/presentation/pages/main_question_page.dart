@@ -161,10 +161,10 @@ class MyTextFieldWithPrefix extends StatelessWidget {
             borderSide: BorderSide(color: borderColor),
           ),
           suffixIcon: suffixIcon ?? SizedBox.shrink(),
-          prefixIcon: prefixIcon ?? Icon(Icons.search, color: greyIconColor),
+          // prefixIcon: prefixIcon ?? Icon(Icons.search, color: greyIconColor,),
           hintText: hintText,
           hintStyle: TextStyle(color: primaryGreyTextColor),
-          contentPadding: EdgeInsets.symmetric(vertical: 12),
+          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         ),
       ),
     );

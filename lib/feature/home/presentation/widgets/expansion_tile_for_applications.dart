@@ -69,7 +69,7 @@ class _ExpansionTileForApplicationsState
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              width: size.screenWidth * 0.86,
+                              width: size.screenWidth * 0.83,
                               decoration: BoxDecoration(
                                 border: Border.all(color: primaryGreenColor),
                                 borderRadius: BorderRadius.circular(10),
@@ -109,21 +109,27 @@ class _ExpansionTileForApplicationsState
                                             ),
                                           ],
                                         ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                            color: primaryGreenColor,
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: textWithH1Style(
-                                              document.status!.title!.getText(
-                                                widget.currentLocale,
+                                        Expanded(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(
+                                                12,
                                               ),
-                                              fontsize: 12,
-                                              color: Colors.white,
+                                              color: primaryGreenColor,
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: SizedBox(
+                                                width: size.screenWidth * 0.3,
+                                                child: textWithH1Style(
+                                                  document.status!.title!.getText(
+                                                    widget.currentLocale,
+                                                  ),
+                                                  fontsize: 12,
+                                                  color: Colors.white,
+                                                  maxLines: 1
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),

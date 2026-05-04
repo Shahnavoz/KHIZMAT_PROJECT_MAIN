@@ -36,7 +36,6 @@ final specializationProvider = FutureProvider.family<SpecializationData, int>((
             ..sort(
               (a, b) => (a.position ?? 999999).compareTo(b.position ?? 999999),
             );
-
       return _DocResultForSpecialization(
         docId: doc.id,
         specializations: sortedSpecs,
