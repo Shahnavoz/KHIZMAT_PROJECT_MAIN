@@ -56,11 +56,11 @@ class _ExpansionTileForDocumentsPageState
             children: [
               buildCustomRow(
                 "Статус",
-                info.status.title.getText(widget.currentLocale),
+                info!.status!.title!.getText(widget.currentLocale),
               ),
               buildCustomRow(
                 "Наименование лицензиата",
-                info.name, //field?
+                info.name!, //field?
                 fontsize: 15,
               ),
               buildCustomRow(
@@ -68,12 +68,12 @@ class _ExpansionTileForDocumentsPageState
                 info.address ?? '',
                 fontsize: 15,
               ),
-              buildCustomRow("ИНН лицензиата", info.tin, fontsize: 15),
-              buildCustomRow("Номер документа", info.number, fontsize: 15),
+              buildCustomRow("ИНН лицензиата", info.tin!, fontsize: 15),
+              buildCustomRow("Номер документа", info.number!, fontsize: 15),
               buildCustomRow(
                 "Номер в реестре",
 
-                info.registerNumber,
+                info.registerNumber!,
                 fontsize: 15,
               ),
               buildCustomRow(

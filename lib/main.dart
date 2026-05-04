@@ -4,10 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/consts/themes/themes.dart';
 import 'package:khizmat_new/feature/authorization/presentation/pages/main_enter_page.dart';
-import 'package:khizmat_new/feature/documents/presentation/pages/my_documents_page.dart';
 import 'package:khizmat_new/generated/l10n.dart';
+import 'package:pdfrx/pdfrx.dart';
 
-void main() {
+void main() async{
+  await pdfrxFlutterInitialize(dismissPdfiumWasmWarnings: true);
   runApp(ProviderScope(child: MyApp()));
 }
 

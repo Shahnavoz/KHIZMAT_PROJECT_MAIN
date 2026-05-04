@@ -55,19 +55,19 @@ class _ExpansionTileForElectronalSignaturesPageState
               ),
             ),
             children: [
-              info.pkiSignatures != null
+              info!.pkiSignatures != null
                   ? Column(
                     children: [
-                      buildCustomRow("Имя", info.name),
+                      buildCustomRow("Имя", info.name!),
                       buildCustomRow("Фамилия", "", fontsize: 15),
                       buildCustomRow(
                         "Серийный номер сертификата",
-                        info.pkiSignatures!.serialNumber,
+                        info.pkiSignatures!.serialNumber!,
                         fontsize: 15,
                       ),
                       buildCustomRow(
                         "Подпись",
-                        info.pkiSignatures!.ru,
+                        info.pkiSignatures!.ru!,
                         fontsize: 15,
                       ),
                     ],

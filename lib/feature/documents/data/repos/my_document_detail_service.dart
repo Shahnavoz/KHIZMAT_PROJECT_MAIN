@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:khizmat_new/feature/documents/data/models/my_documents_detail_model.dart';
-import 'package:path_provider/path_provider.dart';
 
 class MyDocumentDetailService {
   var storage = FlutterSecureStorage();

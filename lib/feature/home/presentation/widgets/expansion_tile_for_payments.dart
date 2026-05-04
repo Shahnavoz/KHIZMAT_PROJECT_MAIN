@@ -4,29 +4,29 @@ import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/documents/data/models/my_documents_detail_model.dart';
 
-class ExpansionTileForTakenDocuments extends StatefulWidget {
-  const ExpansionTileForTakenDocuments({
+class ExpansionTileForPayments extends StatefulWidget {
+  const ExpansionTileForPayments({
     super.key,
     required this.size,
     required this.title,
     required this.currentLocale,
     required this.index,
-    required this.attachments
+    required this.payments
   });
 
   final AdaptiveSizes size;
   final String title;
   final Locale currentLocale;
   final int index;
-  final List<Attachment> attachments;
+  final List<dynamic> payments;
 
   @override
-  State<ExpansionTileForTakenDocuments> createState() =>
-      _ExpansionTileForTakenDocumentsState();
+  State<ExpansionTileForPayments> createState() =>
+      _ExpansionTileForPaymentsState();
 }
 
-class _ExpansionTileForTakenDocumentsState
-    extends State<ExpansionTileForTakenDocuments> {
+class _ExpansionTileForPaymentsState
+    extends State<ExpansionTileForPayments> {
   @override
   Widget build(BuildContext context) {
     // final info = widget.docModel!.data;
@@ -60,9 +60,9 @@ class _ExpansionTileForTakenDocumentsState
                 children: [
                   ListView.builder(
                     shrinkWrap: true,
-                    itemCount: widget.attachments.length,
+                    itemCount: widget.payments.length,
                     itemBuilder: (context, index) {
-                      final document=widget.attachments[index];
+                      final document=widget.payments[index];
                       return Padding(
                         padding: EdgeInsets.symmetric(vertical: size.otstup10),
                         child: Row(

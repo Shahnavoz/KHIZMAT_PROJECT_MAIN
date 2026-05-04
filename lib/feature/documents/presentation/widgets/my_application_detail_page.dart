@@ -4,23 +4,18 @@ import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
-import 'package:khizmat_new/feature/documents/data/models/my_documents_model.dart';
-import 'package:khizmat_new/feature/documents/data/providers/document_detail_info_provider.dart';
-import 'package:khizmat_new/feature/documents/data/repos/my_document_detail_service.dart';
-import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart';
-import 'package:khizmat_new/feature/home/presentation/widgets/expansion_tile_forTaken_documents.dart';
-import 'package:khizmat_new/feature/home/presentation/widgets/expansion_tile_for_applications.dart';
-import 'package:khizmat_new/feature/home/presentation/widgets/expansion_tile_for_documents_page.dart';
-import 'package:khizmat_new/feature/home/presentation/widgets/expansion_tile_for_electronal_signature.dart';
-import 'package:khizmat_new/feature/home/presentation/widgets/expansion_tile_for_payments.dart';
-import 'package:pdfrx/pdfrx.dart';
+import 'package:khizmat_new/feature/documents/data/models/my_applications_model.dart';
+import 'package:khizmat_new/feature/documents/data/providers/application_detail_info_provider.dart';
 
-class MyDocumentDetailPage extends ConsumerStatefulWidget {
-  final MyDocumentsModel docModel;
+import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart';
+import 'package:khizmat_new/feature/home/presentation/widgets/expansion_tile_for_applicant_info.dart';
+
+class MyApplicationDetaillPage extends ConsumerStatefulWidget {
+  final MyApplicationsModel docModel;
   final int index;
   final int id;
   final Locale currentLocale;
-  const MyDocumentDetailPage({
+  const MyApplicationDetaillPage({
     super.key,
     required this.docModel,
     required this.index,
@@ -29,51 +24,12 @@ class MyDocumentDetailPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MyDocumentDetailPage> createState() =>
+  ConsumerState<MyApplicationDetaillPage> createState() =>
       _MyDocumentDetailPageState();
 }
 
-class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
-  PdfViewerController? _pdfController;
-  bool _isPdfLoading = true;
-  String? _pdfError;
-  int _currentPage = 1;
-  int _totalPages = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _pdfController = PdfViewerController();
-  }
-  // String? _filePath;
-  // bool _isLoading = true;
-  // String? _error;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadDocument();
-  // }
-
-  // final service = MyDocumentDetailService();
-  // Future<void> _loadDocument() async {
-  //   final path = await service.getCertificateUrl(
-  //     widget.id,
-  //     widget.currentLocale,
-  //   );
-
-  //   if (!mounted) return;
-
-  //   setState(() {
-  //     _isLoading = false;
-  //     if (path != null) {
-  //       _filePath = path;
-  //     } else {
-  //       _error = 'Не удалось загрузить документ';
-  //     }
-  //   });
-  // }
-
+class _MyDocumentDetailPageState
+    extends ConsumerState<MyApplicationDetaillPage> {
   @override
   Widget build(BuildContext context) {
     final size = AdaptiveSizes(context);
@@ -82,21 +38,16 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
     final index = widget.index;
     final appId = widget.id;
 
-    final url = MyDocumentDetailService().getCertificateUrl(
-      appId,
-      currentLocale,
+    final asyncApplicationsDetailInfo = ref.watch(
+      applicationDetailInfoProvider(appId),
     );
-
-    final testUrl =
-        'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
-
-    final asyncDocDetailInfo = ref.watch(documentDetailInfoProvider(appId));
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       appBar: CustomAppbar(title: "Назад"),
-      body: asyncDocDetailInfo.when(
+      body: asyncApplicationsDetailInfo.when(
         data: (data) {
           final detailInfo = data.data;
+          final steps = detailInfo.steps;
           return Padding(
             padding: EdgeInsets.symmetric(
               horizontal: size.otstup18,
@@ -108,127 +59,67 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                 children: [
                   //Document title
                   textWithH1Style(
-                    info!.registers[index].document!.ru!,
+                    info!.applicationList[widget.index].category!.title!
+                        .getText(currentLocale),
                     textAlign: TextAlign.start,
                   ),
-                  // SizedBox(height: size.otstup15),
-                  // _isPdfLoading
-                  //     ? Center(child: CircularProgressIndicator())
-                  //     : SizedBox(
-                  //       height: 250,
-                  //       child: Center(
-                  //         child: PdfViewer.uri(
-                  //           Uri.parse(testUrl),
-                  //           params: PdfViewerParams(
-                  //             errorBannerBuilder: (
-                  //               context,
-                  //               error,
-                  //               stackTrace,
-                  //               documentRef,
-                  //             ) {
-                  //               return Center(
-                  //                 child: Column(
-                  //                   children: [
-                  //                     Icon(
-                  //                       Icons.error_outline,
-                  //                       color: Colors.redAccent,
-                  //                     ),
-                  //                     SizedBox(height: 16),
-                  //                     Text(
-                  //                       'Не удалось загрузить PDF',
-                  //                       style: Theme.of(
-                  //                         context,
-                  //                       ).textTheme.titleLarge?.copyWith(
-                  //                         color: Colors.red,
-                  //                         fontWeight: FontWeight.bold,
-                  //                       ),
-                  //                     ),
-
-                  //                     const SizedBox(height: 8),
-                  //                     Padding(
-                  //                       padding: const EdgeInsets.symmetric(
-                  //                         horizontal: 32,
-                  //                       ),
-                  //                       child: Text(
-                  //                         error.toString(),
-                  //                         textAlign: TextAlign.center,
-                  //                         style: const TextStyle(
-                  //                           color: Colors.grey,
-                  //                         ),
-                  //                       ),
-                  //                     ),
-
-                  //                     const SizedBox(height: 24),
-                  //                     ElevatedButton.icon(
-                  //                       icon: const Icon(Icons.refresh),
-                  //                       label: const Text('Повторить'),
-                  //                       onPressed: () => setState(() {}),
-                  //                     ),
-                  //                   ],
-                  //                 ),
-                  //               );
-                  //             },
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
                   SizedBox(height: size.otstup35),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: darkPrimaryGreenColor,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.remove_red_eye_outlined,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: size.otstup15,
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: darkPrimaryGreenColor,
-                            borderRadius: BorderRadius.circular(size.otstup35),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.downloading_rounded,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(width: size.otstup10),
-                                textWithH1Style(
-                                  "Сохранить",
-                                  color: Colors.white,
-                                  fontsize: 16,
-                                  fontW: FontWeight.normal,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: darkPrimaryGreenColor,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(Icons.send, color: Colors.white),
-                        ),
-                      ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     shape: BoxShape.circle,
+                      //     color: darkPrimaryGreenColor,
+                      //   ),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(8.0),
+                      //     child: Icon(
+                      //       Icons.remove_red_eye_outlined,
+                      //       color: Colors.white,
+                      //     ),
+                      //   ),
+                      // ),
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(
+                      //     horizontal: size.otstup15,
+                      //   ),
+                      //   child: Container(
+                      //     decoration: BoxDecoration(
+                      //       color: darkPrimaryGreenColor,
+                      //       borderRadius: BorderRadius.circular(size.otstup35),
+                      //     ),
+                      //     child: Padding(
+                      //       padding: const EdgeInsets.all(8.0),
+                      //       child: Row(
+                      //         children: [
+                      //           Icon(
+                      //             Icons.downloading_rounded,
+                      //             color: Colors.white,
+                      //           ),
+                      //           SizedBox(width: size.otstup10),
+                      //           textWithH1Style(
+                      //             "Сохранить",
+                      //             color: Colors.white,
+                      //             fontsize: 16,
+                      //             fontW: FontWeight.normal,
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     shape: BoxShape.circle,
+                      //     color: darkPrimaryGreenColor,
+                      //   ),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(8.0),
+                      //     child: Icon(Icons.send, color: Colors.white),
+                      //   ),
+                      // ),
                     ],
                   ),
 
@@ -264,14 +155,12 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     textWithH1Style(
-                                      "Тип документа",
+                                      "Номер заявки",
                                       fontW: FontWeight.normal,
                                       fontsize: 15,
                                     ),
                                     textWithH1Style(
-                                      detailInfo!.typeTitle!.getText(
-                                        currentLocale,
-                                      ),
+                                      detailInfo.registrationNumber,
                                       fontsize: 16,
                                     ),
                                   ],
@@ -317,7 +206,9 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                       fontW: FontWeight.normal,
                                     ),
                                     textWithH1Style(
-                                      detailInfo.status!.status!,
+                                      detailInfo.status.title.getText(
+                                        currentLocale,
+                                      ),
                                       fontsize: 16,
                                     ),
                                   ],
@@ -407,12 +298,13 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     textWithH1Style(
-                                      "Дата выдачи",
+                                      "Дата заявки:",
                                       fontsize: 15,
                                       fontW: FontWeight.normal,
                                     ),
                                     textWithH1Style(
-                                      detailInfo.registrationDate!,
+                                      "",
+                                    //  " detailInfo.actionLog[index].date",
                                       fontsize: 19,
                                     ),
                                   ],
@@ -425,68 +317,68 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                     ],
                   ),
                   SizedBox(height: size.otstup25),
-                  ExpansionTileForDocumentsPage(
+                  ExpansionTileForApplicantInfoPage(
                     size: size,
-                    title: "Общая информация",
+                    title: "Данные заявления",
                     currentLocale: currentLocale,
-                    docModel: data,
-                    index: index,
+                    docModel: steps,
+                    index: steps.length,
                   ),
                   SizedBox(height: size.otstup15),
-                  data.data!.pkiSignatures != null
-                      ? Column(
-                        children: [
-                          ExpansionTileForElectronalSignaturesPage(
-                            currentLocale: currentLocale,
-                            size: size,
-                            title: "Электронная подпись документа",
-                            docModel: data,
-                            index: index,
-                          ),
-                          SizedBox(height: size.otstup15),
-                        ],
-                      )
-                      : SizedBox.shrink(),
+                  // data.data.pkiSignatures != null
+                  //     ? Column(
+                  //       children: [
+                  //         ExpansionTileForElectronalSignaturesPage(
+                  //           currentLocale: currentLocale,
+                  //           size: size,
+                  //           title: "Электронная подпись документа",
+                  //           docModel: data,
+                  //           index: index,
+                  //         ),
+                  //         SizedBox(height: size.otstup15),
+                  //       ],
+                  //     )
+                  //     : SizedBox.shrink(),
 
-                  data.data!.attachments!.isNotEmpty
-                      ? Column(
-                        children: [
-                          ExpansionTileForTakenDocuments(
-                            size: size,
-                            title: "Приложенные документы",
-                            currentLocale: currentLocale,
-                            index: index,
-                            attachments: data.data!.attachments!,
-                          ),
-                          SizedBox(height: size.otstup15),
-                        ],
-                      )
-                      : SizedBox.shrink(),
+                  // data.data!.attachments!.isNotEmpty
+                  //     ? Column(
+                  //       children: [
+                  //         ExpansionTileForTakenDocuments(
+                  //           size: size,
+                  //           title: "Приложенные документы",
+                  //           currentLocale: currentLocale,
+                  //           index: index,
+                  //           attachments: data.data!.attachments!,
+                  //         ),
+                  //         SizedBox(height: size.otstup15),
+                  //       ],
+                  //     )
+                  //     : SizedBox.shrink(),
 
-                  data.data!.payments!.isNotEmpty
-                      ? Column(
-                        children: [
-                          ExpansionTileForPayments(
-                            size: size,
-                            title: "Платежи",
-                            currentLocale: currentLocale,
-                            index: index,
-                            payments: data.data!.payments!,
-                          ),
-                          SizedBox(height: size.otstup15),
-                        ],
-                      )
-                      : SizedBox.shrink(),
+                  // data.data!.payments!.isNotEmpty
+                  //     ? Column(
+                  //       children: [
+                  //         ExpansionTileForPayments(
+                  //           size: size,
+                  //           title: "Платежи",
+                  //           currentLocale: currentLocale,
+                  //           index: index,
+                  //           payments: data.data!.payments!,
+                  //         ),
+                  //         SizedBox(height: size.otstup15),
+                  //       ],
+                  //     )
+                  //     : SizedBox.shrink(),
 
-                  data.data!.applications!.isNotEmpty
-                      ? ExpansionTileForApplications(
-                        size: size,
-                        title: "Все заявки",
-                        currentLocale: currentLocale,
-                        index: index,
-                        applications: data.data!.applications!,
-                      )
-                      : SizedBox.shrink(),
+                  // data.data!.applications!.isNotEmpty
+                  //     ? ExpansionTileForApplications(
+                  //       size: size,
+                  //       title: "Все заявки",
+                  //       currentLocale: currentLocale,
+                  //       index: index,
+                  //       applications: data.data!.applications!,
+                  //     )
+                  //     : SizedBox.shrink(),
                 ],
               ),
             ),
