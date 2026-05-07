@@ -13,6 +13,7 @@ import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/core/config/app_config.dart';
 import 'package:khizmat_new/feature/documents/data/models/my_application_detail_info_model.dart';
 import 'package:khizmat_new/feature/documents/presentation/widgets/document_opener.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class ApplicationView extends ConsumerStatefulWidget {
   final List<Step> steps;
@@ -390,16 +391,16 @@ class _ApplicationViewState extends ConsumerState<ApplicationView> {
 
       case TypeEnum.switch_:
         displayText =
-            (field.value == "1" || field.value == "true") ? "Да" : "Нет";
+            (field.value == "1" || field.value == "true") ? S.of(context).yes : S.of(context).no;
         break;
 
       case TypeEnum.file:
         if (field.value != null &&
             field.value!.trim().isNotEmpty &&
             field.value != "[]") {
-          displayText = "Файл";
+          displayText = S.of(context).file;
         } else {
-          displayText = "Нет файла";
+          displayText = S.of(context).noFile;
         }
         break;
 
@@ -435,7 +436,7 @@ class _ApplicationViewState extends ConsumerState<ApplicationView> {
                 _downloadAttachedFile(context, fileId);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Файл недоступен')),
+                   SnackBar(content: Text(S.of(context).fileIsNotAvailable)),
                 );
               }
             },

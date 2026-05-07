@@ -12,6 +12,7 @@ import 'package:khizmat_new/feature/home/data/models/usluga_specialization.dart'
 import 'package:khizmat_new/feature/home/data/providers/all_updated_date_provider.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/my_button_polucheniye_uslugi.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/my_expansion_tile_for_detail_info.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class UslugaInfoPage extends ConsumerStatefulWidget {
   final UslugaDetailInfo uslugaInfo;
@@ -35,12 +36,6 @@ class UslugaInfoPage extends ConsumerStatefulWidget {
 }
 
 class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
-  List<String> texts = [
-    "Детальная информация",
-    "Специализации",
-    "Что такое eKhukumat",
-  ];
-
   @override
   Widget build(BuildContext context) {
     final size = AdaptiveSizes(context);
@@ -61,7 +56,7 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
         final List<Widget> tiles = [
           MyExpansionTile(
             size: size,
-            title: "Детальная информация",
+            title: S.of(context).detailInformation,
             detailInfo: widget.uslugaInfo,
             currentLocale: currentLocale,
           ),
@@ -73,7 +68,7 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
               padding: EdgeInsets.only(top: size.otstup10),
               child: SpecializationTile(
                 size: size,
-                title: "Специализации",
+                title: S.of(context).specialization,
                 specializations: allSpecializations,
                 currentLocale: currentLocale,
               ),
@@ -101,7 +96,7 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                           ? SizedBox.shrink()
                           : RequirementTile(
                             size: size,
-                            title: 'Требования',
+                            title: S.of(context).requirements,
                             requirements: requirements,
                             currentLocale: currentLocale,
                           );
@@ -115,7 +110,7 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                         (err, stack) => Padding(
                           padding: EdgeInsets.all(16),
                           child: Text(
-                            "Ошибка загрузки требований: $err",
+                            S.of(context).errorLoading(err.toString()),
                             style: TextStyle(color: Colors.red),
                           ),
                         ),
@@ -134,7 +129,7 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
             title: Column(
               children: [
                 textWithH1Style(
-                  "Назад",
+                  S.of(context).back,
                   fontW: FontWeight.w500,
                   color: Colors.black,
                 ),
@@ -169,7 +164,7 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      textWithH1Style("Стоимость:"),
+                      textWithH1Style(S.of(context).price),
                       textWithH1Style("${allInfo.serviceCost.toString()}c"),
                     ],
                   ),
@@ -350,7 +345,7 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                                   //   ],
                                   // ),
                                   textH2GreyTitle(
-                                    "Уполномоченный орган",
+                                    S.of(context).authorizedBody,
                                     fontSize: 16,
                                   ),
                                   // SizedBox(height: size.otstup5),
@@ -392,12 +387,12 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                                     currentLocale,
                                   ),
                                   icon: infoDoc.icon ?? "",
-                                  typeText: "Тип документа",
+                                  typeText: S.of(context).documentType,
                                 ),SizedBox(height: size.otstup20,),
                                 MyTypeContainer(
                                   size: size,
-                                  typeText: "Срок действия",
-                                  typeName: "${allInfo.expiryDate} (год)",
+                                  typeText: S.of(context).expiryDate,
+                                  typeName: S.of(context).expiryDateYears(allInfo.expiryDate ?? 0),
                                   icon: infoDoc.icon ?? "",
                                 ),
                               ],
@@ -439,14 +434,15 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
                                           SizedBox(
                                             width: size.screenWidth * 0.7,
                                             child: textWithH1Style(
-                                              "Срок рассмотрения и предоставления услуги: ",
+                                              textAlign: TextAlign.start,
+                                              S.of(context).srokRassmotreniyeIPredostavleniyeUslugi,
                                               fontsize: 15,
                                               fontW: FontWeight.w400,
                                               maxLines: 1,
                                             ),
                                           ),
                                           textWithH1Style(
-                                            "${allInfo.reviewTime} дней",
+                                            S.of(context).allinforeviewtime(allInfo.reviewTime.toString()),
                                             fontsize: 15,
                                             fontW: FontWeight.w500,
                                           ),
@@ -482,7 +478,7 @@ class _UslugaInfoPageState extends ConsumerState<UslugaInfoPage> {
           ),
       error:
           (err, stack) =>
-              Scaffold(body: Center(child: Text("Ошибка загрузки: $err"))),
+              Scaffold(body: Center(child: Builder(builder: (context) => Text(S.of(context).errorLoading(err.toString()))))),
     );
   }
 }

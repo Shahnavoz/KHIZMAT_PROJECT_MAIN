@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
@@ -51,8 +52,10 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
     super.initState();
     _pdfController = PdfViewerController();
     // Create the future once — FutureBuilder must not recreate it on rebuild.
-    _pdfFuture = MyDocumentDetailService()
-        .getCertificateUrl(widget.id, widget.currentLocale);
+    _pdfFuture = MyDocumentDetailService().getCertificateUrl(
+      widget.id,
+      widget.currentLocale,
+    );
   }
   // String? _filePath;
   // bool _isLoading = true;
@@ -100,7 +103,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
     final asyncDocDetailInfo = ref.watch(documentDetailInfoProvider(appId));
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
-      appBar: CustomAppbar(title: "Назад"),
+      appBar: CustomAppbar(title: S.of(context).back),
       body: asyncDocDetailInfo.when(
         data: (data) {
           final detailInfo = data.data;
@@ -115,7 +118,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                 children: [
                   //Document title
                   textWithH1Style(
-                    detailInfo!.document!.ru!,
+                    detailInfo!.document!.getText(currentLocale),
                     // info!.registers[index].document!.ru!,
                     textAlign: TextAlign.start,
                   ),
@@ -143,7 +146,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                   size: 40,
                                 ),
                                 const SizedBox(height: 12),
-                                const Text(
+                                Text(
                                   'Не удалось загрузить документ',
                                   style: TextStyle(
                                     color: Colors.red,
@@ -160,11 +163,14 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                 ElevatedButton.icon(
                                   icon: const Icon(Icons.refresh),
                                   label: const Text('Повторить'),
-                                  onPressed: () => setState(() {
-                                    _pdfFuture = MyDocumentDetailService()
-                                        .getCertificateUrl(
-                                            widget.id, widget.currentLocale);
-                                  }),
+                                  onPressed:
+                                      () => setState(() {
+                                        _pdfFuture = MyDocumentDetailService()
+                                            .getCertificateUrl(
+                                              widget.id,
+                                              widget.currentLocale,
+                                            );
+                                      }),
                                 ),
                               ],
                             ),
@@ -213,9 +219,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: darkPrimaryGreenColor,
-                            borderRadius: BorderRadius.circular(
-                              size.otstup35,
-                            ),
+                            borderRadius: BorderRadius.circular(size.otstup35),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -227,7 +231,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                 ),
                                 SizedBox(width: size.otstup10),
                                 textWithH1Style(
-                                  "Сохранить",
+                                  S.of(context).save,
                                   color: Colors.white,
                                   fontsize: 16,
                                   fontW: FontWeight.normal,
@@ -241,8 +245,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                       GestureDetector(
                         onTap: () async {
                           if (_pdfBytes != null && _pdfBytes!.isNotEmpty) {
-                            final fileName =
-                                "certificate_${widget.id}.pdf";
+                            final fileName = "certificate_${widget.id}.pdf";
                             await SharePlus.instance.share(
                               ShareParams(
                                 files: [
@@ -250,16 +253,16 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                     _pdfBytes!,
                                     name: fileName,
                                     mimeType: 'application/pdf',
-                                  )
+                                  ),
                                 ],
                                 subject: fileName,
                               ),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
+                              SnackBar(
                                 content: Text(
-                                  "Документ ещё не загружен или пустой",
+                                  S.of(context).docIsNotLoadedOrEmpty,
                                 ),
                               ),
                             );
@@ -310,7 +313,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   textWithH1Style(
-                                    "Тип документа",
+                                    S.of(context).documentType,
                                     fontW: FontWeight.normal,
                                     fontsize: 15,
                                   ),
@@ -355,7 +358,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   textWithH1Style(
-                                    "Статус",
+                                    S.of(context).status,
                                     fontsize: 15,
                                     fontW: FontWeight.normal,
                                   ),
@@ -405,7 +408,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     textWithH1Style(
-                                      "Номер документа",
+                                      S.of(context).docNumber,
                                       fontW: FontWeight.normal,
                                       fontsize: 13,
                                     ),
@@ -451,7 +454,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     textWithH1Style(
-                                      "Дата выдачи",
+                                      S.of(context).registrationDate,
                                       fontsize: 15,
                                       fontW: FontWeight.normal,
                                     ),
@@ -471,7 +474,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                   SizedBox(height: size.otstup25),
                   ExpansionTileForDocumentsPage(
                     size: size,
-                    title: "Общая информация",
+                    title: S.of(context).detailInformation,
                     currentLocale: currentLocale,
                     docModel: data,
                     index: index,
@@ -483,7 +486,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                           ExpansionTileForElectronalSignaturesPage(
                             currentLocale: currentLocale,
                             size: size,
-                            title: "Электронная подпись документа",
+                            title: S.of(context).electronicSIgnature,
                             docModel: data,
                             index: index,
                           ),
@@ -497,7 +500,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                         children: [
                           ExpansionTileForTakenDocuments(
                             size: size,
-                            title: "Приложенные документы",
+                            title: S.of(context).attachments,
                             currentLocale: currentLocale,
                             index: index,
                             attachments: data.data!.attachments!,
@@ -512,7 +515,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                         children: [
                           ExpansionTileForPayments(
                             size: size,
-                            title: "Платежи",
+                            title: S.of(context).payments,
                             currentLocale: currentLocale,
                             index: index,
                             payments: data.data!.payments!,
@@ -525,7 +528,7 @@ class _MyDocumentDetailPageState extends ConsumerState<MyDocumentDetailPage> {
                   data.data!.applications!.isNotEmpty
                       ? ExpansionTileForApplications(
                         size: size,
-                        title: "Все заявки",
+                        title: S.of(context).allApplications,
                         currentLocale: currentLocale,
                         index: index,
                         applications: data.data!.applications!,

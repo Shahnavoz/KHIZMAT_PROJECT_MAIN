@@ -6,7 +6,7 @@ class ProfileService {
   Future<void> logOut() async {
     var token = storage.read(key: "token");
     var response = await http.post(
-      Uri.parse("https://apikhizmat.ehukumat.tj/v1/oauth/logout"),
+      Uri.parse("https://api.ekhizmat.tj/v1/oauth/logout"),
 
       headers: <String, String>{
         "Content-Type": "Application/json;Charset=utf-8",

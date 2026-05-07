@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/feature/documents/data/models/my_documents_detail_model.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class ExpansionTileForPayments extends StatefulWidget {
   const ExpansionTileForPayments({
@@ -56,13 +57,13 @@ class _ExpansionTileForPaymentsState extends State<ExpansionTileForPayments> {
   String _statusLabel(String? status) {
     switch (status) {
       case 'PAID':
-        return 'Оплачен';
+        return S.of(context).paid;
       case 'OPEN':
-        return 'Открыт';
+        return S.of(context).open;
       case 'EXPIRED':
-        return 'Просрочен';
+        return S.of(context).expired;
       case 'CANCELED':
-        return 'Отменён';
+        return S.of(context).canceled;
       default:
         return status ?? '';
     }
@@ -115,10 +116,10 @@ class _ExpansionTileForPaymentsState extends State<ExpansionTileForPayments> {
                       color: Color(0xFFF5F5F5),
                     ),
                     children: [
-                      _headerCell('Статус'),
-                      _headerCell('Номер инвойса'),
-                      _headerCell('Сумма платежа'),
-                      _headerCell('Дата оплаты'),
+                      _headerCell(S.of(context).status),
+                      _headerCell(S.of(context).invoiceNumber),
+                      _headerCell(S.of(context).paymentAmount),
+                      _headerCell(S.of(context).paymentDate),
                     ],
                   ),
                   // ── Data rows ───────────────────────────────────────────

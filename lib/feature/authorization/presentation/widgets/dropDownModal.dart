@@ -6,6 +6,7 @@ import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/button_modal_bottom_sheet.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/button_or_container_with_two_parts.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class Language {
   final String asset;
@@ -42,7 +43,7 @@ class _DropdownmodalState extends ConsumerState<Dropdownmodal> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          ModalAppBar(mainText: "Выберите язык"),
+          ModalAppBar(mainText: S.of(context).chooseTheLanguage),
 
           Padding(
             padding: EdgeInsets.symmetric(horizontal: size.screenWidth * 0.03,vertical: size.screenHeight*0.02),

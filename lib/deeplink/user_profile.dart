@@ -130,6 +130,8 @@ class UserProfileNotifier extends StateNotifier<UserProfile?> {
     await _storage.write(key: _key, value: jsonEncode(state!.toJson()));
   }
 
+  Future<void> reload() => _loadFromStorage();
+
   Future<void> clear() async {
     state = null;
     await _storage.delete(key: _key);

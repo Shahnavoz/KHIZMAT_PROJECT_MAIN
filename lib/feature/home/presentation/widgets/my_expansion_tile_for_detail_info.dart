@@ -5,6 +5,7 @@ import 'package:khizmat_new/consts/methods/common_methods.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/feature/home/data/models/usluga_detail_info.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/detail_info_row_widget.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class MyExpansionTile extends StatefulWidget {
   const MyExpansionTile({
@@ -53,21 +54,21 @@ class _MyExpansionTileState extends State<MyExpansionTile> {
             ),
             children: [
               buildCustomRow(
-                "Заявители",
+                S.of(context).applicants,
                 info.applicantType.getText(widget.currentLocale),
               ),
               buildCustomRow(
-                "Государственная пошлина",
-                info.usageFee == false ? "Не имеется" : "", //field?
+                S.of(context).feeState,
+                info.usageFee == false ? S.of(context).dontExist : "", //field?
                 fontsize: 15,
               ),
               buildCustomRow(
-                "Ежемесячный сбор",
-                "Не применяется", //field?
+                S.of(context).monthlyFee,
+                S.of(context).dosntExist, //field?
                 fontsize: 15,
               ),
               buildCustomRow(
-                "Подтверждающий документ",
+                S.of(context).regulatingDocument,
 
                 '${info.documentNumber ?? ""}(${info.documentDate.day}.${info.documentDate.month.toString().padLeft(2, "0")}.${info.documentDate.year})',
                 fontsize: 15,
@@ -77,7 +78,7 @@ class _MyExpansionTileState extends State<MyExpansionTile> {
                   openUrl(info.documentLink.toString());
                 },
                 child: buildCustomRow(
-                  "Ссылка на подтверждающий документ",
+                  S.of(context).linkToDocument,
                   info.documentLink.toString(),
                   fontsize: 15,
                   color: Colors.blue,

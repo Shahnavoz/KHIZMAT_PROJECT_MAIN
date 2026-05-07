@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -14,7 +13,7 @@ class MyDocumentDetailService {
     try {
       var token = await storage.read(key: 'token');
       var response = await http.get(
-        Uri.parse("https://apikhizmat.ehukumat.tj/v1/register/view?id=$id"),
+        Uri.parse("https://api.ekhizmat.tj/v1/register/view?id=$id"),
         headers: <String, String>{
           'Content-Type': 'Application/json;Charset=utf-8',
           'Accept': 'application/json',
@@ -76,11 +75,17 @@ class MyDocumentDetailService {
   //   }
   // }
 
+  String _serverLangCode(Locale locale) {
+    // App stores Tajik as Locale('fr'); server expects 'tj'
+    if (locale.languageCode == 'fr') return 'tj';
+    return locale.languageCode;
+  }
+
   Future<Uint8List> getCertificateUrl(int appId, Locale currentLocale) async {
     var token = await storage.read(key: 'token');
     var response = await http.get(
       Uri.parse(
-        'https://dockhizmat.ehukumat.tj/certificate/$appId/pdf?language=${currentLocale.languageCode}',
+        'https://dockhizmat.ehukumat.tj/certificate/$appId/pdf?language=${_serverLangCode(currentLocale)}',
       ),
       headers: <String, String>{
         'Content-Type': 'Application/json;Charset=utf-8',

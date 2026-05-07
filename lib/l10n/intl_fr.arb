@@ -35,7 +35,7 @@
       }
     }
   },
-  "favorites": "Избранное",
+  "favorites": "Интихобшудаҳо",
   "noDocuments": "Ҳуҷҷат нест",
   "allDocuments": "Ҳама ҳуҷҷатҳо",
   "search": "Ҷустуҷӯ",
@@ -71,9 +71,48 @@
       }
     }
   },
-  "nazad": "Бозгашт",
   "podrobnee": "Муфассал",
-  "svernut": "Свернуть",
+  "svernut": "Камтар",
+  "savedToDownloads": "Дар Зеркаш сохта шуд: {fileName}",
+  "@savedToDownloads": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "greeting": "{name}, Салом",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shagNomer": "Қадами № {step}",
+  "@shagNomer": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "expiryDateYears": "{years} (сол)",
+  "@expiryDateYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "errorLoading": "Хатои боркунӣ: {error}",
+  "@errorLoading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "srokPolucheniyaOnline": "Мӯҳлати гирифтан: Онлайн (фавран)",
   "srokPolucheniyaDays": "Мӯҳлати гирифтан: {days} рӯз",
   "@srokPolucheniyaDays": {
@@ -82,5 +121,116 @@
         "type": "int"
       }
     }
-  }
+  },
+  "detailInformation": "Маълумоти умумӣ",
+  "specialization": "Ихтисосҳо",
+  "requirements": "Шартҳо",
+  "authorizedBody": "Мақомоти ваколатдор",
+  "documentType": "Навъи ҳуҷҷат",
+  "expiryDate": "Мӯҳлати эътибор",
+  "srokRassmotreniyeIPredostavleniyeUslugi": "Муҳлати баррасӣ ва пешниҳоди хизматрасонӣ: ",
+  "allinforeviewtime": "{reviewTime} рӯз",
+  "@allinforeviewtime": {
+    "placeholders": {
+      "reviewTime": {
+        "type": "String"
+      }
+    }
+  },
+  "price": "Нарх:",
+  "applicants": "Аризадиҳандаҳо",
+  "feeState": "Хироҷи давлатӣ",
+  "dontExist": "Мавҷуд нест",
+  "monthlyFee": "Пардохти ҳармоҳа",
+  "regulatingDocument": "Ҳуҷҷати танзимкунандаи хизматрасонӣ",
+  "linkToDocument": "Истинод ба санади танзимкунандаи хизматрасонӣ",
+  "dosntExist": "Истифода намешавад",
+  "poluchitUslugu": "Гирифтани хизматрасонӣ",
+  "back": "Ба қафо",
+  "continueButton": "Давом додан",
+  "goToPayment": "Ба пардохт гузаред",
+  "fillAgain": "Дубора пур кунед",
+  "oznakomtesIpotverditeVseTrebovaniya": "Лутфан ҳамаи талаботҳоро тафтиш кунед ва тасдиқ кунед.",
+  "currentstep1": "Қадами № ${currentStep + 1}",
+  "verifiedProfile": "Профили тасдиқшуда",
+  "commonSettings": "Танзимоти умумӣ",
+  "languageSettings": "Танзимоти забон",
+  "help": "Кӯмак",
+  "whereAreWe": "Суроғаи мо",
+  "support": "Дастгирӣ",
+  "privatePolicy": "Сиёсати Корбурди Маълумоти Шахсӣ",
+  "exitTheApp": "Хориҷ шудан аз барнома",
+  "chooseTheMap": "Харитаро интихоб кунед",
+  "notInstalledMap": "Дар телефон ягон харита насб нашудааст.",
+  "failedToLoadDoc": "Ҳуҷҷатро бор карда натавонист",
+  "repeat": "Такрор кунед",
+  "docIsEmpty": "Ҳуҷҷат холӣ аст",
+  "docIsNotLoadedOrEmpty": "Ҳуҷҷат ҳанӯз бор карда нашудааст ё холӣ аст.",
+  "status": "Статус",
+  "docNumber": "Рақами ҳуҷҷат",
+  "registrationDate": "Оғози эътибор",
+  "electronicSIgnature": "Имзои электронии ҳуҷҷат",
+  "attachments": "Ҳуҷҷатҳои замимашуда  ",
+  "payments": "Пардохтҳо",
+  "licenseeName": "Номи иҷозатномадор",
+  "address": "Суроға",
+  "licenseeTin": "РМН-и иҷозатномадор",
+  "numberInReestr": "Рақами бақайдгирӣ",
+  "validUntill": "Фаъол то",
+  "name": "Ном",
+  "surname": "Насаб",
+  "certificateSerialNumber": "Рақами силсилавии сертификат",
+  "signature": "Имзо",
+  "save": "Захира кардан",
+  "invoiceNumber": "Рақами фактура",
+  "paymentAmount": "Маблағи пардохт",
+  "paymentDate": "Санаи пардохт",
+  "paid": "Пардохтшуда",
+  "open": "Кушода",
+  "expired": "Мӯҳлат гузаштааст",
+  "canceled": "Бекор карда шуд",
+  "applicationType": "Навъи ариза",
+  "applicationNumber": "Рақами ариза",
+  "requiredField": "Ин майдон ҳатмист",
+  "minLength": "Дарозии ҳадди ақал: {minLength} аломат",
+  "@minLength": {
+    "placeholders": {
+      "minLength": {
+        "type": "int"
+      }
+    }
+  },
+  "maxLength": "Дарозии максималӣ: {maxLength} аломат",
+  "@maxLength": {
+    "placeholders": {
+      "maxLength": {
+        "type": "int"
+      }
+    }
+  },
+  "action": "Амалҳо",
+  "add": "Илова кардан",
+  "pickFile": "Файлро интихоб кунед",
+  "loadingError": "Хатогии боркунӣ: {error}",
+  "@loadingError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noSpecialization": "Ихтисос нест",
+  "notPaid": "Пардохта нашудааст",
+  "yes": "Бале",
+  "no": "Не",
+  "file": "Файл",
+  "noFile": "Файл нест",
+  "applicationDate": "Санаи дархост",
+  "fileIsNotAvailable": "Файл дастрас нест",
+  "exite": "Баромад",
+  "areYouSure": "Оё шумо мехоҳед аз барнома хориҷ шавед?",
+  "callTheOperator": "Бо мутахассиси дастгирӣ тамос гиред",
+  "operatorCall": "Ба оператор занг занед",
+  "writeInTelegramm": "Ба Telegram нависед",
+  "chooseTheLanguage": "Забонро интихоб кунед"
 }

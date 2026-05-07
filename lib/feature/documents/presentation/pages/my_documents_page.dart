@@ -4,6 +4,7 @@ import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
+import 'package:khizmat_new/deeplink/user_profile.dart';
 import 'package:khizmat_new/feature/authorization/presentation/pages/main_question_page.dart';
 import 'package:khizmat_new/feature/documents/data/providers/my_application_provider.dart';
 import 'package:khizmat_new/feature/documents/data/providers/my_documents_provider.dart';
@@ -77,9 +78,13 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
       {"count": "12", "text": "Получено услуг"},
       {"count": "1", "text": "Истекло"},
     ];
+    final profileData = ref.watch(userProfileProvider);
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppbar(title: "Shahnavoz", leadingWidget: CircleAvatar()),
+      appBar: CustomAppbar(
+        title: profileData?.firstname ?? "",
+        leadingWidget: CircleAvatar(),
+      ),
 
       body: SingleChildScrollView(
         child: Container(
@@ -545,26 +550,31 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                             child: Padding(
                                                               padding: EdgeInsets.symmetric(
                                                                 horizontal:
-                                                                    size.otstup30,
+                                                                    size.otstup15,
                                                                 vertical:
                                                                     size.otstup10,
                                                               ),
-                                                              child: textWithH1Style(
-                                                                filteredDocuments[index]
-                                                                    .status!
-                                                                    .title!
-                                                                    .getText(
-                                                                      currentLocale,
-                                                                    ),
-                                                                fontsize: 13,
-                                                                color:
-                                                                    filteredDocuments[index]
-                                                                            .status!
-                                                                            .isActive
-                                                                        ? Colors
-                                                                            .white
-                                                                        : Colors
-                                                                            .black,
+                                                              child: SizedBox(
+                                                                width:
+                                                                    size.screenWidth *
+                                                                    0.29,
+                                                                child: textWithH1Style(
+                                                                  filteredDocuments[index]
+                                                                      .status!
+                                                                      .title!
+                                                                      .getText(
+                                                                        currentLocale,
+                                                                      ),
+                                                                  fontsize: 13,
+                                                                  color:
+                                                                      filteredDocuments[index]
+                                                                              .status!
+                                                                              .isActive
+                                                                          ? Colors
+                                                                              .white
+                                                                          : Colors
+                                                                              .black,
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
@@ -1229,19 +1239,27 @@ class _MyDocumentsPageState extends ConsumerState<MyDocumentsPage> {
                                                             child: Padding(
                                                               padding: EdgeInsets.symmetric(
                                                                 horizontal:
-                                                                    size.otstup30,
+                                                                    size.otstup15,
                                                                 vertical:
                                                                     size.otstup10,
                                                               ),
-                                                              child: textWithH1Style(
-                                                                docsExpiredDate[index1]
-                                                                    .status!
-                                                                    .title!
-                                                                    .ru!,
-                                                                fontsize: 13,
-                                                                color:
-                                                                    Colors
-                                                                        .black,
+                                                              child: SizedBox(
+                                                                width:
+                                                                    size.screenWidth *
+                                                                    0.29,
+                                                                child: textWithH1Style(
+                                                                  maxLines: 1,
+                                                                  docsExpiredDate[index1]
+                                                                      .status!
+                                                                      .title!
+                                                                      .getText(
+                                                                        currentLocale,
+                                                                      ),
+                                                                  fontsize: 13,
+                                                                  color:
+                                                                      Colors
+                                                                          .black,
+                                                                ),
                                                               ),
                                                             ),
                                                           ),

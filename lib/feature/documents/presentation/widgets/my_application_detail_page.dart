@@ -9,6 +9,7 @@ import 'package:khizmat_new/feature/documents/data/providers/application_detail_
 import 'package:khizmat_new/feature/documents/presentation/widgets/test_widget.dart';
 
 import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class MyApplicationInReviewDetailPage extends ConsumerStatefulWidget {
   final int id;
@@ -42,14 +43,16 @@ class _MyDocumentDetailPageState
     );
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
-      appBar: CustomAppbar(title: "Назад"),
+      appBar: CustomAppbar(title: S.of(context).back),
       body: asyncApplicationsDetailInfo.when(
         data: (data) {
           final detailInfo = data.data;
           final steps = detailInfo.steps;
           // Category title comes from the detail response — no list index needed.
           // React equivalent: ApplicationModule.Components.View fetches by id directly.
-          final categoryTitle = detailInfo.category.title.getText(currentLocale);
+          final categoryTitle = detailInfo.category.title.getText(
+            currentLocale,
+          );
           return Padding(
             padding: EdgeInsets.symmetric(
               horizontal: size.otstup18,
@@ -60,10 +63,7 @@ class _MyDocumentDetailPageState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //Document title
-                  textWithH1Style(
-                    categoryTitle,
-                    textAlign: TextAlign.start,
-                  ),
+                  textWithH1Style(categoryTitle, textAlign: TextAlign.start),
                   SizedBox(height: size.otstup20),
                   Column(
                     children: [
@@ -95,7 +95,7 @@ class _MyDocumentDetailPageState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   textWithH1Style(
-                                    "Номер заявки",
+                                    S.of(context).applicationNumber,
                                     fontW: FontWeight.normal,
                                     fontsize: 15,
                                   ),
@@ -139,7 +139,7 @@ class _MyDocumentDetailPageState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   textWithH1Style(
-                                    "Статус",
+                                    S.of(context).status,
                                     fontsize: 15,
                                     fontW: FontWeight.normal,
                                   ),
@@ -188,7 +188,7 @@ class _MyDocumentDetailPageState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   textWithH1Style(
-                                    "Дата заявки",
+                                    S.of(context).applicationDate,
                                     fontsize: 15,
                                     fontW: FontWeight.normal,
                                   ),
@@ -207,7 +207,7 @@ class _MyDocumentDetailPageState
                   SizedBox(height: size.otstup25),
                   SizedBox(height: size.otstup15),
 
-                  ApplicationView(steps: steps, applicationId: appId,)
+                  ApplicationView(steps: steps, applicationId: appId),
                 ],
               ),
             ),

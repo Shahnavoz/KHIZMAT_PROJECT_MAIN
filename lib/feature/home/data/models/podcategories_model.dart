@@ -98,7 +98,7 @@ class Data {
     applicationTypes: List<String>.from(json["applicationTypes"].map((x) => x)),
     documentLink:
         json["document_link"] ??
-        "https://apikhizmat.ehukumat.tj/v1/file/open_source/download/3091",
+        "https://api.ekhizmat.tj/v1/file/open_source/download/3091",
     documentNumber: json["document_number"] ?? '0',
     documentDate: DateTime.parse(json["document_date"]),
     additionalData:

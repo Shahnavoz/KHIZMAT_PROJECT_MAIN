@@ -40,7 +40,7 @@ class _MainEnterPageState extends ConsumerState<MainEnterPage> {
   Future<void> login(String email, String password) async {
     try {
       var response = await http.post(
-        Uri.parse("https://apikhizmat.ehukumat.tj/v1/oauth/email/login"),
+        Uri.parse("https://api.ekhizmat.tj/v1/oauth/email/login"),
 
         headers: <String, String>{
           "Content-Type": "application/json;Charset=utf-8",

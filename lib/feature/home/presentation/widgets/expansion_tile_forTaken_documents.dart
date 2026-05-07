@@ -9,6 +9,7 @@ import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/documents/data/models/my_documents_detail_model.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/notification_page.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ExpansionTileForTakenDocuments extends StatefulWidget {
@@ -100,7 +101,7 @@ class _ExpansionTileForTakenDocumentsState
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: textWithH1Style(
-                                    "Сохранить",
+                                    S.of(context).save,
                                     fontsize: 14,
                                     color: Colors.white,
                                   ),

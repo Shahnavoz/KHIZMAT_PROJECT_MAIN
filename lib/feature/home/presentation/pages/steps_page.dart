@@ -32,6 +32,7 @@ import 'package:khizmat_new/feature/home/presentation/widgets/custom_appbar.dart
 import 'package:khizmat_new/feature/home/presentation/widgets/radio_button.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/requirement_step.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/switch_widget.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 final currentStepProvider = StateProvider<int>((ref) => 0);
@@ -137,7 +138,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppbar(
-        title: "Назад",
+        title: S.of(context).back,
         // actionWidget: Padding(
         //   padding: const EdgeInsets.only(right: 10),
         //   child: FontSettingContainer(size: size),
@@ -321,7 +322,7 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                   Row(
                                     children: [
                                       textWithH1Style(
-                                        "Шаг № ${currentStep + 1}",
+                                        S.of(context).shagNomer(currentStep + 1),
                                       ),
                                       textWithH1Style(" / "),
                                       textWithH1Style(
@@ -547,7 +548,16 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                 ref
                                     .read(processProvider.notifier)
                                     .cancel()
-                                    .then((_) {
+                                    .then((cancelled) {
+                                      if (!cancelled) return; // cancel failed — don't start a new process
+                                      // Reset form state so old values don't bleed into the new attempt
+                                      ref
+                                          .read(formProviderFamily(widget.docId))
+                                          .disposeControllers();
+                                      // Reset step indicator to 0
+                                      ref
+                                          .read(currentStepProvider.notifier)
+                                          .state = 0;
                                       final locale = ref.read(localeProvider);
                                       ref
                                           .read(processProvider.notifier)
@@ -572,8 +582,8 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                             },
                             child: textWithH1Style(
                               currentStepType == 'PAYMENT'
-                                  ? "Заполнить заново"
-                                  : "Назад",
+                                  ? S.of(context).fillAgain
+                                  : S.of(context).back,
                               fontsize: 15,
                             ),
                           ),
@@ -636,8 +646,8 @@ class _StepsPageState extends ConsumerState<StepsPage> {
                                           )
                                           : textWithH1Style(
                                             currentStepType == 'PAYMENT'
-                                                ? "Перейти к оплате"
-                                                : "Продолжить",
+                                                ? S.of(context).goToPayment
+                                                : S.of(context).continueButton,
                                             fontsize: 15,
                                             color: Colors.white,
                                           ),
@@ -814,9 +824,9 @@ class _StepsPageState extends ConsumerState<StepsPage> {
       if (allRequirements.isNotEmpty &&
           checkedIds.length < allRequirements.length) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+           SnackBar(
             content: Text(
-              'Пожалуйста, ознакомьтесь и подтвердите все требования',
+              S.of(context).oznakomtesIpotverditeVseTrebovaniya,
             ),
           ),
         );
@@ -1822,7 +1832,7 @@ class _StepContentWidgetState extends ConsumerState<StepContentWidget> {
       },
       validator: (value) {
         if (isRequired && (value == null || value.trim().isEmpty)) {
-          return 'Поле обязательно для заполнения';
+          return "Поле обязательно для заполнения";
         }
         // Validate against UNMASKED digit count for masked fields
         final checkValue =
@@ -2035,10 +2045,11 @@ class _StepContentWidgetState extends ConsumerState<StepContentWidget> {
       final time = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.now(),
-        builder: (ctx, child) => MediaQuery(
-          data: MediaQuery.of(ctx).copyWith(alwaysUse24HourFormat: true),
-          child: child!,
-        ),
+        builder:
+            (ctx, child) => MediaQuery(
+              data: MediaQuery.of(ctx).copyWith(alwaysUse24HourFormat: true),
+              child: child!,
+            ),
       );
       if (time == null) return;
       final formatted =

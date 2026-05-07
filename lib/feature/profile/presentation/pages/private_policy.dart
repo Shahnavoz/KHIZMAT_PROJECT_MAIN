@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/feature/profile/data/repos/private_policy_service.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class PrivatePolicyPage extends ConsumerStatefulWidget {
   const PrivatePolicyPage({super.key});
@@ -24,7 +25,7 @@ class _PrivatePolicyPageState extends ConsumerState<PrivatePolicyPage> {
 
   @override
   Widget build(BuildContext context) {
-    final languageCode = ref.watch(localeProvider).languageCode;
+    final languageCode = ref.watch(localeProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -35,8 +36,8 @@ class _PrivatePolicyPageState extends ConsumerState<PrivatePolicyPage> {
           icon: const Icon(Icons.arrow_back_ios, color: primaryButtonColor),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Политика конфиденциальности',
+        title: Text(
+          S.of(context).privatePolicy,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -78,7 +79,7 @@ class _PrivatePolicyPageState extends ConsumerState<PrivatePolicyPage> {
                 'h4': Style(margin: Margins.symmetric(vertical: 4)),
                 'h5': Style(margin: Margins.symmetric(vertical: 4)),
                 'h6': Style(margin: Margins.symmetric(vertical: 4)),
-                'p':  Style(margin: Margins.symmetric(vertical: 4)),
+                'p': Style(margin: Margins.symmetric(vertical: 4)),
                 'table': Style(border: Border.all(color: Colors.grey)),
                 'td': Style(
                   border: Border.all(color: Colors.grey),

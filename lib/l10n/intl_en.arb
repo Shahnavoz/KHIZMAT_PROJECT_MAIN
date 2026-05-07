@@ -71,7 +71,157 @@
     }
   },
   "myApplications": "My applications",
-  "nazad": "Back",
   "podrobnee": "In detail",
-  "svernut": "Collapse"
+  "svernut": "Collapse",
+  "expiryDateYears": "{years} (year)",
+  "@expiryDateYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "errorLoading": "Loading error: {error}",
+  "@errorLoading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "srokPolucheniyaOnline": "Receipt period: Online (instantly)",
+  "srokPolucheniyaDays": "Receipt period: {days} days",
+  "@srokPolucheniyaDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "detailInformation": "Detail information",
+  "specialization": "Specializations",
+  "requirements": "Requirements",
+  "authorizedBody": "Authorized body",
+  "documentType": "Document type",
+  "expiryDate": "Expiry date",
+  "srokRassmotreniyeIPredostavleniyeUslugi": "Review and issuance period: ",
+  "allinforeviewtime": "{reviewTime} days",
+  "@allinforeviewtime": {
+    "placeholders": {
+      "reviewTime": {
+        "type": "String"
+      }
+    }
+  },
+  "price": "Price:",
+  "applicants": "Applicants",
+  "feeState": "State fee",
+  "dontExist": "Does not exist",
+  "monthlyFee": "Monthly fee",
+  "regulatingDocument": "Service regulation document",
+  "linkToDocument": "Link to supporting document",
+  "dosntExist": "Does not exist",
+  "poluchitUslugu": "Get service",
+  "back": "Back",
+  "continueButton": "Continue",
+  "goToPayment": "Go to Payment",
+  "fillAgain": "Fill again",
+  "oznakomtesIpotverditeVseTrebovaniya": "Please review and confirm all requirements",
+  "greeting": "Hello, {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shagNomer": "Step № {step}",
+  "@shagNomer": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "verifiedProfile": "Verified profile",
+  "commonSettings": "General settings",
+  "languageSettings": "Language settings",
+  "help": "Help",
+  "whereAreWe": "Where are we ?",
+  "support": "Support",
+  "privatePolicy": "Privacy Policy",
+  "exitTheApp": "Exit the App",
+  "chooseTheMap": "Choose the map",
+  "notInstalledMap": "There are no maps installed on the device.",
+  "failedToLoadDoc": "Failed to load document",
+  "repeat": "Repeat",
+  "docIsEmpty": "Document is empty",
+  "docIsNotLoadedOrEmpty": "The document has not yet been uploaded or is empty.",
+  "status": "Status",
+  "docNumber": "Document number",
+  "registrationDate": "Registration date",
+  "electronicSIgnature": "Electronic signature of the document",
+  "attachments": "Attached documents",
+  "payments": "Payments",
+  "licenseeName": "Licensee name",
+  "address": "Address",
+  "licenseeTin": "Licensee TIN",
+  "numberInReestr": "Number in Registry",
+  "validUntill": "Valid until",
+  "name": "Name",
+  "surname": "Surname",
+  "certificateSerialNumber": "Certificate serial number",
+  "signature": "Signature",
+  "save": "Save",
+  "invoiceNumber": "Invoice Number",
+  "paymentAmount": "Payment amount",
+  "paymentDate": "Payment date",
+  "paid": "Paid",
+  "open": "Open",
+  "expired": "Expired",
+  "canceled": "Canceled",
+  "applicationType": "Application type",
+  "applicationNumber": "Application number",
+  "requiredField": "Field is required",
+  "minLength": "Minimum length: {minLength} characters",
+  "@minLength": {
+    "placeholders": {
+      "minLength": {
+        "type": "int"
+      }
+    }
+  },
+  "maxLength": "Maximum length: {maxLength} characters",
+  "@maxLength": {
+    "placeholders": {
+      "maxLength": {
+        "type": "int"
+      }
+    }
+  },
+  "action": "Actions",
+  "add": "Add",
+  "pickFile": "Select file",
+  "loadingError": "Error loading: {error}",
+  "@loadingError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noSpecialization": "No specializations available",
+  "notPaid": "Not paid",
+  "yes": "Yes",
+  "no": "No",
+  "file": "File",
+  "noFile": "No file",
+  "applicationDate": "Application date",
+  "fileIsNotAvailable": "File is not available",
+  "exite": "Exit",
+  "areYouSure": "Are you sure you want to exit the app?",
+  "callTheOperator": "Contact a support specialist",
+  "operatorCall": "Call the operator",
+  "writeInTelegramm": "Write in Telegram",
+  "chooseTheLanguage": "Choose the language"
 }

@@ -7,6 +7,7 @@ import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/my__button.dart';
 import 'package:khizmat_new/feature/home/data/providers/steps_provider.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/steps_page.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class MyButtonPolucheniyeUslugi extends ConsumerStatefulWidget {
   final int docId;
@@ -319,7 +320,7 @@ class _MyButtonPolucheniyeUslugiState
                 ),
               )
               : textWithH1Style(
-                "Получить услугу",
+                S.of(context).poluchitUslugu,
                 color: Colors.white,
                 fontsize: 15,
               ),

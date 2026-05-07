@@ -3,6 +3,7 @@ import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/feature/documents/data/models/my_documents_detail_model.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/detail_info_row_widget.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class ExpansionTileForDocumentsPage extends StatefulWidget {
   const ExpansionTileForDocumentsPage({
@@ -55,35 +56,35 @@ class _ExpansionTileForDocumentsPageState
             ),
             children: [
               buildCustomRow(
-                "Статус",
+                S.of(context).status,
                 info!.status!.title!.getText(widget.currentLocale),
               ),
               buildCustomRow(
-                "Наименование лицензиата",
+                S.of(context).licenseeName,
                 info.name ?? "", //field?
                 fontsize: 15,
               ),
               buildCustomRow(
-                "Адрес", //field?
+                S.of(context).address, //field?
                 info.address ?? '',
                 fontsize: 15,
               ),
-              buildCustomRow("ИНН лицензиата", info.tin!, fontsize: 15),
-              buildCustomRow("Номер документа", info.number!, fontsize: 15),
+              buildCustomRow(S.of(context).licenseeTin, info.tin!, fontsize: 15),
+              buildCustomRow(S.of(context).docNumber, info.number!, fontsize: 15),
               buildCustomRow(
-                "Номер в реестре",
+                S.of(context).numberInReestr,
 
                 info.registerNumber!,
                 fontsize: 15,
               ),
               buildCustomRow(
-                "Дата выдачи",
+                S.of(context).registrationDate,
 
                 info.registrationDate.toString(),
                 fontsize: 15,
               ),
               buildCustomRow(
-                "Действует до",
+                S.of(context).validUntill,
 
                 info.registrationDate.toString(),
                 fontsize: 15,

@@ -6,6 +6,7 @@ import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/authorization/presentation/pages/main_question_page.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/button_or_container_with_two_parts.dart';
 import 'package:khizmat_new/feature/authorization/presentation/widgets/step_with_num_and_text.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class ButtonModalBottomSheet extends StatefulWidget {
   const ButtonModalBottomSheet({super.key, required this.size});
@@ -128,7 +129,7 @@ class SupportCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             textWithH2BlackStyle(
-              "Связаться с специалистом поддержки",
+              S.of(context).callTheOperator,
             ),
             SizedBox(height: size.otstup15),
             ButtonOrContainerWithTwoParts(
@@ -154,7 +155,7 @@ class SupportCard extends StatelessWidget {
                   makePhoneCall("870904004");
                 },
                 child: Text(
-                  "Позвонить оператору",
+                  S.of(context).operatorCall,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -186,7 +187,7 @@ class SupportCard extends StatelessWidget {
                   openTelegram("@shahnavoz1");
                 },
                 child: Text(
-                  "Написать в телеграм",
+                  S.of(context).writeInTelegramm,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,

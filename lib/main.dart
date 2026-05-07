@@ -87,7 +87,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   //     // Your backend verifies it with the SSO provider and returns your token.
   //     final recievedToken=storage.read(key: 'token');
   //     final response = await http.post(
-  //       Uri.parse('https://apikhizmat.ehukumat.tj/v1/oauth/sso/access_token'),
+  //       Uri.parse('https://api.ekhizmat.tj/v1/oauth/sso/access_token'),
   //       headers: {
   //         'Content-Type': 'application/json',
   //         'Accept': 'application/json',

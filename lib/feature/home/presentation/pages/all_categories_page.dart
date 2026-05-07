@@ -6,6 +6,7 @@ import 'package:khizmat_new/consts/global_providers/locale_provider.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/authorization/presentation/pages/main_question_page.dart';
+import 'package:khizmat_new/feature/bottomNavBar/presentation/pages/bottom_nav_page.dart';
 import 'package:khizmat_new/feature/home/data/models/all_updated_date_model.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/Gos_organizations_page.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/search_page.dart';
@@ -53,7 +54,7 @@ class _AllCategoriesPageState extends ConsumerState<AllCategoriesPage> {
         leading: Padding(
           padding: EdgeInsets.only(left: 25),
           child: IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>BottomNavPage())),
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           ),
         ),

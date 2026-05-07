@@ -3,6 +3,7 @@ import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/consts/text_styles/const_text_styles.dart';
 import 'package:khizmat_new/feature/documents/data/models/my_documents_detail_model.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class ExpansionTileForApplications extends StatefulWidget {
   const ExpansionTileForApplications({
@@ -89,7 +90,7 @@ class _ExpansionTileForApplicationsState
                                               CrossAxisAlignment.start,
                                           children: [
                                             textWithH2BlackStyle(
-                                              "Тип заявки",
+                                              S.of(context).applicationType,
                                               fontWeight: FontWeight.normal,
                                             ),
                                             textWithH1Style(
@@ -100,7 +101,7 @@ class _ExpansionTileForApplicationsState
                                               fontsize: 15,
                                             ),
                                             textWithH2BlackStyle(
-                                              "Номер заявки",
+                                              S.of(context).applicationNumber,
                                               fontWeight: FontWeight.normal,
                                             ),
                                             textWithH1Style(

@@ -22,7 +22,7 @@ class ShagiPolucheniyeUslugiService {
       var token = await storage.read(key: 'token');
       var response = await http.get(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/reference/documents/process?document_id=$documentId&application_id=$applicationId',
+          'https://api.ekhizmat.tj/v1/reference/documents/process?document_id=$documentId&application_id=$applicationId',
         ),
         headers: <String, String>{
           'Content-Type': 'application/json;Charset=utf-8',
@@ -54,7 +54,7 @@ class ShagiPolucheniyeUslugiService {
       final token = await storage.read(key: 'token');
       final response = await http.post(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v2/process/start?document_id=$documentId',
+          'https://api.ekhizmat.tj/v2/process/start?document_id=$documentId',
         ),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=utf-8',
@@ -141,7 +141,7 @@ class ShagiPolucheniyeUslugiService {
       // final body = jsonEncode(values.map((val) => val.toJson()));//
       final response = await http.post(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/action?application_id=$applicationId&lang=$lang&action_key=$actionKey',
+          'https://api.ekhizmat.tj/v1/action?application_id=$applicationId&lang=$lang&action_key=$actionKey',
         ),
 
         headers: <String, String>{
@@ -208,7 +208,7 @@ class ShagiPolucheniyeUslugiService {
 
       final response = await http.post(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/action?application_id=$applicationId&lang=$lang&action_key=$actionKey',
+          'https://api.ekhizmat.tj/v1/action?application_id=$applicationId&lang=$lang&action_key=$actionKey',
         ),
 
         headers: <String, String>{
@@ -249,7 +249,7 @@ class ShagiPolucheniyeUslugiService {
       var token = await storage.read(key: 'token');
       var response = await http.get(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/reference/documents/requirement?document_id=$documentId&SELECTED_SPECIALIZATIONS=',
+          'https://api.ekhizmat.tj/v1/reference/documents/requirement?document_id=$documentId&SELECTED_SPECIALIZATIONS=',
         ),
         headers: <String, String>{
           'Content-Type': 'application/json;Charset=utf-8',
@@ -285,7 +285,7 @@ class ShagiPolucheniyeUslugiService {
 
       var response = await http.post(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v2/process/update?application_id=$applicationId&step_id=$stepId',
+          'https://api.ekhizmat.tj/v2/process/update?application_id=$applicationId&step_id=$stepId',
         ),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=utf-8',
@@ -330,7 +330,7 @@ class ShagiPolucheniyeUslugiService {
 
       var response = await http.post(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v2/process/update?application_id=$applicationId&step_id=$stepId',
+          'https://api.ekhizmat.tj/v2/process/update?application_id=$applicationId&step_id=$stepId',
         ),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=utf-8',
@@ -404,7 +404,7 @@ class ShagiPolucheniyeUslugiService {
       var token = await storage.read(key: 'token');
       var response = await http.post(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/file/application/upload?application_id=$applicationId',
+          'https://api.ekhizmat.tj/v1/file/application/upload?application_id=$applicationId',
         ),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=utf-8',
@@ -432,7 +432,7 @@ class ShagiPolucheniyeUslugiService {
       var token = await storage.read(key: 'token');
       var response = await http.post(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/file/application/info/6575?application_id=$application_id',
+          'https://api.ekhizmat.tj/v1/file/application/info/6575?application_id=$application_id',
         ),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=utf-8',

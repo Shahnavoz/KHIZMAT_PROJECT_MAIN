@@ -27,24 +27,24 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
     "assets/icons/profilePageIcon.svg",
   ];
 
-
   Future<bool> _showExitDialog(BuildContext context) async {
     return await showDialog<bool>(
           context: context,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Выход'),
-            content: const Text('Вы хотите выйти из приложения?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Отмена'),
+          builder:
+              (ctx) => AlertDialog(
+                title: Text(S.of(context).exite),
+                content: Text(S.of(context).areYouSure),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: Text(S.of(context).cancel),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, true),
+                    child: Text(S.of(context).exite),
+                  ),
+                ],
               ),
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Выйти'),
-              ),
-            ],
-          ),
         ) ??
         false;
   }
@@ -54,14 +54,13 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
   Widget _buildServicesTab() {
     final asyncData = ref.watch(allUpdatedDateProvider);
     return asyncData.when(
-      loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) =>
-          Scaffold(body: Center(child: Text(e.toString()))),
+      loading:
+          () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, _) => Scaffold(body: Center(child: Text(e.toString()))),
       data: (data) {
         if (data == null) {
-          return const Scaffold(
-              body: Center(child: Text('Нет данных')));
+          return const Scaffold(body: Center(child: Text('Нет данных')));
         }
         return AllCategoriesPage(
           categories: data.data.categories,
@@ -73,7 +72,12 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
 
   @override
   Widget build(BuildContext context) {
-  final List<String> labels = [S.of(context).main, S.of(context).documents, S.of(context).services, S.of(context).profile];
+    final List<String> labels = [
+      S.of(context).main,
+      S.of(context).documents,
+      S.of(context).services,
+      S.of(context).profile,
+    ];
 
     final pages = [
       const NewHomePage(),

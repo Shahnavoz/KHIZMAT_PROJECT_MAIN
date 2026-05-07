@@ -458,6 +458,721 @@ class S {
   String get svernut {
     return Intl.message('Collapse', name: 'svernut', desc: '', args: []);
   }
+
+  /// `{years} (year)`
+  String expiryDateYears(int years) {
+    return Intl.message(
+      '$years (year)',
+      name: 'expiryDateYears',
+      desc: '',
+      args: [years],
+    );
+  }
+
+  /// `Loading error: {error}`
+  String errorLoading(String error) {
+    return Intl.message(
+      'Loading error: $error',
+      name: 'errorLoading',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Receipt period: Online (instantly)`
+  String get srokPolucheniyaOnline {
+    return Intl.message(
+      'Receipt period: Online (instantly)',
+      name: 'srokPolucheniyaOnline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Receipt period: {days} days`
+  String srokPolucheniyaDays(int days) {
+    return Intl.message(
+      'Receipt period: $days days',
+      name: 'srokPolucheniyaDays',
+      desc: '',
+      args: [days],
+    );
+  }
+
+  /// `Detail information`
+  String get detailInformation {
+    return Intl.message(
+      'Detail information',
+      name: 'detailInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Specializations`
+  String get specialization {
+    return Intl.message(
+      'Specializations',
+      name: 'specialization',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Requirements`
+  String get requirements {
+    return Intl.message(
+      'Requirements',
+      name: 'requirements',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Authorized body`
+  String get authorizedBody {
+    return Intl.message(
+      'Authorized body',
+      name: 'authorizedBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Document type`
+  String get documentType {
+    return Intl.message(
+      'Document type',
+      name: 'documentType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expiry date`
+  String get expiryDate {
+    return Intl.message('Expiry date', name: 'expiryDate', desc: '', args: []);
+  }
+
+  /// `Review and issuance period: `
+  String get srokRassmotreniyeIPredostavleniyeUslugi {
+    return Intl.message(
+      'Review and issuance period: ',
+      name: 'srokRassmotreniyeIPredostavleniyeUslugi',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{reviewTime} days`
+  String allinforeviewtime(String reviewTime) {
+    return Intl.message(
+      '$reviewTime days',
+      name: 'allinforeviewtime',
+      desc: '',
+      args: [reviewTime],
+    );
+  }
+
+  /// `Price:`
+  String get price {
+    return Intl.message('Price:', name: 'price', desc: '', args: []);
+  }
+
+  /// `Applicants`
+  String get applicants {
+    return Intl.message('Applicants', name: 'applicants', desc: '', args: []);
+  }
+
+  /// `State fee`
+  String get feeState {
+    return Intl.message('State fee', name: 'feeState', desc: '', args: []);
+  }
+
+  /// `Does not exist`
+  String get dontExist {
+    return Intl.message(
+      'Does not exist',
+      name: 'dontExist',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly fee`
+  String get monthlyFee {
+    return Intl.message('Monthly fee', name: 'monthlyFee', desc: '', args: []);
+  }
+
+  /// `Service regulation document`
+  String get regulatingDocument {
+    return Intl.message(
+      'Service regulation document',
+      name: 'regulatingDocument',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Link to supporting document`
+  String get linkToDocument {
+    return Intl.message(
+      'Link to supporting document',
+      name: 'linkToDocument',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Does not exist`
+  String get dosntExist {
+    return Intl.message(
+      'Does not exist',
+      name: 'dosntExist',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get service`
+  String get poluchitUslugu {
+    return Intl.message(
+      'Get service',
+      name: 'poluchitUslugu',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Back`
+  String get back {
+    return Intl.message('Back', name: 'back', desc: '', args: []);
+  }
+
+  /// `Continue`
+  String get continueButton {
+    return Intl.message('Continue', name: 'continueButton', desc: '', args: []);
+  }
+
+  /// `Go to Payment`
+  String get goToPayment {
+    return Intl.message(
+      'Go to Payment',
+      name: 'goToPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fill again`
+  String get fillAgain {
+    return Intl.message('Fill again', name: 'fillAgain', desc: '', args: []);
+  }
+
+  /// `Please review and confirm all requirements`
+  String get oznakomtesIpotverditeVseTrebovaniya {
+    return Intl.message(
+      'Please review and confirm all requirements',
+      name: 'oznakomtesIpotverditeVseTrebovaniya',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Hello, {name}`
+  String greeting(String name) {
+    return Intl.message(
+      'Hello, $name',
+      name: 'greeting',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Step № {step}`
+  String shagNomer(int step) {
+    return Intl.message(
+      'Step № $step',
+      name: 'shagNomer',
+      desc: '',
+      args: [step],
+    );
+  }
+
+  /// `Verified profile`
+  String get verifiedProfile {
+    return Intl.message(
+      'Verified profile',
+      name: 'verifiedProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `General settings`
+  String get commonSettings {
+    return Intl.message(
+      'General settings',
+      name: 'commonSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Language settings`
+  String get languageSettings {
+    return Intl.message(
+      'Language settings',
+      name: 'languageSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Help`
+  String get help {
+    return Intl.message('Help', name: 'help', desc: '', args: []);
+  }
+
+  /// `Where are we ?`
+  String get whereAreWe {
+    return Intl.message(
+      'Where are we ?',
+      name: 'whereAreWe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Support`
+  String get support {
+    return Intl.message('Support', name: 'support', desc: '', args: []);
+  }
+
+  /// `Privacy Policy`
+  String get privatePolicy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privatePolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit the App`
+  String get exitTheApp {
+    return Intl.message('Exit the App', name: 'exitTheApp', desc: '', args: []);
+  }
+
+  /// `Choose the map`
+  String get chooseTheMap {
+    return Intl.message(
+      'Choose the map',
+      name: 'chooseTheMap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `There are no maps installed on the device.`
+  String get notInstalledMap {
+    return Intl.message(
+      'There are no maps installed on the device.',
+      name: 'notInstalledMap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load document`
+  String get failedToLoadDoc {
+    return Intl.message(
+      'Failed to load document',
+      name: 'failedToLoadDoc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repeat`
+  String get repeat {
+    return Intl.message('Repeat', name: 'repeat', desc: '', args: []);
+  }
+
+  /// `Document is empty`
+  String get docIsEmpty {
+    return Intl.message(
+      'Document is empty',
+      name: 'docIsEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The document has not yet been uploaded or is empty.`
+  String get docIsNotLoadedOrEmpty {
+    return Intl.message(
+      'The document has not yet been uploaded or is empty.',
+      name: 'docIsNotLoadedOrEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Status`
+  String get status {
+    return Intl.message('Status', name: 'status', desc: '', args: []);
+  }
+
+  /// `Document number`
+  String get docNumber {
+    return Intl.message(
+      'Document number',
+      name: 'docNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Registration date`
+  String get registrationDate {
+    return Intl.message(
+      'Registration date',
+      name: 'registrationDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Electronic signature of the document`
+  String get electronicSIgnature {
+    return Intl.message(
+      'Electronic signature of the document',
+      name: 'electronicSIgnature',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attached documents`
+  String get attachments {
+    return Intl.message(
+      'Attached documents',
+      name: 'attachments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payments`
+  String get payments {
+    return Intl.message('Payments', name: 'payments', desc: '', args: []);
+  }
+
+  /// `Licensee name`
+  String get licenseeName {
+    return Intl.message(
+      'Licensee name',
+      name: 'licenseeName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address`
+  String get address {
+    return Intl.message('Address', name: 'address', desc: '', args: []);
+  }
+
+  /// `Licensee TIN`
+  String get licenseeTin {
+    return Intl.message(
+      'Licensee TIN',
+      name: 'licenseeTin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Number in Registry`
+  String get numberInReestr {
+    return Intl.message(
+      'Number in Registry',
+      name: 'numberInReestr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Valid until`
+  String get validUntill {
+    return Intl.message('Valid until', name: 'validUntill', desc: '', args: []);
+  }
+
+  /// `Name`
+  String get name {
+    return Intl.message('Name', name: 'name', desc: '', args: []);
+  }
+
+  /// `Surname`
+  String get surname {
+    return Intl.message('Surname', name: 'surname', desc: '', args: []);
+  }
+
+  /// `Certificate serial number`
+  String get certificateSerialNumber {
+    return Intl.message(
+      'Certificate serial number',
+      name: 'certificateSerialNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Signature`
+  String get signature {
+    return Intl.message('Signature', name: 'signature', desc: '', args: []);
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message('Save', name: 'save', desc: '', args: []);
+  }
+
+  /// `Invoice Number`
+  String get invoiceNumber {
+    return Intl.message(
+      'Invoice Number',
+      name: 'invoiceNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment amount`
+  String get paymentAmount {
+    return Intl.message(
+      'Payment amount',
+      name: 'paymentAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment date`
+  String get paymentDate {
+    return Intl.message(
+      'Payment date',
+      name: 'paymentDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paid`
+  String get paid {
+    return Intl.message('Paid', name: 'paid', desc: '', args: []);
+  }
+
+  /// `Open`
+  String get open {
+    return Intl.message('Open', name: 'open', desc: '', args: []);
+  }
+
+  /// `Expired`
+  String get expired {
+    return Intl.message('Expired', name: 'expired', desc: '', args: []);
+  }
+
+  /// `Canceled`
+  String get canceled {
+    return Intl.message('Canceled', name: 'canceled', desc: '', args: []);
+  }
+
+  /// `Application type`
+  String get applicationType {
+    return Intl.message(
+      'Application type',
+      name: 'applicationType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Application number`
+  String get applicationNumber {
+    return Intl.message(
+      'Application number',
+      name: 'applicationNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Field is required`
+  String get requiredField {
+    return Intl.message(
+      'Field is required',
+      name: 'requiredField',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minimum length: {minLength} characters`
+  String minLength(int minLength) {
+    return Intl.message(
+      'Minimum length: $minLength characters',
+      name: 'minLength',
+      desc: '',
+      args: [minLength],
+    );
+  }
+
+  /// `Maximum length: {maxLength} characters`
+  String maxLength(int maxLength) {
+    return Intl.message(
+      'Maximum length: $maxLength characters',
+      name: 'maxLength',
+      desc: '',
+      args: [maxLength],
+    );
+  }
+
+  /// `Actions`
+  String get action {
+    return Intl.message('Actions', name: 'action', desc: '', args: []);
+  }
+
+  /// `Add`
+  String get add {
+    return Intl.message('Add', name: 'add', desc: '', args: []);
+  }
+
+  /// `Select file`
+  String get pickFile {
+    return Intl.message('Select file', name: 'pickFile', desc: '', args: []);
+  }
+
+  /// `Error loading: {error}`
+  String loadingError(String error) {
+    return Intl.message(
+      'Error loading: $error',
+      name: 'loadingError',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `No specializations available`
+  String get noSpecialization {
+    return Intl.message(
+      'No specializations available',
+      name: 'noSpecialization',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not paid`
+  String get notPaid {
+    return Intl.message('Not paid', name: 'notPaid', desc: '', args: []);
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message('Yes', name: 'yes', desc: '', args: []);
+  }
+
+  /// `No`
+  String get no {
+    return Intl.message('No', name: 'no', desc: '', args: []);
+  }
+
+  /// `File`
+  String get file {
+    return Intl.message('File', name: 'file', desc: '', args: []);
+  }
+
+  /// `No file`
+  String get noFile {
+    return Intl.message('No file', name: 'noFile', desc: '', args: []);
+  }
+
+  /// `Application date`
+  String get applicationDate {
+    return Intl.message(
+      'Application date',
+      name: 'applicationDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `File is not available`
+  String get fileIsNotAvailable {
+    return Intl.message(
+      'File is not available',
+      name: 'fileIsNotAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Exit`
+  String get exite {
+    return Intl.message('Exit', name: 'exite', desc: '', args: []);
+  }
+
+  /// `Are you sure you want to exit the app?`
+  String get areYouSure {
+    return Intl.message(
+      'Are you sure you want to exit the app?',
+      name: 'areYouSure',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact a support specialist`
+  String get callTheOperator {
+    return Intl.message(
+      'Contact a support specialist',
+      name: 'callTheOperator',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Call the operator`
+  String get operatorCall {
+    return Intl.message(
+      'Call the operator',
+      name: 'operatorCall',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Write in Telegram`
+  String get writeInTelegramm {
+    return Intl.message(
+      'Write in Telegram',
+      name: 'writeInTelegramm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose the language`
+  String get chooseTheLanguage {
+    return Intl.message(
+      'Choose the language',
+      name: 'chooseTheLanguage',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

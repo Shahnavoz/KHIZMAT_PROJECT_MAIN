@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class PrivatePolicyData {
@@ -29,9 +30,9 @@ class PrivatePolicyData {
     }
   }
 
-  String description(String languageCode) {
-    switch (languageCode) {
-      case 'tj':
+  String description(Locale languageCode) {
+    switch (languageCode.languageCode) {
+      case 'fr':
         return descriptionTj;
       case 'en':
         return descriptionEn;

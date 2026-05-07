@@ -95,7 +95,7 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
         title: Column(
           children: [
             textWithH1Style(
-              "Назад",
+              S.of(context).back,
               fontW: FontWeight.w500,
               color: Colors.black,
             ),
@@ -398,9 +398,10 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                           SizedBox(height: size.otstup5),
                                           textWithH1Style(
                                             textAlign: TextAlign.start,
-                                            uslugaDetailInfo[index]
-                                                        .data
-                                                        .expiryDate ==
+                                            (uslugaDetailInfo[index]
+                                                            .data
+                                                            .expiryDate ??
+                                                        0) ==
                                                     0
                                                 ? S
                                                     .of(context)
@@ -409,9 +410,8 @@ class _CategoryDetailPageState extends ConsumerState<CategoryDetailPage> {
                                                     .of(context)
                                                     .srokPolucheniyaDays(
                                                       uslugaDetailInfo[index]
-                                                              .data
-                                                              .expiryDate ??
-                                                          0,
+                                                          .data
+                                                          .expiryDate!,
                                                     ),
                                             fontsize: 16,
                                             color: primaryGreenColor,

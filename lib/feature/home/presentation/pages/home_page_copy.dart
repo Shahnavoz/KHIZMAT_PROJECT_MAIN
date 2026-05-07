@@ -1235,7 +1235,7 @@ class CategoryService {
       var token = await storage.read(key: 'token');
       var response = await http.get(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/reference/documents/info?document_id=$document_id',
+          'https://api.ekhizmat.tj/v1/reference/documents/info?document_id=$document_id',
         ),
 
         headers: <String, String>{
@@ -1265,7 +1265,7 @@ class CategoryService {
       var token = await storage.read(key: 'token');
       var response = await http.get(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/reference/documents/specialization?document_id=$document_id',
+          'https://api.ekhizmat.tj/v1/reference/documents/specialization?document_id=$document_id',
         ),
 
         headers: <String, String>{
@@ -1298,7 +1298,7 @@ class CategoryService {
       var token = await storage.read(key: 'token');
       var response = await http.get(
         Uri.parse(
-          'https://apikhizmat.ehukumat.tj/v1/reference/documents/requirement?document_id=$document_id&SELECTED_SPECIALIZATIONS=$selected_spec',
+          'https://api.ekhizmat.tj/v1/reference/documents/requirement?document_id=$document_id&SELECTED_SPECIALIZATIONS=$selected_spec',
         ),
 
         headers: <String, String>{

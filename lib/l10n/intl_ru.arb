@@ -71,9 +71,56 @@
       }
     }
   },
-  "nazad": "Назад",
   "podrobnee": "Подробнее",
   "svernut": "Свернуть",
+  "savedToDownloads": "Сохранено в Загрузки: {fileName}",
+  "@savedToDownloads": {
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "amountSomoni": "{amount} сомони",
+  "@amountSomoni": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "greeting": "{name}, Привет",
+  "@greeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shagNomer": "Шаг № {step}",
+  "@shagNomer": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "expiryDateYears": "{years} (год)",
+  "@expiryDateYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "errorLoading": "Ошибка загрузки: {error}",
+  "@errorLoading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "srokPolucheniyaOnline": "Срок получения: Онлайн (мгновенно)",
   "srokPolucheniyaDays": "Срок получения: {days} дней",
   "@srokPolucheniyaDays": {
@@ -82,5 +129,117 @@
         "type": "int"
       }
     }
-  }
+  },
+  "detailInformation": "Детальная информация",
+  "specialization": "Специализации",
+  "requirements": "Требования",
+  "authorizedBody": "Уполномоченный орган",
+  "documentType": "Тип документа",
+  "expiryDate": "Срок действия",
+  "srokRassmotreniyeIPredostavleniyeUslugi": "Срок рассмотрения и предоставления услуги: ",
+  "allinforeviewtime": "{reviewTime} дней",
+  "@allinforeviewtime": {
+    "placeholders": {
+      "reviewTime": {
+        "type": "String"
+      }
+    }
+  },
+  "price": "Стоимость:",
+  "applicants": "Заявители",
+  "feeState": "Государственная пошлина",
+  "dontExist": "Не имеется",
+  "monthlyFee": "Ежемесячный сбор",
+  "regulatingDocument": "Регулирующий документ услуги",
+  "linkToDocument": "Ссылка на подтверждающий документ",
+  "dosntExist": "Не применяется",
+  "poluchitUslugu": "Получить услугу",
+  "back": "Назад",
+  "continue": "Продолжить",
+  "continueButton": "Продолжить",
+  "goToPayment": "Перейти к оплате",
+  "fillAgain": "Заполнить заново",
+  "oznakomtesIpotverditeVseTrebovaniya": "Пожалуйста, ознакомьтесь и подтвердите все требования",
+  "currentstep1": "Шаг № ${currentStep + 1}",
+  "verifiedProfile": "Подтвержденный профиль",
+  "commonSettings": "Общие настройки",
+  "languageSettings": "Настройки языка",
+  "help": "Помощь",
+  "whereAreWe": "Где мы находимся ?",
+  "support": "Поддержка",
+  "privatePolicy": "Политика конфиденциальности",
+  "exitTheApp": "Выход с приложения",
+  "chooseTheMap": "Выберите карту",
+  "notInstalledMap": "На устройстве нет установленных карт",
+  "failedToLoadDoc": "Не удалось загрузить документ",
+  "repeat": "Повторить",
+  "docIsEmpty": "Документ пустой",
+  "docIsNotLoadedOrEmpty": "Документ ещё не загружен или пустой",
+  "status": "Статус",
+  "docNumber": "Номер документа",
+  "registrationDate": "Дата выдачи",
+  "electronicSIgnature": "Электронная подпись документа",
+  "attachments": "Приложенные документы",
+  "payments": "Платежи",
+  "licenseeName": "Наименование лицензиата",
+  "address": "Адрес",
+  "licenseeTin": "ИНН лицензиата",
+  "numberInReestr": "Register number",
+  "validUntill": "Действует до",
+  "name": "Имя",
+  "surname": "Фамилия",
+  "certificateSerialNumber": "Серийный номер сертификата",
+  "signature": "Подпись",
+  "save": "Сохранить",
+  "invoiceNumber": "Номер инвойса",
+  "paymentAmount": "Сумма платежа",
+  "paymentDate": "Дата оплаты",
+  "paid": "Оплачен",
+  "open": "Открыт",
+  "expired": "Просрочен",
+  "canceled": "Отменён",
+  "applicationType": "Тип заявки",
+  "applicationNumber": "Номер заявки",
+  "requiredField": "Поле обязательно для заполнения",
+  "minLength": "Минимальная длина: {minLength} символов",
+  "@minLength": {
+    "placeholders": {
+      "minLength": {
+        "type": "int"
+      }
+    }
+  },
+  "maxLength": "Максимальная длина: {maxLength} символов",
+  "@maxLength": {
+    "placeholders": {
+      "maxLength": {
+        "type": "int"
+      }
+    }
+  },
+  "action": "Действия",
+  "add": "Добавить",
+  "pickFile": "Выберите файл",
+  "loadingError": "Ошибка загрузки: {error}",
+  "@loadingError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noSpecialization": "Нет специализаций",
+  "notPaid": "Не оплачено",
+  "yes": "Да",
+  "no": "Нет",
+  "file": "Файл",
+  "noFile": "Нет файла",
+  "applicationDate": "Дата заявки",
+  "fileIsNotAvailable": "Файл недоступен",
+  "exite": "Выход",
+  "areYouSure": "Вы хотите выйти из приложения?",
+  "callTheOperator": "Связаться с специалистом поддержки",
+  "operatorCall": "Позвонить оператору",
+  "writeInTelegramm": "Написать в телеграм",
+  "chooseTheLanguage": "Выберите язык"
 }

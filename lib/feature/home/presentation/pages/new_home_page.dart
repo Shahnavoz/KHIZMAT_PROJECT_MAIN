@@ -12,6 +12,8 @@ import 'package:khizmat_new/feature/authorization/presentation/pages/main_questi
 import 'package:khizmat_new/feature/authorization/presentation/widgets/my__button.dart';
 import 'package:khizmat_new/feature/documents/presentation/pages/my_documents_page.dart';
 import 'package:khizmat_new/feature/home/data/providers/all_updated_date_provider.dart';
+import 'package:khizmat_new/feature/documents/data/providers/my_documents_provider.dart';
+import 'package:khizmat_new/feature/documents/data/providers/my_application_provider.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/card_test_page.dart';
 import 'package:khizmat_new/feature/home/presentation/pages/search_page.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/buttons_bar_titles.dart';
@@ -139,7 +141,20 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                 //     fit: BoxFit.fitHeight,
                 //   ),
                 // ),
-                CustomScrollView(
+                RefreshIndicator(
+                  onRefresh: () async {
+                    ref.invalidate(allUpdatedDateProvider);
+                    ref.invalidate(applicationProvider);
+                    ref.invalidate(myDocumentsProvider);
+                    ref.invalidate(userProfileProvider);
+                    await Future.wait([
+                      ref.read(allUpdatedDateProvider.future),
+                      ref.read(applicationProvider.future),
+                      ref.read(myDocumentsProvider.future),
+                      ref.read(userProfileProvider.notifier).reload(),
+                    ]);
+                  },
+                  child: CustomScrollView(
                   controller: _scrollController,
                   slivers: [
                     SliverAppBar(
@@ -176,8 +191,9 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                               CircleAvatar(backgroundColor: Colors.grey[300]),
                               SizedBox(width: 15),
                               Text(
-                                '${ref.watch(userProfileProvider)?.firstname ?? ''},'
-                                ' салом',
+                                S.of(context).greeting(
+                                  ref.watch(userProfileProvider)?.firstname ?? '',
+                                ),
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -671,6 +687,7 @@ class _NewHomePageState extends ConsumerState<NewHomePage> {
                     ),
                   ],
                 ),
+                ), // RefreshIndicator
               ],
             ),
           ),

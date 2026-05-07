@@ -3,6 +3,7 @@ import 'package:khizmat_new/consts/colors/const_colors.dart';
 import 'package:khizmat_new/consts/sizes/adaptive_sizes.dart';
 import 'package:khizmat_new/feature/documents/data/models/my_documents_detail_model.dart';
 import 'package:khizmat_new/feature/home/presentation/widgets/detail_info_row_widget.dart';
+import 'package:khizmat_new/generated/l10n.dart';
 
 class ExpansionTileForElectronalSignaturesPage extends StatefulWidget {
   const ExpansionTileForElectronalSignaturesPage({
@@ -58,15 +59,15 @@ class _ExpansionTileForElectronalSignaturesPageState
               info!.pkiSignatures != null
                   ? Column(
                     children: [
-                      buildCustomRow("Имя", info.name!),
-                      buildCustomRow("Фамилия", "", fontsize: 15),
+                      buildCustomRow(S.of(context).name, info.name!),
+                      buildCustomRow(S.of(context).surname, "", fontsize: 15),
                       buildCustomRow(
-                        "Серийный номер сертификата",
+                        S.of(context).certificateSerialNumber,
                         info.pkiSignatures!.serialNumber!,
                         fontsize: 15,
                       ),
                       buildCustomRow(
-                        "Подпись",
+                        S.of(context).signature,
                         info.pkiSignatures!.ru!,
                         fontsize: 15,
                       ),
